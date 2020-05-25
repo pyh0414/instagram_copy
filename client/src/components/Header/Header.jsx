@@ -9,7 +9,7 @@ import {
 import { navigate } from "@reach/router";
 
 import { HeaderWrapper, InstagramLogo, Search } from "./style";
-import PostFormModal from "../PostFromModal";
+import PostFormModal from "../PostFormModal";
 
 const Header = () => {
 	const [modalVisible, setmodalVisible] = useState(false);
