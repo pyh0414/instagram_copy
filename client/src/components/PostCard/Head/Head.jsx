@@ -2,12 +2,16 @@ import React from "react";
 
 import { Wrapper, ImgCustom, UserCustom } from "./style";
 
-const Head = ({ user }) => {
-	const { userId, profile } = user;
+// const Head = ({ user }) => {
+const Head = () => {
 	return (
 		<Wrapper>
-			<ImgCustom src={`http://localhost:3060/${profile}`} />
-			<UserCustom>{userId}</UserCustom>
+			<ImgCustom
+				src={
+					"https://blog.naver.com/dooboo7178?Redirect=Log&logNo=221853498343"
+				}
+			/>
+			<UserCustom>whwlsvy12</UserCustom>
 		</Wrapper>
 	);
 };

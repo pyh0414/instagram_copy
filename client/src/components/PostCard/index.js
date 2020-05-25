@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 import Head from "./Head";
-import Images from "./Images";
+import Image from "./Image";
 import Body from "./Body";
 import CommentInput from "./CommentInput";
 
@@ -23,7 +23,7 @@ const PostCard = ({ post }) => {
 		<Container>
 			<Wrapper>
 				<Head user={post.User} />
-				<Images images={post.Images} />
+				<Image images={post.Images} />
 				<Body post={post} />
 				<CommentInput postId={post.id} />
 			</Wrapper>
