@@ -1,8 +1,8 @@
 import React, { Fragment } from "react";
 import { Router } from "@reach/router";
 
-import Main from "./main";
-import Profile from "./profile";
+import Main from "./main/main";
+import Profile from "./profile/profile";
 import Header from "../containers/Header";
 
 const Pages = () => {
