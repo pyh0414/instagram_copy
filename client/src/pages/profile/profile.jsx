@@ -1,66 +1,17 @@
 import React, { useEffect, useState, useCallback } from "react";
-import styled from "styled-components";
-import { useSelector, useDispatch } from "react-redux";
-import { Row, Col, Button, Icon } from "antd";
+import { Row, Col } from "antd";
 
-import { LOAD_MY_POSTS_REQUEST } from "../reducer/user";
-import { CHANGE_SELECTED_POST } from "../reducer/post";
+import { Wrapper, UserInfo, UserImage, CustomUl, ImgCustom } from "./style";
 
-import Header from "../containers/Home/Header";
-
-import Post from "../components/Post";
-const Wrapper = styled.div`
-	width: 60%;
-	margin: auto;
-`;
-
-const UserInfo = styled.div`
-	height: 300px;
-	padding-top: 60px;
-`;
-
-const UserImage = styled.img`
-	height: 160px;
-	width: 170px;
-	border-radius: 50%;
-	margin-left: 25%;
-`;
-
-const CustomUl = styled.ul`
-	display: "flex";
-	list-style: none;
-	padding-left: 0px;
-	margin-top: 20px;
-
-	li {
-		margin-top: 10px;
-		color: #848484;
-		font-weight: 600;
-		font-size: 16px;
-		span {
-			margin-left: 5px;
-			color: #262626;
-		}
-	}
-`;
-
-const ImgCustom = styled.img`
-	width: 90%;
-	height: 100%;
-	cursor: pointer;
-`;
-
+// import PostModal from "../../components/PostCard";
+import PostModal from "../../components/PostModal";
 const Profile = () => {
 	const [postModal, setPostModal] = useState(false);
-	const { user, followings, followers, posts } = useSelector(
-		(state) => state.user
-	);
-	const dispatch = useDispatch();
 
 	useEffect(() => {
-		dispatch({
-			type: LOAD_MY_POSTS_REQUEST,
-		});
+		// dispatch({
+		// 	type: LOAD_MY_POSTS_REQUEST,
+		// });
 	}, []);
 
 	const onCloseModal = useCallback(() => {
@@ -69,24 +20,30 @@ const Profile = () => {
 
 	const onOpenModal = useCallback(
 		(post) => () => {
-			dispatch({
-				type: CHANGE_SELECTED_POST,
-				data: post,
-			});
+			// dispatch({
+			// 	type: CHANGE_SELECTED_POST,
+			// 	data: post,
+			// });
 			setPostModal(true);
 		},
 		[postModal]
 	);
 
+	const user = {
+		userId: "whwlsvy12",
+		name: "박연호",
+	};
+
+	const posts = ["asd", "qwe", "zxc"];
+
 	return (
 		<div>
-			<Header />
 			<Wrapper>
 				<UserInfo>
 					<Row>
 						<Col span={9}>
 							{user && (
-								<UserImage src={`http://localhost:3060/${user.profile}`} />
+								<UserImage src="http://assets.stickpng.com/thumbs/580b57fcd9996e24bc43c521.png" />
 							)}
 						</Col>
 						<Col span={15}>
@@ -112,13 +69,16 @@ const Profile = () => {
 
 							<CustomUl>
 								<li>
-									게시글<span>{posts.length}</span>
+									{/* 게시글<span>{posts.length}</span> */}
+									게시글<span>3</span>
 								</li>
 								<li>
-									팔로잉<span>{followings.length}</span>
+									팔로잉<span>3</span>
+									{/* 팔로잉<span>{followings.length}</span> */}
 								</li>
 								<li>
-									팔로워<span>{followers.length}</span>
+									{/* 팔로워<span>{followers.length}</span> */}
+									팔로워<span>3</span>
 								</li>
 							</CustomUl>
 							<div />
@@ -131,7 +91,7 @@ const Profile = () => {
 							<Col span={8} key={i} style={{ marginTop: "10px" }}>
 								<div style={{ height: "250px" }}>
 									<ImgCustom
-										src={`http://localhost:3060/${v.Images[0].src}`}
+										src="http://assets.stickpng.com/thumbs/580b57fcd9996e24bc43c521.png"
 										onClick={onOpenModal(v)}
 									></ImgCustom>
 								</div>
@@ -139,7 +99,7 @@ const Profile = () => {
 						);
 					})}
 				</Row>
-				{postModal && <Post onCloseModal={onCloseModal} user={user} />}
+				{postModal && <PostModal onCloseModal={onCloseModal} />}
 			</Wrapper>
 		</div>
 	);

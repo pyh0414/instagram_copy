@@ -1,27 +1,16 @@
 import React, { useEffect } from "react";
-import styled from "styled-components";
 import { Col, Row } from "antd";
 
-import PostCard from "../components/PostCard";
-import UserInfo from "../components/UserInfo";
-// import Messenger from "../containers/Messenger";
+import PostCard from "../../components/PostCard";
+import UserInfo from "../../components/UserInfo";
+import Messenger from "../../components/Messenger";
 
 // import { LOAD_MAIN_POSTS_REQUEST } from "../reducer/post";
 // import { LOAD_CHAT_ROOM_REQUEST } from "../reducer/chat";
 
-const Wrapper = styled.div`
-	background-color: #fafafa;
-	height: 100%;
-`;
+import { Wrapper, Side } from "./style";
 
-const Side = styled.div`
-	width: 50%;
-	height: 60%;
-	margin-top: 40px;
-	margin-left: 40px;
-`;
-
-const Home = () => {
+const Main = () => {
 	// const { user } = useSelector((state) => state.user);
 	// const { mainPosts } = useSelector((state) => state.post);
 
@@ -57,7 +46,7 @@ const Home = () => {
 						<Side>
 							{/* <UserInfo user={user} /> */}
 							<UserInfo />
-							{/* <Messenger /> */}
+							<Messenger />
 						</Side>
 					</Col>
 				</Row>
@@ -66,4 +55,4 @@ const Home = () => {
 	);
 };
 
-export default Home;
+export default Main;
