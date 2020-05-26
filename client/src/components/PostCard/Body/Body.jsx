@@ -1,17 +1,11 @@
 import React from "react";
-import styled from "styled-components";
 
-import LikeIcon from "./LikeIcon";
-import Liker from "./PostLikers";
-import Content from "./PostContent";
-import Comment from "./PostComment";
+import LikeIcon from "./LikeIcon/LikeIcon";
+import Liker from "./PostLiker/PostLiker";
+import Content from "./PostContent/PostContent";
+import Comment from "./PostComment/PostComment";
 
-const Wrapper = styled.div`
-	width: 100%;
-	padding-top: 10px;
-	padding-left: 15px;
-	padding-right: 20px;
-`;
+import { Wrapper } from "./style";
 
 // const Body = ({ post }) => {
 const Body = () => {

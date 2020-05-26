@@ -1,31 +1,25 @@
 import React from "react";
-import styled from "styled-components";
 
 import Head from "./Head";
 import Image from "./Image";
 import Body from "./Body";
 import CommentInput from "./CommentInput";
 
-const Wrapper = styled.div`
-	margin-left: 40%;
-	width: 60%;
-	height: 100%;
-	background-color: #fff;
-	border: 1px solid #edebeb;
-`;
+import { Wrapper, Container } from "./style";
 
-const Container = styled.div`
-	padding-top: 40px;
-`;
-
-const PostCard = ({ post }) => {
+// const PostCard = ({ post }) => {
+const PostCard = () => {
 	return (
 		<Container>
 			<Wrapper>
-				<Head user={post.User} />
+				{/* <Head user={post.User} />
 				<Image images={post.Images} />
 				<Body post={post} />
-				<CommentInput postId={post.id} />
+				<CommentInput postId={post.id} /> */}
+				<Head />
+				<Image />
+				<Body />
+				<CommentInput />
 			</Wrapper>
 		</Container>
 	);
