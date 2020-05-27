@@ -1,33 +1,15 @@
-import React, { useState, useCallback, useRef, useEffect } from "react";
-import styled from "styled-components";
-import { Input, Form, Button, Upload } from "antd";
+import React, { useState, useCallback, useRef } from "react";
+import { Input, Button } from "antd";
 import Icon from "@ant-design/icons";
+import { navigate } from "@reach/router";
 
-const Wrapper = styled.div`
-	height: 70vh;
-	display: flex;
-`;
-
-const FormCustom = styled(Form)`
-	display: block;
-	margin: auto;
-	width: 22%;
-`;
-
-const Foot = styled.div`
-	text-align: center;
-	margin-top: 20px;
-`;
-
-const IdCheckButtonCustom = styled(Button)`
-	margin-top: 5px;
-`;
-
-const ImageCustom = styled.img`
-	margin-top: 15px;
-	width: 200px;
-	height: 200px;
-`;
+import {
+	ImageCustom,
+	IdCheckButtonCustom,
+	Foot,
+	FormCustom,
+	Wrapper,
+} from "./style";
 
 const SignUp = () => {
 	const [id, setChangeId] = useState("");
@@ -190,9 +172,15 @@ const SignUp = () => {
 					가입하기
 				</Button>
 				<Foot>
-					이미 가입하셨다면 ?{/* <Link href="/"> */}
-					<a> 로그인</a>
-					{/* </Link> */}
+					이미 가입하셨다면 ?
+					<a
+						onClick={() => {
+							navigate("/");
+						}}
+					>
+						{" "}
+						로그인
+					</a>
 				</Foot>
 			</FormCustom>
 		</Wrapper>

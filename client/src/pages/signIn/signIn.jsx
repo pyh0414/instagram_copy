@@ -1,19 +1,11 @@
 import React, { useState, useEffect } from "react";
-import styled from "styled-components";
-import { Input, Form, Button, message } from "antd";
+import { Input, Button } from "antd";
 import Icon from "@ant-design/icons";
+import { navigate } from "@reach/router";
 
-const Wrapper = styled.div`
-	height: 70vh;
-	display: flex;
-`;
+import { Wrapper, CustomForm } from "./style";
 
-const CustomForm = styled(Form)`
-	margin: auto;
-	width: 22%;
-`;
-
-const SignIn = () => {
+const SignIn = ({ onLoginStatus }) => {
 	const [id, setChangeId] = useState("");
 	const [password, setChangePassword] = useState("");
 
@@ -87,17 +79,24 @@ const SignIn = () => {
 					type="primary"
 					htmlType="submit"
 					style={{ width: "40%", marginRight: "20%" }}
+					onClick={() => {
+						onLoginStatus();
+					}}
 				>
 					로그인
 				</Button>
-				<Button type="Default" style={{ width: "40%" }}>
-					{/* <Link href="/signUp">
-						<a> 회원가입</a>
-					</Link> */}
+				<Button
+					type="Default"
+					style={{ width: "40%" }}
+					onClick={() => {
+						navigate("/signUp");
+					}}
+				>
+					<a> 회원가입</a>
 				</Button>
 			</CustomForm>
 		</Wrapper>
 	);
 };
 
-export default SignUp;
+export default SignIn;
