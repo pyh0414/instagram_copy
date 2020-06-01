@@ -1,0 +1,65 @@
+type User {
+	id: ID! @id
+	name: String!
+	password: String!
+	createdAt: DateTime! @createdAt
+	profile: Image!
+	# posts: [Post!]!
+	# comments: [Comment!]!
+	# chats: [Chat!]!
+	# rooms: [Room!]!
+	# following: [User!]! @relation(name: "Follow")
+	# followers: [User!]! @relation(name: "Follow")
+}
+
+# type Post {
+# 	id: Int! @id(strategy: SEQUENCE)
+# 	content: String!
+# 	createdAt: DateTime! @createdAt
+# 	author: User! @relation(link: INLINE, onDelete: CASCADE)
+# 	comments: [Comment!]!
+# 	hashtags: [HashTag!]!
+# 		@relation(link: TABLE, name: "HashtagToPost", onDelete: SET_NULL)
+# 	images: [Image!]
+# 	likers: [User!]! @relation(name: "LikerToPost", onDelete: CASCADE)
+# }
+
+# type HashTag {
+# 	id: Int! @id(strategy: SEQUENCE)
+# 	name: String!
+# 	createdAt: DateTime! @createdAt
+# 	posts: [Post!]! @relation(name: "HashtagToPost", onDelete: SET_NULL)
+# }
+
+# type Room {
+# 	id: Int! @id(strategy: SEQUENCE)
+# 	name: String!
+# 	master: User! @relation(link: INLINE, onDelete: CASCADE)
+# 	createdAt: DateTime! @createdAt
+# 	users: [User!]! @relation(name: "RoomTouser", onDelete: CASCADE)
+# 	chats: [Chat!]! @relation(name: "ChatToRoom", onDelete: CASCADE)
+# }
+
+type Image {
+	id: Int! @id(strategy: SEQUENCE)
+	src: String!
+	createdAt: DateTime! @createdAt
+	user: User! @relation(link: INLINE, onDelete: SET_NULL)
+	# post: Post! @relation(link: INLINE, onDelete: SET_NULL)
+}
+
+# type Comment {
+# 	id: Int! @id(strategy: SEQUENCE)
+# 	content: String!
+# 	createdAt: DateTime! @createdAt
+# 	user: User! @relation(linke: INLINE, onDelete: CASCADE)
+# 	post: Post! @relation(linke: INLINE, onDelete: CASCADE)
+# }
+
+# type Chat {
+# 	id: Int! @id(strategy: SEQUENCE)
+# 	content: String!
+# 	createdAt: DateTime! @createdAt
+# 	user: User! @relation(link: INLINE, onDelete: CASCADE)
+# 	room: Room! @relation(name: "ChatToRoom", onDelete: CASCADE)
+# }
