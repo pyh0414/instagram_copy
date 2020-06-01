@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Input, Button } from "antd";
-import Icon from "@ant-design/icons";
 import { navigate } from "@reach/router";
 
 import { Wrapper, CustomForm } from "./style";
@@ -8,7 +7,6 @@ import { Wrapper, CustomForm } from "./style";
 const SignIn = ({ onLoginStatus }) => {
 	const [id, setChangeId] = useState("");
 	const [password, setChangePassword] = useState("");
-
 	useEffect(() => {
 		// if (hasLoginRequestFinished) {
 		// 	if (user) {
@@ -57,7 +55,6 @@ const SignIn = ({ onLoginStatus }) => {
 						value={id}
 						onChange={onChangeId}
 						required
-						prefix={<Icon type="mail" style={{ color: "rgba(0,0,0,.25)" }} />}
 					/>
 					<br />
 				</div>
@@ -69,7 +66,6 @@ const SignIn = ({ onLoginStatus }) => {
 						value={password}
 						onChange={onChangePassword}
 						required
-						prefix={<Icon type="lock" style={{ color: "rgba(0,0,0,.25)" }} />}
 						type="password"
 					/>
 					<br />
