@@ -1,17 +1,26 @@
 import { GraphQLServer } from "graphql-yoga";
 
-import Query from "../src/resolvers/Query";
+import resolvers from "./resolvers";
 import prisma from "./prisma";
-import Mutation from "./prisma";
 
 const server = new GraphQLServer({
 	typeDefs: "./src/schema.graphql",
-	resolvers: {
-		Query,
-	},
+	resolvers,
 	context(request) {
 		return {
 			prisma,
 		};
 	},
+});
+
+const options = {
+	cors: {
+		crediential: true,
+		origin: "*",
+	},
+	endpoint: "/graphql",
+};
+
+server.start(options, () => {
+	console.log("The server 4000 port is up!");
 });
