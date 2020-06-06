@@ -1,15 +1,26 @@
 import React, { useState, useCallback, useRef } from "react";
 import { Input, Button } from "antd";
-import Icon from "@ant-design/icons";
 import { navigate } from "@reach/router";
+import { useMutation, useLazyQuery } from "@apollo/react-hooks";
+import gql from "graphql-tag";
 
-import {
-	ImageCustom,
-	IdCheckButtonCustom,
-	Foot,
-	FormCustom,
-	Wrapper,
-} from "./style";
+import { IdCheckButtonCustom, Foot, Wrapper, FormCustom } from "./style";
+
+const GET_USER = gql`
+	query($userId: String!) {
+		user(query: $userId) {
+			name
+		}
+	}
+`;
+
+const UPLOAD_FILE = gql`
+	mutation($file: Upload!) {
+		uploadFile(file: $file) {
+			filePath
+		}
+	}
+`;
 
 const SignUp = () => {
 	const [id, setChangeId] = useState("");
@@ -17,17 +28,31 @@ const SignUp = () => {
 	const [password, setChangePassword] = useState("");
 	const [passwordCheck, setChangePasswordCheck] = useState("");
 	const [passwordError, setPasswordError] = useState(false);
-
-	//   useEffect(() => {
-	//     if (isSignedUpSuccess) {
-	//       alert("가입되셨습니다. 로그인 페이지로 이동합니다.");
-	//       Router.push("/");
-	//     }
-	//   }, [isSignedUpSuccess]);
-
+	const [hasSmaeId, setHasSmaeId] = useState(false);
+	const [hasSameIdChecked, setHasSameIdChecked] = useState(false);
+	const [filePath, setFilePath] = useState("");
 	const imageInput = useRef();
 
+	const [uploadFile] = useMutation(UPLOAD_FILE, {
+		onCompleted: (data) => {
+			const filePath = data.uploadFile.filePath;
+			console.log(data);
+			setFilePath(filePath);
+		},
+	});
+
+	const [getUser] = useLazyQuery(GET_USER, {
+		onCompleted: (data) => {
+			setHasSameIdChecked(true);
+			if (data.user) {
+				setHasSmaeId(true);
+			}
+		},
+	});
+
 	const onChangeId = (e) => {
+		setHasSameIdChecked(false);
+		setHasSmaeId(false);
 		setChangeId(e.target.value);
 	};
 
@@ -43,36 +68,20 @@ const SignUp = () => {
 		setChangePasswordCheck(e.target.value);
 	};
 
-	const onSubmitForm = useCallback(
-		(e) => {
-			e.preventDefault();
-			if (password !== passwordCheck) {
-				return setPasswordError(true);
-			}
-			//   dispatch({
-			//     type: SIGN_UP_REQUEST,
-			//     data: {
-			//       id,
-			//       password,
-			//       name,
-			//       profileImage
-			//     }
-			//   });
-		},
-		// [id, password, name, profileImage]
-		[id, password, name]
-	);
+	const onSubmitForm = useCallback(() => {
+		console.log(id, password, passwordCheck, name);
+		if (password !== passwordCheck) {
+			return setPasswordError(true);
+		}
+	}, [id, password, passwordCheck, name]);
 
 	const onExistingIdCheck = useCallback(() => {
 		if (id.trim() === "") {
 			return alert("아이디를 입력해 주세요");
 		}
-		// dispatch({
-		//   type: EXISTING_ID_CHECK_REQUEST,
-		//   data: {
-		//     id
-		//   }
-		// });
+		getUser({
+			variables: { userId: id },
+		});
 	}, [id]);
 
 	const onClickImageUpload = useCallback(() => {
@@ -80,32 +89,29 @@ const SignUp = () => {
 	}, [imageInput.current]);
 
 	const onChangeImages = useCallback((e) => {
-		// const imgFormData = new FormData();
-		// imgFormData.append("image", e.target.files[0]);
-		// dispatch({
-		//   type: UPLOAD_PROFILE_IMAGE_REQUEST,
-		//   data: imgFormData
-		// });
-	}, []);
+		const file = e.target.files[0];
+		uploadFile({ variables: { file } });
+	});
 
 	return (
 		<Wrapper>
-			<FormCustom encType="multipart/form-data" onSubmit={onSubmitForm}>
+			<FormCustom onFinish={onSubmitForm}>
 				<br />
 				<Input
 					name="user-id"
-					placeholder="이메일"
+					placeholder="아이디"
 					value={id}
 					onChange={onChangeId}
 					required
-					prefix={<Icon type="mail" style={{ color: "rgba(0,0,0,.25)" }} />}
 				/>
 				<IdCheckButtonCustom type="danger" onClick={onExistingIdCheck}>
 					중복확인
 				</IdCheckButtonCustom>
-				{/* {hasIdCheckRequestFinished &&
-					(isExistingId ? "중복된 아이디 입니다" : "사용가능한 아이디 입니다.")} */}
-				"중복된 아이디입니다. 사용가능한 아이디입니다 확인"
+				{hasSameIdChecked
+					? hasSmaeId
+						? "중복된 아이디 입니다"
+						: "사용가능한 아이디 입니다"
+					: ""}
 				<br />
 				<div>
 					<br />
@@ -115,7 +121,6 @@ const SignUp = () => {
 						value={name}
 						onChange={onChangeName}
 						required
-						prefix={<Icon type="user" style={{ color: "rgba(0,0,0,.25)" }} />}
 					/>
 				</div>
 				<div>
@@ -127,7 +132,6 @@ const SignUp = () => {
 						value={password}
 						onChange={onChangePassword}
 						required
-						prefix={<Icon type="lock" style={{ color: "rgba(0,0,0,.25)" }} />}
 						type="password"
 					/>
 					<br />
@@ -140,7 +144,6 @@ const SignUp = () => {
 						value={passwordCheck}
 						onChange={onChangePasswordCheck}
 						required
-						prefix={<Icon type="lock" style={{ color: "rgba(0,0,0,.25)" }} />}
 						type="password"
 					/>
 				</div>
@@ -151,14 +154,14 @@ const SignUp = () => {
 					<input
 						type="file"
 						ref={imageInput}
-						multiple
 						hidden
 						onChange={onChangeImages}
 					/>
 					<br />
 
 					<Button onClick={onClickImageUpload}>
-						<Icon type="upload" /> 프로필 업로드
+						{/* <Icon type="upload" /> 프로필 드 */}
+						프로필 업로드
 					</Button>
 
 					<br />
@@ -168,7 +171,7 @@ const SignUp = () => {
 					)} */}
 				</div>
 				<br />
-				<Button type="primary" htmlType="submit" style={{ width: "100%" }}>
+				<Button type="submit" htmlType="submit" style={{ width: "100%" }}>
 					가입하기
 				</Button>
 				<Foot>
@@ -178,7 +181,6 @@ const SignUp = () => {
 							navigate("/");
 						}}
 					>
-						{" "}
 						로그인
 					</a>
 				</Foot>
