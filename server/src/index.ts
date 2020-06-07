@@ -1,4 +1,5 @@
 import { GraphQLServer } from "graphql-yoga";
+import express from "express";
 
 import resolvers from "./resolvers";
 import prisma from "./prisma";
@@ -9,9 +10,12 @@ const server = new GraphQLServer({
 	context(request) {
 		return {
 			prisma,
+			request,
 		};
 	},
 });
+
+server.express.use("/images", express.static("images"));
 
 const options = {
 	cors: {
