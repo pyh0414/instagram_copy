@@ -17,10 +17,6 @@ export const Foot = styled.div`
 	margin-top: 20px;
 `;
 
-export const IdCheckButtonCustom = styled(Button)`
-	margin-top: 5px;
-`;
-
 export const ImageCustom = styled.img`
 	margin-top: 15px;
 	width: 200px;
