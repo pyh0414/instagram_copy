@@ -4,7 +4,6 @@ import { Input, Button, message } from "antd";
 import { navigate } from "@reach/router";
 import { useMutation, useLazyQuery } from "@apollo/react-hooks";
 import { UploadOutlined } from "@ant-design/icons";
-import Icon from "@ant-design/icons";
 
 import { Foot, Wrapper, FormCustom, ImageCustom } from "./style";
 
