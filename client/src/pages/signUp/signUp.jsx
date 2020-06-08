@@ -1,10 +1,14 @@
 import React, { useState, useCallback, useRef } from "react";
-import { Input, Button } from "antd";
+import gql from "graphql-tag";
+import { Input, Button, message } from "antd";
 import { navigate } from "@reach/router";
 import { useMutation, useLazyQuery } from "@apollo/react-hooks";
-import gql from "graphql-tag";
+import { UploadOutlined } from "@ant-design/icons";
+import Icon from "@ant-design/icons";
 
-import { IdCheckButtonCustom, Foot, Wrapper, FormCustom } from "./style";
+import { Foot, Wrapper, FormCustom, ImageCustom } from "./style";
+
+import signUpValidation from "../../utils/signUpValidation";
 
 const GET_USER = gql`
 	query($userId: String!) {
@@ -22,22 +26,39 @@ const UPLOAD_FILE = gql`
 	}
 `;
 
+const CREATE_USER = gql`
+	mutation($user: CreateUserInput!) {
+		createUser(user: $user) {
+			id
+			name
+			password
+			profile
+		}
+	}
+`;
+
 const SignUp = () => {
 	const [id, setChangeId] = useState("");
 	const [name, setChangeName] = useState("");
 	const [password, setChangePassword] = useState("");
 	const [passwordCheck, setChangePasswordCheck] = useState("");
-	const [passwordError, setPasswordError] = useState(false);
-	const [hasSmaeId, setHasSmaeId] = useState(false);
+	const [hasSameId, setHasSameId] = useState(false);
 	const [hasSameIdChecked, setHasSameIdChecked] = useState(false);
-	const [filePath, setFilePath] = useState("");
+	const [profile, setProfile] = useState("");
+
 	const imageInput = useRef();
 
+	const [createUser] = useMutation(CREATE_USER, {
+		onCompleted: () => {
+			message.success("가입 성공 되었습니다.", 0.7, () => {
+				navigate("/");
+			});
+		},
+	});
 	const [uploadFile] = useMutation(UPLOAD_FILE, {
 		onCompleted: (data) => {
 			const filePath = data.uploadFile.filePath;
-			console.log(data);
-			setFilePath(filePath);
+			setProfile(filePath);
 		},
 	});
 
@@ -45,14 +66,18 @@ const SignUp = () => {
 		onCompleted: (data) => {
 			setHasSameIdChecked(true);
 			if (data.user) {
-				setHasSmaeId(true);
+				setHasSameId(true);
+				return message.error("중복된 아이디 입니다", 0.5);
+			} else {
+				setHasSameId(false);
+				return message.success("사용 가능한 아이디 입니다", 0.5);
 			}
 		},
 	});
 
 	const onChangeId = (e) => {
 		setHasSameIdChecked(false);
-		setHasSmaeId(false);
+		setHasSameId(false);
 		setChangeId(e.target.value);
 	};
 
@@ -64,20 +89,29 @@ const SignUp = () => {
 		setChangePassword(e.target.value);
 	};
 	const onChangePasswordCheck = (e) => {
-		setPasswordError(e.target.value !== password);
 		setChangePasswordCheck(e.target.value);
 	};
 
 	const onSubmitForm = useCallback(() => {
-		console.log(id, password, passwordCheck, name);
-		if (password !== passwordCheck) {
-			return setPasswordError(true);
+		if (
+			signUpValidation({
+				password,
+				passwordCheck,
+				profile,
+				hasSameIdChecked,
+				hasSameId,
+			})
+		) {
+			const user = { id, name, password, profile };
+			createUser({
+				variables: { user },
+			});
 		}
-	}, [id, password, passwordCheck, name]);
+	}, [id, password, passwordCheck, name, profile, hasSameIdChecked]);
 
 	const onExistingIdCheck = useCallback(() => {
 		if (id.trim() === "") {
-			return alert("아이디를 입력해 주세요");
+			return message.error("아이디를 입력해 주세요");
 		}
 		getUser({
 			variables: { userId: id },
@@ -104,14 +138,13 @@ const SignUp = () => {
 					onChange={onChangeId}
 					required
 				/>
-				<IdCheckButtonCustom type="danger" onClick={onExistingIdCheck}>
+				<Button
+					type="danger"
+					onClick={onExistingIdCheck}
+					style={{ marginTop: "4px" }}
+				>
 					중복확인
-				</IdCheckButtonCustom>
-				{hasSameIdChecked
-					? hasSmaeId
-						? "중복된 아이디 입니다"
-						: "사용가능한 아이디 입니다"
-					: ""}
+				</Button>
 				<br />
 				<div>
 					<br />
@@ -147,9 +180,6 @@ const SignUp = () => {
 						type="password"
 					/>
 				</div>
-				{passwordError && (
-					<div style={{ color: "red" }}>비밀번호가 일치하지 않습니다.</div>
-				)}
 				<div>
 					<input
 						type="file"
@@ -158,17 +188,11 @@ const SignUp = () => {
 						onChange={onChangeImages}
 					/>
 					<br />
-
-					<Button onClick={onClickImageUpload}>
-						{/* <Icon type="upload" /> 프로필 드 */}
+					<Button onClick={onClickImageUpload} icon={<UploadOutlined />}>
 						프로필 업로드
 					</Button>
-
 					<br />
-					{/* {profileImage}
-					{profileImage && (
-						<ImageCustom src={`http://localhost:3060/${profileImage}`} />
-					)} */}
+					{profile && <ImageCustom src={`http://localhost:4000/${profile}`} />}
 				</div>
 				<br />
 				<Button type="submit" htmlType="submit" style={{ width: "100%" }}>
