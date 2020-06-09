@@ -1,30 +1,39 @@
-import { GraphQLServer } from "graphql-yoga";
+import "reflect-metadata";
 import express from "express";
+import { buildSchema, Resolver, Query } from "type-graphql";
+import { GraphQLServer } from "graphql-yoga";
 
-import resolvers from "./resolvers";
+import { UserResolver } from "./modules/User/resolver";
 import prisma from "./prisma";
 
-const server = new GraphQLServer({
-	typeDefs: "./src/schema.graphql",
-	resolvers,
-	context(request) {
-		return {
-			prisma,
-			request,
-		};
-	},
-});
+const main = async () => {
+	const schema = await buildSchema({
+		resolvers: [UserResolver],
+	});
 
-server.express.use("/images", express.static("images"));
+	const server = new GraphQLServer({
+		schema,
+		context(request: express.Request) {
+			return {
+				prisma,
+				request,
+			};
+		},
+	});
 
-const options = {
-	cors: {
-		crediential: true,
-		origin: "*",
-	},
-	endpoint: "/graphql",
+	server.express.use("/images", express.static("images"));
+
+	const options = {
+		cors: {
+			crediential: true,
+			origin: "*",
+		},
+		endpoint: "/graphql",
+	};
+
+	server.start(options, (): void => {
+		console.log("🚀 app running at 4000");
+	});
 };
 
-server.start(options, () => {
-	console.log("The server 4000 port is up!");
-});
+main();

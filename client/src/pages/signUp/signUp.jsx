@@ -11,7 +11,8 @@ import signUpValidation from "../../utils/signUpValidation";
 
 const GET_USER = gql`
 	query($userId: String!) {
-		user(query: $userId) {
+		user(id: $userId) {
+			id
 			name
 		}
 	}
