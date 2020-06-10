@@ -20,20 +20,13 @@ const GET_USER = gql`
 
 const UPLOAD_FILE = gql`
 	mutation($file: Upload!) {
-		uploadFile(file: $file) {
-			filePath
-		}
+		uploadFile(file: $file)
 	}
 `;
 
 const CREATE_USER = gql`
-	mutation($user: CreateUserInput!) {
-		createUser(user: $user) {
-			id
-			name
-			password
-			profile
-		}
+	mutation($user: createUserInput!) {
+		createUser(user: $user)
 	}
 `;
 
@@ -49,15 +42,21 @@ const SignUp = () => {
 	const imageInput = useRef();
 
 	const [createUser] = useMutation(CREATE_USER, {
-		onCompleted: () => {
-			message.success("가입 성공 되었습니다.", 0.7, () => {
-				navigate("/");
-			});
+		onCompleted: ({ createUser }) => {
+			if (createUser) {
+				message.success("가입 성공 되었습니다.", 0.7, () => {
+					navigate("/");
+				});
+			} else {
+				message.error("가입에 실패하였습니다.", 0.7, () => {
+					throw new Error("가입에 실패하였습니다.");
+				});
+			}
 		},
 	});
 	const [uploadFile] = useMutation(UPLOAD_FILE, {
 		onCompleted: (data) => {
-			const filePath = data.uploadFile.filePath;
+			const filePath = data.uploadFile;
 			setProfile(filePath);
 		},
 	});
