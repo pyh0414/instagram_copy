@@ -1,23 +1,38 @@
-import { ObjectType, Field, ID } from "type-graphql";
-import { Prisma } from "prisma-binding";
+import "reflect-metadata";
+import { ObjectType, Field, InputType } from "type-graphql";
 import express from "express";
 
 @ObjectType()
 export class User {
-	@Field(() => ID)
-	id: number;
+	@Field({ nullable: false })
+	id: string;
 
-	@Field()
+	@Field({ nullable: false })
 	name: string;
 
-	@Field()
+	@Field({ nullable: false })
 	password: string;
 
-	@Field()
+	@Field({ nullable: false })
+	profile: string;
+}
+
+@InputType()
+export class createUserInput {
+	@Field({ nullable: false })
+	id: string;
+
+	@Field({ nullable: false })
+	name: string;
+
+	@Field({ nullable: false })
+	password: string;
+
+	@Field({ nullable: false })
 	profile: string;
 }
 
 export interface CTX {
 	request: express.Request;
-	prisma: Prisma;
+	prisma: any;
 }
