@@ -1,14 +1,16 @@
 import "reflect-metadata";
 import express from "express";
-import { buildSchema, Resolver, Query } from "type-graphql";
+import { buildSchema } from "type-graphql";
 import { GraphQLServer } from "graphql-yoga";
 
 import { UserResolver } from "./modules/User/resolver";
+import { FileResolver } from "./modules/File/resolver";
+
 import prisma from "./prisma";
 
 const main = async () => {
 	const schema = await buildSchema({
-		resolvers: [UserResolver],
+		resolvers: [UserResolver, FileResolver],
 	});
 
 	const server = new GraphQLServer({
