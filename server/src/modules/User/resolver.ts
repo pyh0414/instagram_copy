@@ -9,63 +9,85 @@ import generateToken from "../../utils/generateToken";
 export class UserResolver {
 	@Query((returns) => User, { nullable: true })
 	async user(@Arg("userId") userId: string, @Ctx() ctx: CTX) {
-		const { prisma } = ctx;
-		if (userId) {
+		try {
+			const { prisma } = ctx;
 			const user = prisma.user.findOne({
 				where: {
 					userId,
 				},
 			});
 			return user;
-		} else {
-			throw new Error("id가 존재하지 않습니다.");
+		} catch (err) {
+			console.log(err);
+			throw new Error(err);
 		}
 	}
 
 	@Query((returns) => AuthPayload)
 	async signIn(@Arg("user") user: signInInput, @Ctx() ctx: CTX) {
-		const { prisma } = ctx;
-		const { userId, userPw } = user;
+		try {
+			const { prisma } = ctx;
+			const { userId, userPw } = user;
+			const fullUser = await prisma.user.findOne({
+				where: {
+					userId,
+				},
+			});
 
-		const fullUser = await prisma.user.findOne({
-			where: {
-				userId,
-			},
-		});
-		if (!fullUser) {
-			throw new Error("가입정보를 다시 확인해 주세요");
+			if (!fullUser) {
+				return {
+					message: "존재하지 않는 아이디 입니다.",
+					user: null,
+					token: null,
+				};
+			}
+
+			const isPasswordSame = await bcrypt.compare(userPw, fullUser.userPw);
+
+			if (!isPasswordSame) {
+				return {
+					message: "비밀번호가 유효하지 않습니다",
+					user: null,
+					token: null,
+				};
+			}
+
+			const Token = generateToken(userId);
+
+			return {
+				message: "로그인 되었습니다",
+				user: fullUser,
+				token: Token,
+			};
+		} catch (err) {
+			console.log(err);
+			throw new Error(err);
 		}
-		const isPasswordSame = bcrypt.compare(userPw, fullUser.userPw);
-
-		if (!isPasswordSame) {
-			throw new Error("가입정보를 다시 확인해 주세요");
-		}
-		const Token = generateToken(userId);
-
-		return {
-			user: fullUser,
-			token: Token,
-		};
 	}
 
 	@Mutation((returns) => Boolean)
 	async createUser(@Arg("user") user: createUserInput, @Ctx() ctx: CTX) {
-		const { userId, userPw, name, profile } = user;
-		const { prisma } = ctx;
+		try {
+			const { userId, userPw, name, profile } = user;
+			const { prisma } = ctx;
 
-		const hashedPassword = await getHashedPassword(userPw);
-		const newUser = await prisma.user.create({
-			data: {
-				userId,
-				userPw: hashedPassword.toString(),
-				name,
-				profile,
-			},
-		});
+			const hashedPassword = await getHashedPassword(userPw);
+			const newUser = await prisma.user.create({
+				data: {
+					userId,
+					userPw: hashedPassword.toString(),
+					name,
+					profile,
+				},
+			});
 
-		if (!newUser) {
-			return false;
+			if (!newUser) {
+				return false;
+			}
+			return true;
+		} catch (err) {
+			console.log(err);
+			throw new Error(err);
 		}
-		return true;
 	}
 }

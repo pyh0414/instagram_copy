@@ -10,12 +10,17 @@ export class FileResolver {
 		@Arg("file", () => GraphQLUpload)
 		{ createReadStream, filename }: UPLOAD
 	): Promise<String> {
-		return new Promise(async (resolve, reject) => {
-			const path = `images/${filename}`;
-			createReadStream()
-				.pipe(createWriteStream(path))
-				.on("finish", () => resolve(path))
-				.on("error", () => reject(""));
-		});
+		try {
+			return new Promise(async (resolve, reject) => {
+				const path = `images/${filename}`;
+				createReadStream()
+					.pipe(createWriteStream(path))
+					.on("finish", () => resolve(path))
+					.on("error", () => reject(""));
+			});
+		} catch (err) {
+			console.log(err);
+			throw new Error(err);
+		}
 	}
 }
