@@ -7,7 +7,8 @@ import { UPLOAD } from "./type";
 export class FileResolver {
 	@Mutation(() => String)
 	async uploadFile(
-		@Arg("file", () => GraphQLUpload) { createReadStream, filename }: UPLOAD
+		@Arg("file", () => GraphQLUpload)
+		{ createReadStream, filename }: UPLOAD
 	): Promise<String> {
 		return new Promise(async (resolve, reject) => {
 			const path = `images/${filename}`;
