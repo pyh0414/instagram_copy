@@ -8,12 +8,12 @@ import generateToken from "../../utils/generateToken";
 @Resolver()
 export class UserResolver {
 	@Query((returns) => User, { nullable: true })
-	async user(@Arg("id") id: string, @Ctx() ctx: CTX) {
+	async user(@Arg("userId") userId: string, @Ctx() ctx: CTX) {
 		const { prisma } = ctx;
-		if (id) {
-			const user = await prisma.query.user({
+		if (userId) {
+			const user = prisma.user.findOne({
 				where: {
-					id,
+					userId,
 				},
 			});
 			return user;
@@ -25,23 +25,22 @@ export class UserResolver {
 	@Query((returns) => AuthPayload)
 	async signIn(@Arg("user") user: signInInput, @Ctx() ctx: CTX) {
 		const { prisma } = ctx;
-		const { id, password } = user;
+		const { userId, userPw } = user;
 
-		const fullUser = await prisma.query.user({
+		const fullUser = await prisma.user.findOne({
 			where: {
-				id,
+				userId,
 			},
 		});
-		console.log(fullUser);
 		if (!fullUser) {
 			throw new Error("가입정보를 다시 확인해 주세요");
 		}
-		const isPasswordSame = bcrypt.compare(password, fullUser.password);
+		const isPasswordSame = bcrypt.compare(userPw, fullUser.userPw);
 
 		if (!isPasswordSame) {
 			throw new Error("가입정보를 다시 확인해 주세요");
 		}
-		const Token = generateToken(id);
+		const Token = generateToken(userId);
 
 		return {
 			user: fullUser,
@@ -51,16 +50,16 @@ export class UserResolver {
 
 	@Mutation((returns) => Boolean)
 	async createUser(@Arg("user") user: createUserInput, @Ctx() ctx: CTX) {
-		const { id, name, password, profile } = user;
+		const { userId, userPw, name, profile } = user;
 		const { prisma } = ctx;
 
-		const hashedPassword = await getHashedPassword(password);
-		const newUser = await prisma.mutation.createUser({
+		const hashedPassword = await getHashedPassword(userPw).toString();
+		const newUser = await prisma.user.create({
 			data: {
-				id,
+				userId,
+				userPw: hashedPassword,
 				name,
 				profile,
-				password: hashedPassword,
 			},
 		});
 		if (!newUser) {

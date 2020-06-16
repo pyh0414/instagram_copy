@@ -1,26 +1,41 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import { Input, Button } from "antd";
 import { navigate } from "@reach/router";
+import gql from "graphql-tag";
+import { useLazyQuery, useApolloClient } from "@apollo/react-hooks";
 
 import { Wrapper, CustomForm } from "./style";
 
-const SignIn = ({ onLoginStatus }) => {
+const SIGN_IN = gql`
+	query($user: signInInput!) {
+		signIn(user: $user) {
+			user {
+				id
+				name
+				password
+				profile
+			}
+			token
+		}
+	}
+`;
+
+const SignIn = () => {
 	const [id, setChangeId] = useState("");
 	const [password, setChangePassword] = useState("");
-	useEffect(() => {
-		// if (hasLoginRequestFinished) {
-		// 	if (user) {
-		// 		dispatch({
-		// 			type: CONNECT_SOCKET_REQUEST,
-		// 		});
-		// 		message.success("로그인 되었습니다");
-		// 		Router.push("/home");
-		// 	} else {
-		// 		message.success("아이디 또는 비밀번호를 확인해 주세요");
-		// 	}
-		// }
-		// }, [user, hasLoginRequestFinished]);
-	}, []);
+
+	const cache = useApolloClient();
+
+	const [signIn] = useLazyQuery(SIGN_IN, {
+		onCompleted: ({ signIn: { user, token } }) => {
+			localStorage.setItem("token", token);
+			cache.writeData({
+				data: {
+					user,
+				},
+			});
+		},
+	});
 
 	const onChangeId = (e) => {
 		setChangeId(e.target.value);
@@ -30,18 +45,16 @@ const SignIn = ({ onLoginStatus }) => {
 		setChangePassword(e.target.value);
 	};
 
-	const onSubmitForm = (e) => {
-		e.preventDefault();
-		// dispatch({
-		// 	type: LOG_IN_REQUEST,
-		// 	data: {
-		// 		id,
-		// 		password,
-		// 	},
-		// });
-		setChangeId("");
-		setChangePassword("");
-	};
+	const onSubmitForm = useCallback(
+		(e) => {
+			e.preventDefault();
+			const user = { id, password };
+			signIn({
+				variables: { user },
+			});
+		},
+		[id, password]
+	);
 
 	return (
 		<Wrapper>
@@ -73,11 +86,8 @@ const SignIn = ({ onLoginStatus }) => {
 				<br />
 				<Button
 					type="primary"
-					htmlType="submit"
 					style={{ width: "40%", marginRight: "20%" }}
-					onClick={() => {
-						onLoginStatus();
-					}}
+					onClick={onSubmitForm}
 				>
 					로그인
 				</Button>
