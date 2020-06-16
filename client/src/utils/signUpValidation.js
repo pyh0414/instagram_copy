@@ -1,13 +1,13 @@
 import { message } from "antd";
 
 export default ({
-	password,
+	userPw,
+	userPwCheck,
 	profile,
-	passwordCheck,
 	hasSameIdChecked,
 	hasSameId,
 }) => {
-	if (password !== passwordCheck) {
+	if (userPw !== userPwCheck) {
 		message.error("비밀번호가 서로 다릅니다.", 0.5);
 		return false;
 	}

@@ -11,8 +11,8 @@ import signUpValidation from "../../utils/signUpValidation";
 
 const GET_USER = gql`
 	query($userId: String!) {
-		user(id: $userId) {
-			id
+		user(userId: $userId) {
+			userId
 			name
 		}
 	}
@@ -31,10 +31,10 @@ const CREATE_USER = gql`
 `;
 
 const SignUp = () => {
-	const [id, setChangeId] = useState("");
+	const [userId, setChangeUserId] = useState("");
 	const [name, setChangeName] = useState("");
-	const [password, setChangePassword] = useState("");
-	const [passwordCheck, setChangePasswordCheck] = useState("");
+	const [userPw, setChangeuserPw] = useState("");
+	const [userPwCheck, setChangeuserPwCheck] = useState("");
 	const [hasSameId, setHasSameId] = useState(false);
 	const [hasSameIdChecked, setHasSameIdChecked] = useState(false);
 	const [profile, setProfile] = useState("");
@@ -77,45 +77,45 @@ const SignUp = () => {
 	const onChangeId = (e) => {
 		setHasSameIdChecked(false);
 		setHasSameId(false);
-		setChangeId(e.target.value);
+		setChangeUserId(e.target.value);
 	};
 
 	const onChangeName = (e) => {
 		setChangeName(e.target.value);
 	};
 
-	const onChangePassword = (e) => {
-		setChangePassword(e.target.value);
+	const onChangeuserPw = (e) => {
+		setChangeuserPw(e.target.value);
 	};
-	const onChangePasswordCheck = (e) => {
-		setChangePasswordCheck(e.target.value);
+	const onChangeuserPwCheck = (e) => {
+		setChangeuserPwCheck(e.target.value);
 	};
 
 	const onSubmitForm = useCallback(() => {
 		if (
 			signUpValidation({
-				password,
-				passwordCheck,
+				userPw,
+				userPwCheck,
 				profile,
 				hasSameIdChecked,
 				hasSameId,
 			})
 		) {
-			const user = { id, name, password, profile };
+			const user = { userId, name, userPw, profile };
 			createUser({
 				variables: { user },
 			});
 		}
-	}, [id, password, passwordCheck, name, profile, hasSameIdChecked]);
+	}, [userPw, userPw, userPwCheck, name, profile, hasSameIdChecked]);
 
 	const onExistingIdCheck = useCallback(() => {
-		if (id.trim() === "") {
+		if (userId.trim() === "") {
 			return message.error("아이디를 입력해 주세요");
 		}
 		getUser({
-			variables: { userId: id },
+			variables: { userId },
 		});
-	}, [id]);
+	}, [userId]);
 
 	const onClickImageUpload = useCallback(() => {
 		imageInput.current.click();
@@ -133,7 +133,7 @@ const SignUp = () => {
 				<Input
 					name="user-id"
 					placeholder="아이디"
-					value={id}
+					value={userId}
 					onChange={onChangeId}
 					required
 				/>
@@ -159,10 +159,10 @@ const SignUp = () => {
 					<br />
 
 					<Input
-						name="user-password"
+						name="user-userPw"
 						placeholder="비밀번호"
-						value={password}
-						onChange={onChangePassword}
+						value={userPw}
+						onChange={onChangeuserPw}
 						required
 						type="password"
 					/>
@@ -171,10 +171,10 @@ const SignUp = () => {
 				</div>
 				<div>
 					<Input
-						name="user-password-check"
+						name="user-userPw-check"
 						placeholder="비밀번호확인"
-						value={passwordCheck}
-						onChange={onChangePasswordCheck}
+						value={userPwCheck}
+						onChange={onChangeuserPwCheck}
 						required
 						type="password"
 					/>
