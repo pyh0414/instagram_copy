@@ -49,9 +49,12 @@ export class createUserInput {
 
 @ObjectType()
 export class AuthPayload {
-	@Field({ nullable: false })
+	@Field({ nullable: true })
 	user: User;
 
-	@Field({ nullable: false })
+	@Field({ nullable: true })
 	token: string;
+
+	@Field({ nullable: false })
+	message: string;
 }
