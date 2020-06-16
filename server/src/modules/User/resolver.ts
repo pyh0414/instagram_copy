@@ -53,15 +53,16 @@ export class UserResolver {
 		const { userId, userPw, name, profile } = user;
 		const { prisma } = ctx;
 
-		const hashedPassword = await getHashedPassword(userPw).toString();
+		const hashedPassword = await getHashedPassword(userPw);
 		const newUser = await prisma.user.create({
 			data: {
 				userId,
-				userPw: hashedPassword,
+				userPw: hashedPassword.toString(),
 				name,
 				profile,
 			},
 		});
+
 		if (!newUser) {
 			return false;
 		}
