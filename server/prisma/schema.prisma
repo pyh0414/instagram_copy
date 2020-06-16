@@ -1,0 +1,64 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource mysql {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// schema 정의
+
+model User {
+  id        Int       @id @default(autoincrement())
+  name      String
+  userId    String    @unique
+  userPw    String
+  profile   String
+  createdAt DateTime  @default(now())
+  myPosts   Post[]    @relation("_PostToUser")
+  comments  Comment[] @relation("_CommentToUser")
+  follower  User[]    @relation("_FollowerFollowing", references: [id]) // 나를 등록한 사람
+  following User[]    @relation("_FollowerFollowing", references: [id]) // 내가 등록한 사람
+  likePosts Post[]    @relation("_likeToPost")
+}
+
+model Post {
+  id          Int       @id @default(autoincrement())
+  content     String
+  createdAt   DateTime  @default(now())
+  author      User      @relation("_PostToUser", fields: [authorId], references: [id])
+  authorId    Int
+  comments    Comment[] @relation("_CommentToPost")
+  hashTags    HashTag[] @relation("_HashTagToPost", references: [id])
+  images      Image[]   @relation("_ImageToPost")
+  likeAuthors User[]    @relation("_likeToPost")
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+  author    User     @relation("_CommentToUser", fields: [authorId], references: [id])
+  authorId  Int
+  Post      Post?    @relation("_CommentToPost", fields: [postId], references: [id])
+  postId    Int?
+}
+
+model HashTag {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+  posts     Post[]   @relation("_HashTagToPost", references: [id])
+}
+
+model Image {
+  id        Int      @id @default(autoincrement())
+  src       String
+  createdAt DateTime @default(now())
+  post      Post     @relation("_ImageToPost", fields: [postId], references: [id])
+  postId    Int
+}
