@@ -10,9 +10,9 @@ import SignUp from "./pages/signUp";
 const IS_LOGGED_IN = gql`
 	query {
 		user @client {
-			id
+			userId
+			userPw
 			name
-			password
 			profile
 		}
 	}

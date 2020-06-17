@@ -1,59 +1,65 @@
 import React, { useState, useCallback } from "react";
-import { Input, Button } from "antd";
+import { useLazyQuery, useQuery, useApolloClient } from "@apollo/react-hooks";
+import { Input, Button, message } from "antd";
 import { navigate } from "@reach/router";
 import gql from "graphql-tag";
-import { useLazyQuery, useApolloClient } from "@apollo/react-hooks";
 
 import { Wrapper, CustomForm } from "./style";
-
+const antdMessage = message;
 const SIGN_IN = gql`
 	query($user: signInInput!) {
 		signIn(user: $user) {
 			user {
-				id
+				userId
 				name
-				password
+				userPw
 				profile
 			}
 			token
+			message
 		}
 	}
 `;
 
 const SignIn = () => {
-	const [id, setChangeId] = useState("");
-	const [password, setChangePassword] = useState("");
+	const [userId, setChangeUserId] = useState("");
+	const [userPw, setChangeUserPw] = useState("");
 
-	const cache = useApolloClient();
+	const client = useApolloClient();
 
 	const [signIn] = useLazyQuery(SIGN_IN, {
-		onCompleted: ({ signIn: { user, token } }) => {
-			localStorage.setItem("token", token);
-			cache.writeData({
-				data: {
-					user,
-				},
-			});
+		onCompleted: ({ signIn: { user, token, message } }) => {
+			if (user) {
+				antdMessage.success(message, 0.7);
+				localStorage.setItem("token", token);
+				client.writeData({
+					data: {
+						user,
+					},
+				});
+			} else {
+				antdMessage.error(message);
+			}
 		},
 	});
 
-	const onChangeId = (e) => {
-		setChangeId(e.target.value);
+	const onChangeUserId = (e) => {
+		setChangeUserId(e.target.value);
 	};
 
-	const onChangePassword = (e) => {
-		setChangePassword(e.target.value);
+	const onChangeUserPw = (e) => {
+		setChangeUserPw(e.target.value);
 	};
 
 	const onSubmitForm = useCallback(
 		(e) => {
 			e.preventDefault();
-			const user = { id, password };
+			const user = { userId, userPw };
 			signIn({
 				variables: { user },
 			});
 		},
-		[id, password]
+		[userId, userPw]
 	);
 
 	return (
@@ -64,9 +70,9 @@ const SignIn = () => {
 
 					<Input
 						name="user-id"
-						placeholder="이메일"
-						value={id}
-						onChange={onChangeId}
+						placeholder="아이디"
+						value={userId}
+						onChange={onChangeUserId}
 						required
 					/>
 					<br />
@@ -76,8 +82,8 @@ const SignIn = () => {
 					<Input
 						name="user-password"
 						placeholder="비밀번호"
-						value={password}
-						onChange={onChangePassword}
+						value={userPw}
+						onChange={onChangeUserPw}
 						required
 						type="password"
 					/>
