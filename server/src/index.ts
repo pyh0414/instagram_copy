@@ -1,8 +1,9 @@
 import "reflect-metadata";
-import express from "express";
+
 import { buildSchema } from "type-graphql";
 import { GraphQLServer } from "graphql-yoga";
 import { PrismaClient } from "@prisma/client";
+import express from "express";
 
 import { UserResolver } from "./modules/User/resolver";
 import { FileResolver } from "./modules/File/resolver";

@@ -1,9 +1,9 @@
 import React, { useState, useCallback, useRef } from "react";
-import gql from "graphql-tag";
-import { Input, Button, message } from "antd";
-import { navigate } from "@reach/router";
 import { useMutation, useLazyQuery } from "@apollo/react-hooks";
 import { UploadOutlined } from "@ant-design/icons";
+import { Input, Button, message } from "antd";
+import { navigate } from "@reach/router";
+import gql from "graphql-tag";
 
 import { Foot, Wrapper, FormCustom, ImageCustom } from "./style";
 
