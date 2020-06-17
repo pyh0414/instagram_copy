@@ -9,18 +9,13 @@ import SignUp from "./pages/signUp";
 
 const IS_LOGGED_IN = gql`
 	query {
-		user @client {
-			userId
-			userPw
-			name
-			profile
-		}
+		isLoggedIn @client
 	}
 `;
 
 const App = () => {
 	const { data } = useQuery(IS_LOGGED_IN);
-	return data && data.user ? (
+	return data && data.isLoggedIn ? (
 		<Pages />
 	) : (
 		<Router>

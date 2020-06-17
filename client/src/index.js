@@ -23,7 +23,7 @@ const client = new ApolloClient({
 
 cache.writeData({
 	data: {
-		user: null,
+		isLoggedIn: false,
 	},
 });
 

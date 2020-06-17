@@ -34,7 +34,7 @@ const SignIn = () => {
 				localStorage.setItem("token", token);
 				client.writeData({
 					data: {
-						user,
+						isLoggedIn: true,
 					},
 				});
 			} else {
