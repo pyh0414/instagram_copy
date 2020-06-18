@@ -7,7 +7,7 @@ import gql from "graphql-tag";
 import { Wrapper, CustomForm } from "./style";
 const antdMessage = message;
 const SIGN_IN = gql`
-	query($user: signInInput!) {
+	query _signIn($user: signInInput!) {
 		signIn(user: $user) {
 			user {
 				userId
@@ -29,12 +29,14 @@ const SignIn = () => {
 
 	const [signIn] = useLazyQuery(SIGN_IN, {
 		onCompleted: ({ signIn: { user, token, message } }) => {
+			console.log(user, token, message);
 			if (user) {
 				antdMessage.success(message, 0.7);
 				localStorage.setItem("token", token);
 				client.writeData({
 					data: {
 						isLoggedIn: true,
+						user,
 					},
 				});
 			} else {

@@ -10,7 +10,7 @@ import { Foot, Wrapper, FormCustom, ImageCustom } from "./style";
 import signUpValidation from "../../utils/signUpValidation";
 
 const GET_USER = gql`
-	query($userId: String!) {
+	query _signUpGetUser($userId: String!) {
 		user(userId: $userId) {
 			userId
 			name
@@ -19,13 +19,13 @@ const GET_USER = gql`
 `;
 
 const UPLOAD_FILE = gql`
-	mutation($file: Upload!) {
+	mutation _signUpUploadFile($file: Upload!) {
 		uploadFile(file: $file)
 	}
 `;
 
 const CREATE_USER = gql`
-	mutation($user: createUserInput!) {
+	mutation _signUpCreateUser($user: createUserInput!) {
 		createUser(user: $user)
 	}
 `;
