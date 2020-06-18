@@ -30,7 +30,7 @@ const Header = () => {
 		<HeaderWrapper>
 			<Col md={7}>
 				<InstagramLogo
-					src="http://assets.stickpng.com/thumbs/580b57fcd9996e24bc43c521.png"
+					src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/220px-Instagram_logo_2016.svg.png"
 					onClick={() => {
 						navigate("/");
 					}}
