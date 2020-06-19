@@ -15,7 +15,12 @@ const cache = new InMemoryCache();
 
 const client = new ApolloClient({
 	cache,
-	link: createUploadLink({ uri: "http://localhost:4000/graphql" }),
+	link: createUploadLink({
+		uri: "http://localhost:4000/graphql",
+		headers: {
+			authorization: `Bearer ${localStorage.getItem("token")}`,
+		},
+	}),
 	resolvers: [userResolver],
 	typeDefs,
 	connectToDevTools: true,
