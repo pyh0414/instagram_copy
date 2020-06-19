@@ -14,7 +14,6 @@ export const authetication = async (
 			// 애초에 query name이 없으면 예외처리
 			throw new Error();
 		}
-		console.log(queryName);
 		const shouldPassAuth: string[] = [
 			// 해당 query는 auth없이 그냥 패스
 			"_signIn",
