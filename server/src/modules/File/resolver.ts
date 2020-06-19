@@ -1,37 +1,38 @@
 import { Resolver, Mutation, Arg } from "type-graphql";
 import { GraphQLUpload } from "graphql-upload";
-import { createWriteStream } from "fs";
 import { SINGLE_FILE_UPLOAD, MULTIPLE_FILE_UPLOAD } from "./type";
 
-import { storeUpload } from "./promise";
+import uploadFile from "../../utils/uploadFile";
 
 @Resolver()
 export class FileResolver {
-	@Mutation((returns) => String, { nullable: true })
+	@Mutation((returns) => String!, { nullable: false })
 	async singleFileUpload(
 		@Arg("file", () => GraphQLUpload)
-		{ createReadStream, filename }: SINGLE_FILE_UPLOAD
+		file: SINGLE_FILE_UPLOAD
 	): Promise<String> {
 		try {
-			return new Promise(async (resolve, reject) => {
-				const path = `images/${filename}`;
-				createReadStream()
-					.pipe(createWriteStream(path))
-					.on("finish", () => resolve(path))
-					.on("error", () => reject(""));
-			});
+			await await uploadFile(file);
+			return `images/${file.filename}`;
 		} catch (err) {
 			console.log(err);
 			throw new Error(err);
 		}
 	}
 
-	@Mutation((returns) => String, { nullable: true })
+	@Mutation((returns) => [String]!, { nullable: false })
 	async multipleFileUpload(
 		@Arg("files", () => [GraphQLUpload!]!)
-		files: any
-	): Promise<void> {
-		const results = await Promise.all(files.map(storeUpload));
-		console.log(results);
+		files: Array<[string, any]>
+	): Promise<Array<string>> {
+		try {
+			const filePaths: Array<string> = await Promise.all(
+				files.map((v) => uploadFile(v))
+			);
+			return filePaths;
+		} catch (err) {
+			console.log(err);
+			throw new Error(err);
+		}
 	}
 }
