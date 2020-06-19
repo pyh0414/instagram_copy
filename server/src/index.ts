@@ -8,6 +8,8 @@ import express from "express";
 import { UserResolver } from "./modules/User/resolver";
 import { FileResolver } from "./modules/File/resolver";
 
+import { authetication } from "./middleware/authetication";
+
 const main = async () => {
 	const schema = await buildSchema({
 		resolvers: [UserResolver, FileResolver],
@@ -22,6 +24,7 @@ const main = async () => {
 				request,
 			};
 		},
+		middlewares: [authetication],
 	});
 
 	server.express.use("/images", express.static("images"));
