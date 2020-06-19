@@ -18,9 +18,9 @@ const GET_USER = gql`
 	}
 `;
 
-const UPLOAD_FILE = gql`
-	mutation _signUpUploadFile($file: Upload!) {
-		uploadFile(file: $file)
+const SINGLE_FILE_UPLOAD = gql`
+	mutation _signUpSingleFileUpload($file: Upload!) {
+		singleFileUpload(file: $file)
 	}
 `;
 
@@ -54,9 +54,9 @@ const SignUp = () => {
 			}
 		},
 	});
-	const [uploadFile] = useMutation(UPLOAD_FILE, {
+	const [singleFileUpload] = useMutation(SINGLE_FILE_UPLOAD, {
 		onCompleted: (data) => {
-			const filePath = data.uploadFile;
+			const filePath = data.singleFileUpload;
 			setProfile(filePath);
 		},
 	});
@@ -123,7 +123,7 @@ const SignUp = () => {
 
 	const onChangeImages = useCallback((e) => {
 		const file = e.target.files[0];
-		uploadFile({ variables: { file } });
+		singleFileUpload({ variables: { file } });
 	});
 
 	return (

@@ -1,13 +1,24 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
-import { Modal, Form, Input, Button, Popconfirm, message } from "antd";
-import Icon from "@ant-design/icons";
+import { useMutation } from "@apollo/react-hooks";
+import { Modal, Form, Input, Button, message } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
+import gql from "graphql-tag";
+
+const MULTIPLE_FILE_UPLOAD = gql`
+	mutation _postMultipleFileUpload($files: [Upload!]!) {
+		multipleFileUpload(files: $files)
+	}
+`;
 
 const PostForm = ({ setmodalVisibleProps }) => {
 	const [modalVisible, setmodalVisible] = useState(true);
-	const [text, setText] = useState("");
+	const [images, setImages] = useState([]);
+	const [content, setContent] = useState("");
 
 	const imageInput = useRef();
 	const formSubmit = useRef();
+
+	const [multipleFileUpload] = useMutation(MULTIPLE_FILE_UPLOAD);
 
 	useEffect(() => {
 		// if (!isAddingPost && addPostResult) {
@@ -39,25 +50,18 @@ const PostForm = ({ setmodalVisibleProps }) => {
 		setmodalVisible(false);
 	}, modalVisible);
 
-	const onChangeText = useCallback((e) => {
-		setText(e.target.value);
+	const onChangeContent = useCallback((e) => {
+		setContent(e.target.value);
 	}, []);
 
 	const onClickImageUpload = useCallback(() => {
-		// imageInput.current.click();
-		// }, [imageInput.current]);
-	}, []);
+		imageInput.current.click();
+	}, [imageInput.current]);
 
 	const onChangeImages = useCallback((e) => {
-		// const imgFormData = new FormData();
-		// Object.keys(e.target.files).map((c) => {
-		// 	imgFormData.append("image", e.target.files[c]);
-		// });
-		// dispatch({
-		// 	type: UPLOAD_POST_IMAGE_REQUEST,
-		// 	data: imgFormData,
-		// });
-	}, []);
+		const files = e.target.files;
+		multipleFileUpload({ variables: { files } });
+	});
 
 	const onDeleteImage = useCallback(
 		(index) => () => {
@@ -70,21 +74,20 @@ const PostForm = ({ setmodalVisibleProps }) => {
 		[]
 	);
 
-	const onClickSubmit = useCallback(() => {
-		if (text.trim() === "") {
-			return message.error("내용을 입력해 주세요 !");
-		}
-		formSubmit.current.props.onSubmit();
-	}, [text]);
-
 	const onSubmitForm = useCallback(() => {
-		// const data = { text, imagePaths };
-		// dispatch({
-		// 	type: ADD_POST_REQUEST,
-		// 	data,
-		// });
-		// }, [text, imagePaths]);
-	}, [text]);
+		if (content.trim() === "") {
+			return message.error("내용을 입력해 주세요");
+		}
+	}, [content]);
+
+	// const onSubmitForm = useCallback(() => {
+	// 	// const data = { text, imagePaths };
+	// 	// dispatch({
+	// 	// 	type: ADD_POST_REQUEST,
+	// 	// 	data,
+	// 	// });
+	// 	// }, [text, imagePaths]);
+	// }, [content]);
 
 	return (
 		<>
@@ -95,7 +98,7 @@ const PostForm = ({ setmodalVisibleProps }) => {
 				onOk={onHandleOk}
 				onCancel={onHandleCancel}
 				footer={[
-					<Button type="primary" onClick={onClickSubmit}>
+					<Button type="primary" onClick={onSubmitForm}>
 						공유하기
 					</Button>,
 				]}
@@ -104,9 +107,10 @@ const PostForm = ({ setmodalVisibleProps }) => {
 					<Input.TextArea
 						maxLength={140}
 						placeholder="어떤 재미난 일이 있었나요 ? "
-						value={text}
-						onChange={onChangeText}
+						value={content}
+						onChange={onChangeContent}
 					/>
+
 					<input
 						type="file"
 						ref={imageInput}
@@ -135,8 +139,7 @@ const PostForm = ({ setmodalVisibleProps }) => {
 						);
 					})} */}
 					<div>
-						<Button onClick={onClickImageUpload}>
-							<Icon type="upload" />
+						<Button onClick={onClickImageUpload} icon={<UploadOutlined />}>
 							사진 업로드
 						</Button>
 					</div>
