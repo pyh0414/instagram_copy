@@ -20,6 +20,8 @@ export const authetication = async (
 			"_signUpGetUser",
 			"_signUpSingleFileUpload",
 			"_signUpCreateUser",
+			"_test",
+			"_getAllPosts",
 		];
 
 		if (queryName && !shouldPassAuth.includes(queryName)) {
