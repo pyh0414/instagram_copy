@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Form, Button } from "antd";
+import { Form } from "antd";
 
 export const Wrapper = styled.div`
 	height: 70vh;
