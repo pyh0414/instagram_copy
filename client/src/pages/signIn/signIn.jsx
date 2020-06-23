@@ -1,11 +1,11 @@
 import React, { useState, useCallback } from "react";
-import { useLazyQuery, useQuery, useApolloClient } from "@apollo/react-hooks";
+import { useLazyQuery, useApolloClient } from "@apollo/react-hooks";
 import { Input, Button, message } from "antd";
 import { navigate } from "@reach/router";
 import gql from "graphql-tag";
 
 import { Wrapper, CustomForm } from "./style";
-const antdMessage = message;
+
 const SIGN_IN = gql`
 	query _signIn($user: signInInput!) {
 		signIn(user: $user) {
@@ -26,10 +26,10 @@ const SignIn = () => {
 	const [userPw, setChangeUserPw] = useState("");
 
 	const client = useApolloClient();
+	const antdMessage = message;
 
 	const [signIn] = useLazyQuery(SIGN_IN, {
 		onCompleted: ({ signIn: { user, token, message } }) => {
-			console.log(user, token, message);
 			if (user) {
 				antdMessage.success(message, 0.7);
 				localStorage.setItem("token", token);
@@ -40,7 +40,7 @@ const SignIn = () => {
 					},
 				});
 			} else {
-				antdMessage.error(message);
+				antdMessage.error(message, 0.7);
 			}
 		},
 	});
@@ -60,8 +60,10 @@ const SignIn = () => {
 			signIn({
 				variables: { user },
 			});
+
+			navigate("/");
 		},
-		[userId, userPw]
+		[userId, userPw, signIn]
 	);
 
 	return (
@@ -106,7 +108,7 @@ const SignIn = () => {
 						navigate("/signUp");
 					}}
 				>
-					<a> 회원가입</a>
+					회원가입
 				</Button>
 			</CustomForm>
 		</Wrapper>
