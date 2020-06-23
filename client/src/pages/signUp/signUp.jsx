@@ -106,7 +106,16 @@ const SignUp = () => {
 				variables: { user },
 			});
 		}
-	}, [userPw, userPw, userPwCheck, name, profile, hasSameIdChecked]);
+	}, [
+		userId,
+		userPw,
+		userPwCheck,
+		name,
+		profile,
+		hasSameIdChecked,
+		createUser,
+		hasSameId,
+	]);
 
 	const onExistingIdCheck = useCallback(() => {
 		if (userId.trim() === "") {
@@ -115,16 +124,19 @@ const SignUp = () => {
 		getUser({
 			variables: { userId },
 		});
-	}, [userId]);
+	}, [userId, getUser]);
 
 	const onClickImageUpload = useCallback(() => {
 		imageInput.current.click();
-	}, [imageInput.current]);
+	}, []);
 
-	const onChangeImages = useCallback((e) => {
-		const file = e.target.files[0];
-		singleFileUpload({ variables: { file } });
-	});
+	const onChangeImages = useCallback(
+		(e) => {
+			const file = e.target.files[0];
+			singleFileUpload({ variables: { file } });
+		},
+		[singleFileUpload]
+	);
 
 	return (
 		<Wrapper>
@@ -199,13 +211,13 @@ const SignUp = () => {
 				</Button>
 				<Foot>
 					이미 가입하셨다면 ?
-					<a
+					<div
 						onClick={() => {
 							navigate("/");
 						}}
 					>
 						로그인
-					</a>
+					</div>
 				</Foot>
 			</FormCustom>
 		</Wrapper>
