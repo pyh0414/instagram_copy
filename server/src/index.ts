@@ -7,12 +7,14 @@ import express from "express";
 
 import { UserResolver } from "./modules/User/resolver";
 import { FileResolver } from "./modules/File/resolver";
+import { PostResolver } from "./modules/Post/resolver";
 
 import { authetication } from "./middleware/authetication";
 
 const main = async () => {
 	const schema = await buildSchema({
-		resolvers: [UserResolver, FileResolver],
+		resolvers: [UserResolver, FileResolver, PostResolver],
+		validate: false,
 	});
 	const prisma = new PrismaClient();
 
