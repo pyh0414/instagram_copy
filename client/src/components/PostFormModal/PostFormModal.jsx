@@ -1,12 +1,40 @@
-import React, { useState, useCallback, useEffect, useRef } from "react";
-import { useMutation } from "@apollo/react-hooks";
-import { Modal, Form, Input, Button, message } from "antd";
+import React, { useState, useCallback, useRef } from "react";
+import { useMutation, useLazyQuery } from "@apollo/react-hooks";
+import { Modal, Form, Input, Button, message, Popconfirm } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
+import Icon from "@ant-design/icons";
 import gql from "graphql-tag";
+
+import { ALL_POSTS_INFO } from "../../../src/type";
 
 const MULTIPLE_FILE_UPLOAD = gql`
 	mutation _postMultipleFileUpload($files: [Upload!]!) {
 		multipleFileUpload(files: $files)
+	}
+`;
+
+const FILE_REMOVE = gql`
+	query _postFileRemove($src: String!) {
+		fileRemove(src: $src)
+	}
+`;
+
+const CREATE_POST = gql`
+	mutation _createPost($post: createPostInput!) {
+		createPost(post: $post) {
+			id
+			content
+			author {
+				id
+				profile
+				userId
+			}
+			images {
+				id
+				src
+				postId
+			}
+		}
 	}
 `;
 
@@ -18,37 +46,47 @@ const PostForm = ({ setmodalVisibleProps }) => {
 	const imageInput = useRef();
 	const formSubmit = useRef();
 
-	const [multipleFileUpload] = useMutation(MULTIPLE_FILE_UPLOAD);
+	const [createPost] = useMutation(CREATE_POST, {
+		update: async (cache, data) => {
+			const newPost = data.data.createPost;
+			const currentAllPosts = await cache.readQuery({
+				query: ALL_POSTS_INFO,
+			}).allPosts;
 
-	useEffect(() => {
-		// if (!isAddingPost && addPostResult) {
-		// 	message.success("게시글이 작성 되었습니다");
-		// 	setmodalVisible(false);
-		// 	return;
-		// }
-		// }, [isAddingPost, addPostResult]);
-	}, []);
-
-	useEffect(() => {
-		return () => {
-			setmodalVisible(true);
+			const allPosts = [...currentAllPosts, newPost];
+			cache.writeQuery({ query: ALL_POSTS_INFO, data: { allPosts } });
+		},
+		onCompleted: () => {
 			setmodalVisibleProps(false);
-			// dispatch({
-			// 	type: CLEAR_POST_IMAGEPATH_REQUEST,
-			// });
-			// dispatch({
-			// 	type: CLEAR_POST_FORM_STATUS,
-			// });
-		};
-	}, [modalVisible]);
+			message.success("게시글을 작성하였습니다.", 0.7);
+		},
+	});
+
+	const [multipleFileUpload] = useMutation(MULTIPLE_FILE_UPLOAD, {
+		onCompleted: async ({ multipleFileUpload }) => {
+			const newImages = await multipleFileUpload.reduce((acc, image, i) => {
+				return [...acc, image];
+			}, images);
+			setImages(newImages);
+		},
+	});
+
+	const [fileRemove] = useLazyQuery(FILE_REMOVE, {
+		onCompleted: async ({ fileRemove: willRemoveImage }) => {
+			const newImages = await images.filter(
+				(image) => image !== willRemoveImage
+			);
+			setImages(newImages);
+		},
+	});
 
 	const onHandleOk = useCallback(() => {
 		setmodalVisible(false);
-	}, modalVisible);
+	}, []);
 
 	const onHandleCancel = useCallback(() => {
 		setmodalVisible(false);
-	}, modalVisible);
+	}, []);
 
 	const onChangeContent = useCallback((e) => {
 		setContent(e.target.value);
@@ -56,38 +94,33 @@ const PostForm = ({ setmodalVisibleProps }) => {
 
 	const onClickImageUpload = useCallback(() => {
 		imageInput.current.click();
-	}, [imageInput.current]);
+	}, []);
 
-	const onChangeImages = useCallback((e) => {
-		const files = e.target.files;
-		multipleFileUpload({ variables: { files } });
-	});
+	const onChangeImages = useCallback(
+		(e) => {
+			const files = e.target.files;
+			multipleFileUpload({ variables: { files } });
+		},
+		[multipleFileUpload]
+	);
 
 	const onDeleteImage = useCallback(
-		(index) => () => {
-			// dispatch({
-			// 	type: DELETE_POST_IMAGE_REQUEST,
-			// 	data: index,
-			// });
-			message.success("삭제되었습니다");
+		(src) => () => {
+			fileRemove({ variables: { src } });
 		},
-		[]
+		[fileRemove]
 	);
 
 	const onSubmitForm = useCallback(() => {
 		if (content.trim() === "") {
 			return message.error("내용을 입력해 주세요");
 		}
-	}, [content]);
-
-	// const onSubmitForm = useCallback(() => {
-	// 	// const data = { text, imagePaths };
-	// 	// dispatch({
-	// 	// 	type: ADD_POST_REQUEST,
-	// 	// 	data,
-	// 	// });
-	// 	// }, [text, imagePaths]);
-	// }, [content]);
+		const post = {
+			content,
+			images,
+		};
+		createPost({ variables: { post } });
+	}, [content, images, createPost]);
 
 	return (
 		<>
@@ -118,26 +151,25 @@ const PostForm = ({ setmodalVisibleProps }) => {
 						hidden
 						onChange={onChangeImages}
 					/>
-					{/* {imagePaths.map((v, i) => {
-						return (
+					{images &&
+						images.map((profile, index) => (
 							<Popconfirm
 								title="삭제 하시겠습니까 ?"
 								okText="삭제"
 								cancelText="취소"
-								onConfirm={onDeleteImage(i)}
+								onConfirm={onDeleteImage(profile)}
 								icon={<Icon type="delete" />}
-								Key={i}
+								Key={index}
 							>
 								<div style={{ display: "inline-block" }}>
 									<img
-										src={`http://localhost:3060/${v}`}
+										src={`http://localhost:4000/${profile}`}
 										style={{ width: "200px" }}
-										alt={v}
+										alt={profile}
 									/>
 								</div>
 							</Popconfirm>
-						);
-					})} */}
+						))}
 					<div>
 						<Button onClick={onClickImageUpload} icon={<UploadOutlined />}>
 							사진 업로드
