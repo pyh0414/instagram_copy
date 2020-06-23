@@ -49,7 +49,7 @@ export class PostResolver {
 				},
 				include: {
 					images: true,
-					comments: true,
+					author: true,
 				},
 			});
 			return fullPost;
@@ -70,8 +70,6 @@ export class PostResolver {
 					author: true,
 				},
 			});
-
-			console.log(posts);
 			return posts;
 		} catch (err) {
 			console.log(err);
