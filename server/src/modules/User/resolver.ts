@@ -65,7 +65,7 @@ export class UserResolver {
 		}
 	}
 
-	@Mutation((returns) => User)
+	@Mutation((returns) => Boolean)
 	async createUser(@Arg("user") user: createUserInput, @Ctx() ctx: CTX) {
 		try {
 			const { userId, userPw, name, profile } = user;
