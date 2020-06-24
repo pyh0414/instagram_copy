@@ -131,7 +131,7 @@ const PostForm = ({ setmodalVisibleProps }) => {
 				onOk={onHandleOk}
 				onCancel={onHandleCancel}
 				footer={[
-					<Button type="primary" onClick={onSubmitForm}>
+					<Button type="primary" key="submit" onClick={onSubmitForm}>
 						공유하기
 					</Button>,
 				]}
