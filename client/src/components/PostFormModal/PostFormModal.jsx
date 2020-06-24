@@ -153,22 +153,24 @@ const PostForm = ({ setmodalVisibleProps }) => {
 					/>
 					{images &&
 						images.map((profile, index) => (
-							<Popconfirm
-								title="삭제 하시겠습니까 ?"
-								okText="삭제"
-								cancelText="취소"
-								onConfirm={onDeleteImage(profile)}
-								icon={<Icon type="delete" />}
-								Key={index}
-							>
-								<div style={{ display: "inline-block" }}>
-									<img
-										src={`http://localhost:4000/${profile}`}
-										style={{ width: "200px" }}
-										alt={profile}
-									/>
-								</div>
-							</Popconfirm>
+							<div key={index} style={{ display: "inline-block" }}>
+								<Popconfirm
+									title="삭제 하시겠습니까 ?"
+									okText="삭제"
+									cancelText="취소"
+									onConfirm={onDeleteImage(profile)}
+									icon={<Icon type="delete" />}
+									Key={index}
+								>
+									<div style={{ display: "inline-block" }}>
+										<img
+											src={`http://localhost:4000/${profile}`}
+											style={{ width: "200px" }}
+											alt={profile}
+										/>
+									</div>
+								</Popconfirm>
+							</div>
 						))}
 					<div>
 						<Button onClick={onClickImageUpload} icon={<UploadOutlined />}>
