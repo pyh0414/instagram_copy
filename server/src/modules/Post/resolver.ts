@@ -16,7 +16,6 @@ export class PostResolver {
 					userId,
 				},
 			});
-
 			const newPost = await prisma.post.create({
 				data: {
 					content,
@@ -68,6 +67,11 @@ export class PostResolver {
 				include: {
 					images: true,
 					author: true,
+					comments: {
+						include: {
+							author: true,
+						},
+					},
 				},
 			});
 			return posts;
