@@ -52,7 +52,6 @@ export class PostResolver {
 					comments: true,
 				},
 			});
-
 			return fullPost;
 		} catch (err) {
 			console.log(err);
