@@ -16,19 +16,20 @@ export class FileResolver {
 			const result: boolean = await removeFile(src);
 			return result ? src : "";
 		} catch (err) {
-			console.log(err);
 			throw new Error(err);
 		}
 	}
 
-	@Mutation((returns) => String!, { nullable: false })
+	@Mutation((returns) => [String]!, { nullable: false })
 	async singleFileUpload(
-		@Arg("file", () => GraphQLUpload)
+		@Arg("file", () => GraphQLUpload!)
 		file: SINGLE_FILE_UPLOAD
 	) {
 		try {
 			await await uploadFile(file);
-			return `images/${file.filename}`;
+			const filePath = [];
+			filePath.push(`images/${file.filename}`);
+			return filePath;
 		} catch (err) {
 			console.log(err);
 			throw new Error(err);
@@ -39,7 +40,7 @@ export class FileResolver {
 	async multipleFileUpload(
 		@Arg("files", () => [GraphQLUpload!]!)
 		files: Array<[string, any]>
-	): Promise<Array<string>> {
+	) {
 		try {
 			const filePaths: Array<string> = await Promise.all(
 				files.map((v) => uploadFile(v))
