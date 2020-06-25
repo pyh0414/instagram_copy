@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { CloseOutlined } from "@ant-design/icons";
 
 import ImageCarousel from "./ImageCarousel";

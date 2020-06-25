@@ -7,19 +7,14 @@ import CommentInput from "./CommentInput";
 
 import { Wrapper, Container } from "./style";
 
-// const PostCard = ({ post }) => {
-const PostCard = () => {
+const PostCard = ({ post }) => {
 	return (
 		<Container>
 			<Wrapper>
-				{/* <Head user={post.User} />
-				<Image images={post.Images} />
+				<Head author={post.author} />
+				<Image images={post.images} />
 				<Body post={post} />
-				<CommentInput postId={post.id} /> */}
-				<Head />
-				<Image />
-				<Body />
-				<CommentInput />
+				<CommentInput postId={post.id} />
 			</Wrapper>
 		</Container>
 	);

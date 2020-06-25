@@ -1,28 +1,67 @@
 import React, { useState, useCallback } from "react";
+import { useApolloClient } from "@apollo/react-hooks";
+import { useMutation } from "@apollo/react-hooks";
+import produce from "immer";
+import gql from "graphql-tag";
 
 import { Wrapper, CommentInput } from "./style";
+import { ALL_POSTS_INFO } from "../../../type";
 
-// const Comment = ({ postId }) => {
-const Comment = () => {
-	const [text, setText] = useState("");
+// createCommentInput: {content:String, postId:number}
+const CREATE_COMMNET = gql`
+	mutation _createComment($comment: createCommentInput!) {
+		createComment(comment: $comment) {
+			id
+			content
+			postId
+			author {
+				id
+				userId
+				profile
+			}
+		}
+	}
+`;
+const Comment = ({ postId }) => {
+	const [content, setContent] = useState("");
 
+	const client = useApolloClient();
+
+	const [createComment] = useMutation(CREATE_COMMNET, {
+		update: async (cache, data) => {
+			const newComment = data.data.createComment;
+			const currentAllPost = await cache.readQuery({
+				query: ALL_POSTS_INFO,
+			}).allPosts;
+
+			const currentPostIndex = currentAllPost.findIndex(
+				(post) => parseInt(post.id) === newComment.postId
+			);
+
+			const allPosts = produce(currentAllPost, (draft) => {
+				draft[currentPostIndex].comments.push(newComment);
+			});
+
+			client.writeQuery({ query: ALL_POSTS_INFO, data: { allPosts } });
+		},
+	});
 	const onChangeText = useCallback((e) => {
-		setText(e.target.value);
+		setContent(e.target.value);
 	}, []);
 
 	const onEnterPress = useCallback(
 		(e) => {
-			if (e.key === "Enter" && text.trim()) {
-				const data = { text };
-				// dispatch({
-				// 	type: ADD_COMMENT_REQUEST,
-				// 	data,
-				// });
-				setText("");
+			if (e.key === "Enter" && content.trim()) {
+				const comment = { postId: parseInt(postId), content };
+				createComment({
+					variables: {
+						comment,
+					},
+				});
+				setContent("");
 			}
 		},
-		// [text, postId]
-		[text]
+		[content]
 	);
 
 	return (
@@ -30,7 +69,7 @@ const Comment = () => {
 			<CommentInput
 				type="text"
 				placeholder="댓글달기..."
-				value={text}
+				value={content}
 				onChange={onChangeText}
 				onKeyPress={onEnterPress}
 			/>
