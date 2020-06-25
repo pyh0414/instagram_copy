@@ -13,7 +13,7 @@ export const authetication = async (
 			context.request.request.headers.authorization.split("Bearer ")[1] ||
 			false;
 
-		if (isTest) {
+		if (isTest === "_test") {
 			//테스트 모드인 경우는 pass
 			return;
 		}
