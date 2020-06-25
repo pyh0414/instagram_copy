@@ -5,11 +5,19 @@ import { UploadOutlined } from "@ant-design/icons";
 import Icon from "@ant-design/icons";
 import gql from "graphql-tag";
 
+import { useApolloClient } from "@apollo/react-hooks";
+
 import { ALL_POSTS_INFO } from "../../../src/type";
 
 const MULTIPLE_FILE_UPLOAD = gql`
 	mutation _postMultipleFileUpload($files: [Upload!]!) {
 		multipleFileUpload(files: $files)
+	}
+`;
+
+const SINGLE_FILE_UPLOAD = gql`
+	mutation _signUpSingleFileUpload($file: Upload!) {
+		singleFileUpload(file: $file)
 	}
 `;
 
@@ -34,6 +42,16 @@ const CREATE_POST = gql`
 				src
 				postId
 			}
+			comments {
+				id
+				content
+				postId
+				author {
+					id
+					userId
+					profile
+				}
+			}
 		}
 	}
 `;
@@ -46,6 +64,8 @@ const PostForm = ({ setmodalVisibleProps }) => {
 	const imageInput = useRef();
 	const formSubmit = useRef();
 
+	const client = useApolloClient();
+
 	const [createPost] = useMutation(CREATE_POST, {
 		update: async (cache, data) => {
 			const newPost = data.data.createPost;
@@ -53,12 +73,18 @@ const PostForm = ({ setmodalVisibleProps }) => {
 				query: ALL_POSTS_INFO,
 			}).allPosts;
 
-			const allPosts = [...currentAllPosts, newPost];
-			cache.writeQuery({ query: ALL_POSTS_INFO, data: { allPosts } });
+			const allPosts = [newPost, ...currentAllPosts];
+			client.writeQuery({ query: ALL_POSTS_INFO, data: { allPosts } });
 		},
 		onCompleted: () => {
 			setmodalVisibleProps(false);
 			message.success("게시글을 작성하였습니다.", 0.7);
+		},
+	});
+
+	const [singleFileUpload] = useMutation(SINGLE_FILE_UPLOAD, {
+		onCompleted: ({ singleFileUpload }) => {
+			setImages(singleFileUpload);
 		},
 	});
 
@@ -96,13 +122,14 @@ const PostForm = ({ setmodalVisibleProps }) => {
 		imageInput.current.click();
 	}, []);
 
-	const onChangeImages = useCallback(
-		(e) => {
-			const files = e.target.files;
+	const onChangeImages = useCallback((e) => {
+		const files = e.target.files;
+		if (files.length > 1) {
 			multipleFileUpload({ variables: { files } });
-		},
-		[multipleFileUpload]
-	);
+		} else {
+			singleFileUpload({ variables: { file: files[0] } });
+		}
+	});
 
 	const onDeleteImage = useCallback(
 		(src) => () => {
@@ -119,6 +146,7 @@ const PostForm = ({ setmodalVisibleProps }) => {
 			content,
 			images,
 		};
+		setImages([]);
 		createPost({ variables: { post } });
 	}, [content, images, createPost]);
 
@@ -151,27 +179,26 @@ const PostForm = ({ setmodalVisibleProps }) => {
 						hidden
 						onChange={onChangeImages}
 					/>
-					{images &&
-						images.map((profile, index) => (
-							<div key={index} style={{ display: "inline-block" }}>
-								<Popconfirm
-									title="삭제 하시겠습니까 ?"
-									okText="삭제"
-									cancelText="취소"
-									onConfirm={onDeleteImage(profile)}
-									icon={<Icon type="delete" />}
-									Key={index}
-								>
-									<div style={{ display: "inline-block" }}>
-										<img
-											src={`http://localhost:4000/${profile}`}
-											style={{ width: "200px" }}
-											alt={profile}
-										/>
-									</div>
-								</Popconfirm>
-							</div>
-						))}
+					{images.map((profile, index) => (
+						<div key={index} style={{ display: "inline-block" }}>
+							<Popconfirm
+								title="삭제 하시겠습니까 ?"
+								okText="삭제"
+								cancelText="취소"
+								onConfirm={onDeleteImage(profile)}
+								icon={<Icon type="delete" />}
+								Key={index}
+							>
+								<div style={{ display: "inline-block" }}>
+									<img
+										src={`http://localhost:4000/${profile}`}
+										style={{ width: "200px" }}
+										alt={profile}
+									/>
+								</div>
+							</Popconfirm>
+						</div>
+					))}
 					<div>
 						<Button onClick={onClickImageUpload} icon={<UploadOutlined />}>
 							사진 업로드

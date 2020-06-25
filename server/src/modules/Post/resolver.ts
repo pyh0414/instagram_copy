@@ -27,7 +27,7 @@ export class PostResolver {
 				},
 			});
 
-			Promise.all(
+			await Promise.all(
 				images.map(async (image) => {
 					await prisma.image.create({
 						data: {
@@ -49,8 +49,10 @@ export class PostResolver {
 				include: {
 					images: true,
 					author: true,
+					comments: true,
 				},
 			});
+
 			return fullPost;
 		} catch (err) {
 			console.log(err);
