@@ -12,7 +12,7 @@ export default ({
 		return false;
 	}
 
-	if (profile.trim() === "") {
+	if (profile.length === 0) {
 		message.error("프로필을 입력해 주세요.", 0.5);
 		return false;
 	}

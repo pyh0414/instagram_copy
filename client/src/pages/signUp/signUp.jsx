@@ -57,7 +57,7 @@ const SignUp = () => {
 	const [singleFileUpload] = useMutation(SINGLE_FILE_UPLOAD, {
 		onCompleted: (data) => {
 			const filePath = data.singleFileUpload;
-			setProfile(filePath);
+			setProfile(filePath[0]);
 		},
 	});
 
