@@ -1,9 +1,70 @@
 import { Resolver, Mutation, Arg, Query, Ctx } from "type-graphql";
-import { createPostInput, CTX, Post } from "./type";
+import { createPostInput, likeOrUnlikeToPostInput, CTX, Post } from "./type";
 
 import getUserWithToken from "../../utils/getUserWithToken";
 @Resolver()
 export class PostResolver {
+	@Mutation((returns) => Boolean)
+	async likeToPost(
+		@Arg("data") data: likeOrUnlikeToPostInput,
+		@Ctx() ctx: CTX
+	) {
+		try {
+			const { prisma } = ctx;
+			const { userId, postId } = data;
+			const likeToPost = await prisma.likeToPost.create({
+				data: {
+					user: {
+						connect: {
+							id: userId,
+						},
+					},
+					post: {
+						connect: {
+							id: postId,
+						},
+					},
+				},
+			});
+
+			if (likeToPost) {
+				return true;
+			}
+			return null;
+		} catch (err) {
+			console.log(err);
+			throw new Error(err);
+		}
+	}
+
+	@Mutation((returns) => Boolean)
+	async unLikeToPost(
+		@Arg("data") data: likeOrUnlikeToPostInput,
+		@Ctx() ctx: CTX
+	) {
+		try {
+			const { prisma } = ctx;
+			const { userId, postId } = data;
+
+			const unLikeToPost = await prisma.likeToPost.delete({
+				where: {
+					postId_userId: {
+						postId,
+						userId,
+					},
+				},
+			});
+
+			if (unLikeToPost) {
+				return true;
+			}
+			return false;
+		} catch (err) {
+			console.log(err);
+			throw new Error(err);
+		}
+	}
+
 	@Mutation((returns) => Post, { nullable: true })
 	async createPost(@Arg("post") post: createPostInput, @Ctx() ctx: CTX) {
 		try {
@@ -16,6 +77,7 @@ export class PostResolver {
 					userId,
 				},
 			});
+
 			const newPost = await prisma.post.create({
 				data: {
 					content,
@@ -49,9 +111,19 @@ export class PostResolver {
 				include: {
 					images: true,
 					author: true,
-					comments: true,
+					likers: {
+						include: {
+							user: true,
+						},
+					},
+					comments: {
+						include: {
+							author: true,
+						},
+					},
 				},
 			});
+
 			return fullPost;
 		} catch (err) {
 			console.log(err);
@@ -68,6 +140,11 @@ export class PostResolver {
 				include: {
 					images: true,
 					author: true,
+					likers: {
+						include: {
+							user: true,
+						},
+					},
 					comments: {
 						include: {
 							author: true,

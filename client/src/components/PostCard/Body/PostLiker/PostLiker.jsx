@@ -23,7 +23,7 @@ const Liker = ({ likers }) => {
 				<div id="items">
 					{likers.length > 0 &&
 						likers.map((v, i) => {
-							return <Item liker={v} key={v.id} />;
+							return <Item liker={v} key={i} />;
 						})}
 				</div>
 			</ShowLikers>
