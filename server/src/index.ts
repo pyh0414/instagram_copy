@@ -8,12 +8,13 @@ import express from "express";
 import { UserResolver } from "./modules/User/resolver";
 import { FileResolver } from "./modules/File/resolver";
 import { PostResolver } from "./modules/Post/resolver";
+import { CommentResolver } from "./modules/Comment/resolver";
 
-import { authetication } from "./middleware/authetication";
+import { authMiddleware } from "./middleware/authMiddleware";
 
 const main = async () => {
 	const schema = await buildSchema({
-		resolvers: [UserResolver, FileResolver, PostResolver],
+		resolvers: [UserResolver, FileResolver, PostResolver, CommentResolver],
 		validate: false,
 	});
 	const prisma = new PrismaClient();
@@ -26,10 +27,10 @@ const main = async () => {
 				request,
 			};
 		},
-		middlewares: [authetication],
 	});
 
 	server.express.use("/images", express.static("images"));
+	server.express.use(authMiddleware);
 
 	const options = {
 		cors: {
