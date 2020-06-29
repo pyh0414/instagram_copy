@@ -1,55 +1,89 @@
 import React, { useCallback } from "react";
+import { useMutation } from "@apollo/react-hooks";
+import gql from "graphql-tag";
 import { Button } from "antd";
 
 import { Wrapper } from "./style";
 
-const ShowLikerItem = ({ liker }) => {
+const FOLLOW_USER = gql`
+	mutation _followUser($data: followUnfollowUserInput!) {
+		followUser(data: $data) {
+			id
+			name
+			userId
+			profile
+		}
+	}
+`;
+
+const ShowLikerItem = ({ liker, user }) => {
+	const [followUser] = useMutation(FOLLOW_USER, {
+		update: async (cache, data) => {
+			// 	const newComment = data.data.createComment;
+			// 	const currentAllPost = await cache.readQuery({
+			// 		query: ALL_POSTS_INFO,
+			// 	}).allPosts;
+			// 	const currentPostIndex = currentAllPost.findIndex(
+			// 		(post) => parseInt(post.id) === newComment.postId
+			// 	);
+			// 	const allPosts = produce(currentAllPost, (draft) => {
+			// 		draft[currentPostIndex].comments.push(newComment);
+			// 	});
+			// 	client.writeQuery({
+			// 		query: ALL_POSTS_INFO,
+			// 		data: { allPosts },
+			// 	});
+		},
+	});
+
 	const onFollow = useCallback(() => {
-		// dispatch({
-		// 	type: FOLLOW_USER_REQUEST,
-		// 	data: liker.id,
-		// });
+		const data = {
+			me: parseInt(user.id),
+			you: parseInt(liker.id),
+		};
+
+		followUser({
+			variables: {
+				data,
+			},
+			context: {
+				headers: {
+					authorization: "Bearer pass",
+				},
+			},
+		});
 	}, []);
 
-	const unFollow = useCallback(() => {
-		// dispatch({
-		// 	type: UNFOLLOW_USER_REQUEST,
-		// 	data: liker.id,
-		// });
-	}, []);
+	const unFollow = useCallback(() => {}, []);
 
-	// const isFollowing =
-	// 	followings &&
-	// 	followings.some((v) => {
-	// 		// 현재 liker를 내가 팔로잉 하고 있는지 확인하는 변수
-	// 		return v.id === liker.id;
-	// 	});
+	const isFollowing = user.following.some((v) => {
+		// 현재 liker를 내가 팔로잉 하고 있는지
 
-	// const isValidEqual = user && user.id != liker.id; // 좋아요 한 사람중에 나인 경우는 제외
+		return v.id === liker.id;
+	});
 
-	const isFollowing = true;
-	const isValidEqual = true;
+	const selfLiked = user.id === liker.id;
 	return (
 		<Wrapper>
-			{isValidEqual ? (
-				isFollowing ? (
-					<div>
-						<img src="http://assets.stickpng.com/thumbs/580b57fcd9996e24bc43c521.png" />
-						<span>{liker.userId}</span>
-						<Button type="danger" onClick={unFollow}>
-							팔로우 취소
-						</Button>
-					</div>
-				) : (
-					<div>
-						<img src="http://assets.stickpng.com/thumbs/580b57fcd9996e24bc43c521.png" />
-						<span>{liker.userId}</span>
-						<Button type="danger" onClick={onFollow}>
-							팔로우
-						</Button>
-					</div>
-				)
-			) : null}
+			{selfLiked ? (
+				<div></div>
+			) : isFollowing ? (
+				<div>
+					<img src={`http://localhost${liker.profile}`} alt="follow img" />
+					<span>{liker.userId}</span>
+					<Button type="danger" onClick={unFollow}>
+						팔로우 취소
+					</Button>
+				</div>
+			) : (
+				<div>
+					<img src={`http://localhost${liker.profile}`} alt="follow img" />
+					<span>{liker.userId}</span>
+					<Button type="danger" onClick={onFollow}>
+						팔로우
+					</Button>
+				</div>
+			)}
 		</Wrapper>
 	);
 };
