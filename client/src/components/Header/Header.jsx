@@ -50,7 +50,6 @@ const Header = () => {
 							style={{ fontSize: "23px" }}
 							onClick={() => {
 								navigate("/profile");
-								// return Router.push("/profile");
 							}}
 						/>
 					</Col>
