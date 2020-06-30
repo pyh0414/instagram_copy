@@ -10,10 +10,16 @@ const SIGN_IN = gql`
 	query _signIn($user: signInInput!) {
 		signIn(user: $user) {
 			user {
+				id
 				userId
 				name
-				userPw
 				profile
+				following {
+					id
+					userId
+					name
+					profile
+				}
 			}
 			token
 			message
@@ -59,6 +65,11 @@ const SignIn = () => {
 			const user = { userId, userPw };
 			signIn({
 				variables: { user },
+				context: {
+					headers: {
+						authorization: "Bearer pass",
+					},
+				},
 			});
 
 			navigate("/");
