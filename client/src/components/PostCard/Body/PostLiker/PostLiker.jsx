@@ -4,7 +4,7 @@ import Item from "../LikerList/LikerList";
 
 import { Wrapper, ShowLikers } from "./style";
 
-const Liker = ({ likers }) => {
+const Liker = ({ likers, user }) => {
 	const showLikersRef = useRef();
 	const onLikerMouseOver = useCallback(() => {
 		showLikersRef.current.style.display = "block";
@@ -21,10 +21,9 @@ const Liker = ({ likers }) => {
 			<ShowLikers ref={showLikersRef}>
 				<div id="header">좋아요</div>
 				<div id="items">
-					{likers.length > 0 &&
-						likers.map((v, i) => {
-							return <Item liker={v} key={i} />;
-						})}
+					{likers.map((v, i) => {
+						return <Item liker={v.user} user={user} key={i} />;
+					})}
 				</div>
 			</ShowLikers>
 		</Wrapper>

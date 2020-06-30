@@ -1,5 +1,8 @@
 import React, { useCallback } from "react";
 import { useMutation } from "@apollo/react-hooks";
+import { useApolloClient } from "@apollo/react-hooks";
+import produce from "immer";
+import { GET_ME } from "../Body";
 import gql from "graphql-tag";
 import { Button } from "antd";
 
@@ -16,23 +19,49 @@ const FOLLOW_USER = gql`
 	}
 `;
 
+const UNFOLLOW_USER = gql`
+	mutation _unFollowUser($data: followUnfollowUserInput!) {
+		unFollowUser(data: $data) {
+			id
+			name
+			userId
+			profile
+		}
+	}
+`;
+
 const ShowLikerItem = ({ liker, user }) => {
+	const client = useApolloClient();
 	const [followUser] = useMutation(FOLLOW_USER, {
 		update: async (cache, data) => {
-			// 	const newComment = data.data.createComment;
-			// 	const currentAllPost = await cache.readQuery({
-			// 		query: ALL_POSTS_INFO,
-			// 	}).allPosts;
-			// 	const currentPostIndex = currentAllPost.findIndex(
-			// 		(post) => parseInt(post.id) === newComment.postId
-			// 	);
-			// 	const allPosts = produce(currentAllPost, (draft) => {
-			// 		draft[currentPostIndex].comments.push(newComment);
-			// 	});
-			// 	client.writeQuery({
-			// 		query: ALL_POSTS_INFO,
-			// 		data: { allPosts },
-			// 	});
+			const newFollowUser = data.data.followUser;
+			const newUser = produce(user, (draft) => {
+				draft.following.push(newFollowUser);
+			});
+
+			client.writeQuery({
+				query: GET_ME,
+				data: { user: newUser },
+			});
+		},
+	});
+
+	const [unFollowUser] = useMutation(UNFOLLOW_USER, {
+		update: async (cache, data) => {
+			const deletedFollowUser = data.data.unFollowUser;
+
+			const newUnFollowings = user.following.filter(
+				(v) => v.id !== deletedFollowUser.id
+			);
+
+			const newUser = produce(user, (draft) => {
+				draft.following = newUnFollowings;
+			});
+
+			client.writeQuery({
+				query: GET_ME,
+				data: { user: newUser },
+			});
 		},
 	});
 
@@ -54,7 +83,22 @@ const ShowLikerItem = ({ liker, user }) => {
 		});
 	}, []);
 
-	const unFollow = useCallback(() => {}, []);
+	const unFollow = useCallback(() => {
+		const data = {
+			me: parseInt(user.id),
+			you: parseInt(liker.id),
+		};
+		unFollowUser({
+			variables: {
+				data,
+			},
+			context: {
+				headers: {
+					authorization: "Bearer pass",
+				},
+			},
+		});
+	}, []);
 
 	const isFollowing = user.following.some((v) => {
 		// 현재 liker를 내가 팔로잉 하고 있는지
@@ -69,7 +113,10 @@ const ShowLikerItem = ({ liker, user }) => {
 				<div></div>
 			) : isFollowing ? (
 				<div>
-					<img src={`http://localhost${liker.profile}`} alt="follow img" />
+					<img
+						src={`http://localhost:4000/${liker.profile}`}
+						alt="follow img"
+					/>
 					<span>{liker.userId}</span>
 					<Button type="danger" onClick={unFollow}>
 						팔로우 취소
@@ -77,7 +124,10 @@ const ShowLikerItem = ({ liker, user }) => {
 				</div>
 			) : (
 				<div>
-					<img src={`http://localhost${liker.profile}`} alt="follow img" />
+					<img
+						src={`http://localhost:4000/${liker.profile}`}
+						alt="follow img"
+					/>
 					<span>{liker.userId}</span>
 					<Button type="danger" onClick={onFollow}>
 						팔로우

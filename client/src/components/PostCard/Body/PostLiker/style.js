@@ -11,7 +11,7 @@ export const ShowLikers = styled.div`
 	border-radius: 5%;
 	position: absolute;
 	z-index: 1;
-	height: 200px;
+	height: auto;
 	width: 300px;
 	display: none;
 
@@ -25,6 +25,7 @@ export const ShowLikers = styled.div`
 	}
 	#items {
 		overflow: "scroll";
+		height: auto;
 		padding: 20px;
 	}
 `;

@@ -18,6 +18,7 @@ const CREATE_COMMNET = gql`
 				id
 				userId
 				profile
+				name
 			}
 		}
 	}
@@ -42,7 +43,10 @@ const Comment = ({ postId }) => {
 				draft[currentPostIndex].comments.push(newComment);
 			});
 
-			client.writeQuery({ query: ALL_POSTS_INFO, data: { allPosts } });
+			client.writeQuery({
+				query: ALL_POSTS_INFO,
+				data: { allPosts },
+			});
 		},
 	});
 	const onChangeText = useCallback((e) => {
@@ -56,6 +60,11 @@ const Comment = ({ postId }) => {
 				createComment({
 					variables: {
 						comment,
+					},
+					context: {
+						headers: {
+							authorization: `Bearer ${localStorage.getItem("token")}`,
+						},
 					},
 				});
 				setContent("");
