@@ -2,17 +2,26 @@ import gql from "graphql-tag";
 
 export const ALL_POSTS_INFO = gql`
 	query {
-		allPosts {
+		allPosts @client {
 			id
 			content
 			author {
 				id
-				profile
 				userId
+				name
+				profile
 			}
 			images {
 				id
 				src
+			}
+			likers {
+				user {
+					id
+					userId
+					name
+					profile
+				}
 			}
 			comments {
 				id
@@ -21,6 +30,7 @@ export const ALL_POSTS_INFO = gql`
 				author {
 					id
 					userId
+					name
 					profile
 				}
 			}
