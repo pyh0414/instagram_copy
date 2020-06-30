@@ -8,6 +8,8 @@ import Pages from "./pages";
 import SignIn from "./pages/signIn";
 import SignUp from "./pages/signUp";
 
+import { ALL_POSTS_INFO } from "./type";
+
 const IS_LOGGED_IN = gql`
 	query {
 		isLoggedIn @client
@@ -22,11 +24,31 @@ const GET_ALL_POSTS = gql`
 			author {
 				id
 				userId
+				name
 				profile
 			}
 			images {
 				id
 				src
+			}
+			likers {
+				user {
+					id
+					userId
+					name
+					profile
+				}
+			}
+			comments {
+				id
+				content
+				postId
+				author {
+					id
+					userId
+					name
+					profile
+				}
 			}
 		}
 	}
@@ -37,10 +59,16 @@ const App = () => {
 
 	const { data, loading } = useQuery(IS_LOGGED_IN);
 	useQuery(GET_ALL_POSTS, {
-		onCompleted: ({ getAllPosts }) => {
-			client.writeData({
+		context: {
+			headers: {
+				authorization: "Bearer pass",
+			},
+		},
+		onCompleted: async ({ getAllPosts: allPosts }) => {
+			await client.writeQuery({
+				query: ALL_POSTS_INFO,
 				data: {
-					allPosts: getAllPosts,
+					allPosts,
 				},
 			});
 		},
