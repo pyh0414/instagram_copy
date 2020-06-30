@@ -12,7 +12,7 @@ import { ALL_POSTS_INFO } from "../../type";
 import { Wrapper, Side } from "./style";
 
 const Main = () => {
-	const { data, loading } = useQuery(ALL_POSTS_INFO);
+	const { data } = useQuery(ALL_POSTS_INFO);
 	return (
 		<div style={{ backgroundColor: "whilte" }}>
 			<Wrapper>
