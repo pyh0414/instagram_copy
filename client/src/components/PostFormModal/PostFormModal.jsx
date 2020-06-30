@@ -41,6 +41,14 @@ const CREATE_POST = gql`
 				src
 				postId
 			}
+			likers {
+				userId
+				postId
+				user {
+					id
+					profile
+				}
+			}
 			comments {
 				id
 				content
@@ -68,11 +76,12 @@ const PostForm = ({ setmodalVisibleProps }) => {
 	const [createPost] = useMutation(CREATE_POST, {
 		update: async (cache, data) => {
 			const newPost = data.data.createPost;
+
 			const currentAllPosts = await cache.readQuery({
 				query: ALL_POSTS_INFO,
 			}).allPosts;
-
 			const allPosts = [newPost, ...currentAllPosts];
+
 			client.writeQuery({ query: ALL_POSTS_INFO, data: { allPosts } });
 		},
 		onCompleted: () => {
@@ -121,18 +130,42 @@ const PostForm = ({ setmodalVisibleProps }) => {
 		imageInput.current.click();
 	}, []);
 
-	const onChangeImages = useCallback((e) => {
-		const files = e.target.files;
-		if (files.length > 1) {
-			multipleFileUpload({ variables: { files } });
-		} else {
-			singleFileUpload({ variables: { file: files[0] } });
-		}
-	});
+	const onChangeImages = useCallback(
+		(e) => {
+			const files = e.target.files;
+			if (files.length > 1) {
+				multipleFileUpload({
+					variables: { files },
+					context: {
+						headers: {
+							authorization: `Bearer ${localStorage.getItem("token")}`,
+						},
+					},
+				});
+			} else {
+				singleFileUpload({
+					variables: { file: files[0] },
+					context: {
+						headers: {
+							authorization: `Bearer ${localStorage.getItem("token")}`,
+						},
+					},
+				});
+			}
+		},
+		[singleFileUpload, multipleFileUpload]
+	);
 
 	const onDeleteImage = useCallback(
 		(src) => () => {
-			fileRemove({ variables: { src } });
+			fileRemove({
+				variables: { src },
+				context: {
+					headers: {
+						authorization: `Bearer ${localStorage.getItem("token")}`,
+					},
+				},
+			});
 		},
 		[fileRemove]
 	);
@@ -146,7 +179,14 @@ const PostForm = ({ setmodalVisibleProps }) => {
 			images,
 		};
 		setImages([]);
-		createPost({ variables: { post } });
+		createPost({
+			variables: { post },
+			context: {
+				headers: {
+					authorization: `Bearer ${localStorage.getItem("token")}`,
+				},
+			},
+		});
 	}, [content, images, createPost]);
 
 	return (
