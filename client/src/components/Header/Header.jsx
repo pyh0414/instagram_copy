@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from "react";
+import { useApolloClient } from "@apollo/react-hooks";
 import { Col, Input, Row } from "antd";
 import {
 	UserOutlined,
@@ -14,17 +15,17 @@ import PostFormModal from "../PostFormModal";
 const Header = () => {
 	const [modalVisible, setmodalVisible] = useState(false);
 
-	// useEffect(() => {
-	// 	!user && Router.push("/");
-	// }, [user]);
+	const client = useApolloClient();
 
 	const onLogout = useCallback(() => {
-		// dispatch({
-		// 	type: LOG_OUT_REQUEST,
-		// });
-		// roomSocket && roomSocket.close();
-		// chatSocket && chatSocket.close();
-	}, []);
+		localStorage.clear();
+		client.writeData({
+			data: {
+				isLoggedIn: false,
+				user: null,
+			},
+		});
+	}, [client]);
 
 	return (
 		<HeaderWrapper>
