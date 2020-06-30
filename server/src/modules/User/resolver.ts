@@ -1,7 +1,14 @@
 import { Resolver, Query, Mutation, Arg, Ctx } from "type-graphql";
 import bcrypt from "bcryptjs";
 
-import { User, createUserInput, signInInput, CTX, AuthPayload } from "./type";
+import {
+	User,
+	createUserInput,
+	signInInput,
+	CTX,
+	AuthPayload,
+	followUnfollowUserInput,
+} from "./type";
 import getHashedPassword from "../../utils/getHashedPassword";
 import generateToken from "../../utils/generateToken";
 
@@ -23,6 +30,76 @@ export class UserResolver {
 		}
 	}
 
+	@Mutation((returns) => User, { nullable: true })
+	async unFollowUser(
+		@Arg("data") data: followUnfollowUserInput,
+		@Ctx() ctx: CTX
+	) {
+		try {
+			const { prisma } = ctx;
+			const { me, you } = data;
+
+			const unFolloweUser = await prisma.user.findOne({
+				where: {
+					id: you,
+				},
+			});
+
+			await prisma.user.update({
+				where: {
+					id: me,
+				},
+				data: {
+					following: {
+						disconnect: {
+							id: you,
+						},
+					},
+				},
+			});
+
+			return unFolloweUser;
+		} catch (err) {
+			console.log(err);
+			throw new Error("err");
+		}
+	}
+
+	@Mutation((returns) => User, { nullable: true })
+	async followUser(
+		@Arg("data") data: followUnfollowUserInput,
+		@Ctx() ctx: CTX
+	) {
+		try {
+			const { prisma } = ctx;
+			const { me, you } = data;
+
+			await prisma.user.update({
+				where: {
+					id: me,
+				},
+				data: {
+					following: {
+						connect: {
+							id: you,
+						},
+					},
+				},
+			});
+
+			const folloUser = await prisma.user.findOne({
+				where: {
+					id: you,
+				},
+			});
+
+			return folloUser;
+		} catch (err) {
+			console.log(err);
+			throw new Error("err");
+		}
+	}
+
 	@Query((returns) => AuthPayload)
 	async signIn(@Arg("user") user: signInInput, @Ctx() ctx: CTX) {
 		try {
@@ -32,8 +109,10 @@ export class UserResolver {
 				where: {
 					userId,
 				},
+				include: {
+					following: true,
+				},
 			});
-
 			if (!fullUser) {
 				return {
 					message: "존재하지 않는 아이디 입니다.",
@@ -53,7 +132,6 @@ export class UserResolver {
 			}
 
 			const Token = generateToken(userId);
-
 			return {
 				message: "로그인 되었습니다",
 				user: fullUser,
