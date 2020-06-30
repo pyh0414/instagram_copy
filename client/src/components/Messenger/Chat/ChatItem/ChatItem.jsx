@@ -23,7 +23,7 @@ const ChatItem = () => {
 				</Me>
 			) : (
 				<You>
-					<img src={item.User.profile} />
+					<img src={item.User.profile} alt="user profile" />
 					<span> {item.User.id}</span>
 					<div> {item.content}</div>
 				</You>

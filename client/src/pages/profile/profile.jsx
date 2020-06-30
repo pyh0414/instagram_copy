@@ -16,7 +16,7 @@ const Profile = () => {
 
 	const onCloseModal = useCallback(() => {
 		setPostModal(false);
-	}, [postModal]);
+	}, []);
 
 	const onOpenModal = useCallback(
 		(post) => () => {
@@ -26,7 +26,7 @@ const Profile = () => {
 			// });
 			setPostModal(true);
 		},
-		[postModal]
+		[]
 	);
 
 	const user = {
@@ -105,7 +105,4 @@ const Profile = () => {
 	);
 };
 
-const Test = () => {
-	return <div>asd</div>;
-};
 export default Profile;

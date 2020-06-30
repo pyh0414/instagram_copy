@@ -13,7 +13,7 @@ const Index = () => {
 				{currentRoom.chats.length > 0 &&
 					currentRoom.chats.map((v, i) => {
 						// return <ChatItem item={v} key={v.id} />;
-						return <ChatItem />;
+						return <ChatItem key={Math.random()} />;
 					})}
 			</div>
 			<Foot />

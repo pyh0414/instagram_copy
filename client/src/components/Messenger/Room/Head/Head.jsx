@@ -11,7 +11,7 @@ const Head = () => {
 	}, []);
 
 	const onMakeRoom = useCallback(() => {
-		if (roomName.trim() == "") {
+		if (roomName.trim() === "") {
 			return message.error("채팅방 이름을 입력해 주세요 !");
 		}
 

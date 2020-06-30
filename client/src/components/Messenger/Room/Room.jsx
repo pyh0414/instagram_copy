@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 
 import RoomItem from "./RoomItem";
 import Head from "./Head";
