@@ -104,6 +104,11 @@ const SignUp = () => {
 			const user = { userId, name, userPw, profile };
 			createUser({
 				variables: { user },
+				context: {
+					headers: {
+						authorization: "Bearer pass",
+					},
+				},
 			});
 		}
 	}, [
@@ -123,6 +128,11 @@ const SignUp = () => {
 		}
 		getUser({
 			variables: { userId },
+			context: {
+				headers: {
+					authorization: "Bearer pass",
+				},
+			},
 		});
 	}, [userId, getUser]);
 
@@ -133,7 +143,14 @@ const SignUp = () => {
 	const onChangeImages = useCallback(
 		(e) => {
 			const file = e.target.files[0];
-			singleFileUpload({ variables: { file } });
+			singleFileUpload({
+				variables: { file },
+				context: {
+					headers: {
+						authorization: "Bearer pass",
+					},
+				},
+			});
 		},
 		[singleFileUpload]
 	);
