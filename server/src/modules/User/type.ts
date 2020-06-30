@@ -1,15 +1,15 @@
 import "reflect-metadata";
-import { ObjectType, Field, InputType } from "type-graphql";
+import { ObjectType, Field, InputType, ID } from "type-graphql";
 import express from "express";
 import { PrismaClient } from "@prisma/client";
 
 import { Post } from "../Post/type";
 @ObjectType()
 export class User {
-	@Field()
+	@Field((type) => ID)
 	id: number;
 
-	@Field()
+	@Field({ nullable: true })
 	name: string;
 
 	@Field()
@@ -29,6 +29,9 @@ export class User {
 
 	@Field((type) => [User], { nullable: true }) // 유저를 생성할 때 follower가 없다
 	follower?: User[];
+
+	@Field((type) => [User], { nullable: true }) // 유저를 생성할 때 following 없다
+	following?: User[];
 }
 
 // id: ID! @id
@@ -72,6 +75,15 @@ export class createUserInput {
 
 	@Field({ nullable: false })
 	profile: string;
+}
+
+@InputType()
+export class followUnfollowUserInput {
+	@Field()
+	me: number;
+
+	@Field()
+	you: number;
 }
 
 @ObjectType()
