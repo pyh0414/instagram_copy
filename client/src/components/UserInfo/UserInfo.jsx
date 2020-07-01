@@ -2,24 +2,14 @@ import React from "react";
 
 import { Wrapper, UserProfile, User } from "./style";
 
-const UserInfo = () => {
-	const user = {
-		userId: "whwlsvy12",
-		name: "박연호",
-	};
+const UserInfo = ({ me }) => {
 	return (
 		<Wrapper>
-			{/* {user && <UserProfile src={`http://localhost:3060/${user.profile}`} />} */}
-			{user && (
-				<UserProfile
-					src={
-						"https://blog.naver.com/dooboo7178?Redirect=Log&logNo=221853498343"
-					}
-				/>
-			)}
+			{<UserProfile src={`http://localhost:4000/${me.profile}`} />}
+
 			<User>
-				{user && <div style={{ fontWeight: "bold" }}>{user.userId}</div>}
-				{user && <div style={{ color: "#A4A4A4" }}>{user.name}</div>}
+				{<div style={{ fontWeight: "bold" }}>{me.userId}</div>}
+				{<div style={{ color: "#A4A4A4" }}>{me.name}</div>}
 			</User>
 		</Wrapper>
 	);
