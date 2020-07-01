@@ -8,14 +8,12 @@ import PostComment from "./PostComment";
 
 import { Modal, ModalContent } from "./style";
 
-// const PostCarousel = ({ onCloseModal, user }) => {
-const PostCarousel = ({ onCloseModal }) => {
+const PostCarousel = ({ onCloseModal, post, me }) => {
 	return (
 		<Modal>
 			<ModalContent>
 				<div style={{ width: "65%", height: "100%" }}>
-					{/* <ImageCarousel images={selectedPost.Images} /> */}
-					<ImageCarousel />
+					<ImageCarousel images={post.images} />
 				</div>
 				<div style={{ width: "35%", height: "100%" }}>
 					<CloseOutlined
@@ -31,8 +29,7 @@ const PostCarousel = ({ onCloseModal }) => {
 							paddingBottom: "14px",
 						}}
 					>
-						{/* <UserInfo user={user} /> */}
-						<UserInfo />
+						<UserInfo me={me} />
 					</div>
 
 					<div
@@ -40,11 +37,10 @@ const PostCarousel = ({ onCloseModal }) => {
 							paddingLeft: "20px",
 						}}
 					>
-						{/* <PostContent contents={selectedPost.content} /> */}
-						<PostContent />
+						<PostContent contents={post.content} />
+
 						<div style={{ overflow: "scroll", height: "300px" }}>
-							{/* <PostComment comments={selectedPost.Comments} /> */}
-							<PostComment />
+							<PostComment comments={post.comments} />
 						</div>
 					</div>
 				</div>
