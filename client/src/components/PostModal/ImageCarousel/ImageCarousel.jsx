@@ -1,11 +1,15 @@
 import React from "react";
 import Slider from "react-slick";
 
-import { Wrapper, ImageWrapper } from "./style";
+import {
+	MultiImageWrapper,
+	SingleImageWrapper,
+	MultiImage,
+	SingleImage,
+} from "./style";
 
-// const ImageCarousel = ({ images }) => {
-const ImageCarousel = () => {
-	const images = [1, 2, 3, 4];
+const ImageCarousel = ({ images }) => {
+	console.log(images);
 	const setting = {
 		dots: true,
 		speed: 500,
@@ -40,17 +44,17 @@ const ImageCarousel = () => {
 					<Slider {...setting}>
 						{images.map((v, i) => {
 							return (
-								<Wrapper key={i}>
-									<ImageWrapper src="http://assets.stickpng.com/thumbs/580b57fcd9996e24bc43c521.png" />
-								</Wrapper>
+								<MultiImageWrapper key={i}>
+									<MultiImage src={`http://localhost:4000/${v.src}`} />
+								</MultiImageWrapper>
 							);
 						})}
 					</Slider>
 				</div>
 			) : (
-				<Wrapper>
-					<ImageWrapper src="http://assets.stickpng.com/thumbs/580b57fcd9996e24bc43c521.png" />
-				</Wrapper>
+				<SingleImageWrapper>
+					<SingleImage src={`http://localhost:4000/${images[0].src}`} />
+				</SingleImageWrapper>
 			)}
 		</div>
 	);

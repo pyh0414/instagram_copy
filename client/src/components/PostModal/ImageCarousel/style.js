@@ -1,13 +1,20 @@
 import styled from "styled-components";
 
-export const Wrapper = styled.div`
-	width: 400px;
-	height: 415px;
+export const MultiImageWrapper = styled.div`
 	text-align: center;
+	height: 380px;
 `;
 
-export const ImageWrapper = styled.img`
-	width: auto;
-	height: 415px;
-	margin: 0px auto;
+export const SingleImageWrapper = styled.div`
+	text-align: center;
+	height: 100%;
+`;
+
+export const MultiImage = styled.img`
+	max-width: 100%;
+`;
+
+export const SingleImage = styled.img`
+	width: 100%;
+	height: 418px;
 `;
