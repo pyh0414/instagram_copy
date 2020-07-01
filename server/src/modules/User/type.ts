@@ -25,7 +25,7 @@ export class User {
 	createAt: Date;
 
 	@Field((type) => [Post], { nullable: true }) // generic types(promise, arrays)에 대해서는 따로 명시해 주어여함
-	posts?: Post[]; // posts는 user를 생성할 때 없을 수 있기 때문에 nullable: true와 ?를 붙여줘야함
+	myPosts?: Post[]; // posts는 user를 생성할 때 없을 수 있기 때문에 nullable: true와 ?를 붙여줘야함
 
 	@Field((type) => [User], { nullable: true }) // 유저를 생성할 때 follower가 없다
 	follower?: User[];
