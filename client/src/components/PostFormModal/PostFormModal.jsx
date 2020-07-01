@@ -5,6 +5,7 @@ import { useApolloClient } from "@apollo/react-hooks";
 import { UploadOutlined } from "@ant-design/icons";
 import Icon from "@ant-design/icons";
 import gql from "graphql-tag";
+import produce from "immer";
 
 import { ALL_POSTS_INFO } from "../../../src/type";
 import { GET_ME } from "../../components/PostCard/Body/Body";
@@ -83,10 +84,15 @@ const PostForm = ({ setmodalVisibleProps }) => {
 			const currentAllPosts = await cache.readQuery({
 				query: ALL_POSTS_INFO,
 			}).allPosts;
+
 			const allPosts = [newPost, ...currentAllPosts];
-			console.log(allPosts);
-			console.log(user);
+
+			const userWithNewPost = produce(user, (draft) => {
+				draft.myPosts.push(newPost);
+			});
+
 			client.writeQuery({ query: ALL_POSTS_INFO, data: { allPosts } });
+			client.writeQuery({ query: GET_ME, data: { user: userWithNewPost } });
 		},
 		onCompleted: () => {
 			setmodalVisibleProps(false);
