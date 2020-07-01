@@ -111,8 +111,26 @@ export class UserResolver {
 				},
 				include: {
 					following: true,
+					follower: true,
+					myPosts: {
+						include: {
+							images: true,
+							author: true,
+							likers: {
+								include: {
+									user: true,
+								},
+							},
+							comments: {
+								include: {
+									author: true,
+								},
+							},
+						},
+					},
 				},
 			});
+
 			if (!fullUser) {
 				return {
 					message: "존재하지 않는 아이디 입니다.",
