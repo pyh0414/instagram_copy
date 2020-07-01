@@ -22,6 +22,45 @@ export const GET_ME = gql`
 				name
 				profile
 			}
+			follower {
+				id
+				userId
+				name
+				profile
+			}
+			myPosts {
+				id
+				content
+				author {
+					id
+					userId
+					name
+					profile
+				}
+				images {
+					id
+					src
+				}
+				likers {
+					user {
+						id
+						userId
+						name
+						profile
+					}
+				}
+				comments {
+					id
+					content
+					postId
+					author {
+						id
+						userId
+						name
+						profile
+					}
+				}
+			}
 		}
 	}
 `;
