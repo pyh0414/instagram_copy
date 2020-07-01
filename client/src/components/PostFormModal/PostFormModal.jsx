@@ -1,12 +1,13 @@
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import { Modal, Form, Input, Button, message, Popconfirm } from "antd";
-import { useMutation, useLazyQuery } from "@apollo/react-hooks";
+import { useMutation, useLazyQuery, useQuery } from "@apollo/react-hooks";
 import { useApolloClient } from "@apollo/react-hooks";
 import { UploadOutlined } from "@ant-design/icons";
 import Icon from "@ant-design/icons";
 import gql from "graphql-tag";
 
 import { ALL_POSTS_INFO } from "../../../src/type";
+import { GET_ME } from "../../components/PostCard/Body/Body";
 
 const MULTIPLE_FILE_UPLOAD = gql`
 	mutation _postMultipleFileUpload($files: [Upload!]!) {
@@ -73,15 +74,18 @@ const PostForm = ({ setmodalVisibleProps }) => {
 
 	const client = useApolloClient();
 
+	const { data } = useQuery(GET_ME);
+	const user = data.user;
+
 	const [createPost] = useMutation(CREATE_POST, {
 		update: async (cache, data) => {
 			const newPost = data.data.createPost;
-
 			const currentAllPosts = await cache.readQuery({
 				query: ALL_POSTS_INFO,
 			}).allPosts;
 			const allPosts = [newPost, ...currentAllPosts];
-
+			console.log(allPosts);
+			console.log(user);
 			client.writeQuery({ query: ALL_POSTS_INFO, data: { allPosts } });
 		},
 		onCompleted: () => {
@@ -115,10 +119,12 @@ const PostForm = ({ setmodalVisibleProps }) => {
 	});
 
 	const onHandleOk = useCallback(() => {
+		setmodalVisibleProps(false);
 		setmodalVisible(false);
 	}, []);
 
 	const onHandleCancel = useCallback(() => {
+		setmodalVisibleProps(false);
 		setmodalVisible(false);
 	}, []);
 
@@ -189,6 +195,11 @@ const PostForm = ({ setmodalVisibleProps }) => {
 		});
 	}, [content, images, createPost]);
 
+	useEffect(() => {
+		return () => {
+			setmodalVisible(true);
+		};
+	});
 	return (
 		<>
 			<Modal
