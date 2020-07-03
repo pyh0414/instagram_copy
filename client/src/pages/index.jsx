@@ -2,7 +2,7 @@ import React, { Fragment } from "react";
 import { Router } from "@reach/router";
 
 import Main from "./main";
-import Profile from "./profile";
+import User from "./user";
 import Header from "../components/Header";
 
 const Pages = () => {
@@ -11,7 +11,7 @@ const Pages = () => {
 			<Header />
 			<Router>
 				<Main path="/" />
-				<Profile path="/profile" />
+				<User path="/user" />
 			</Router>
 		</Fragment>
 	);
