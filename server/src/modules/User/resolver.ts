@@ -30,6 +30,45 @@ export class UserResolver {
 		}
 	}
 
+	@Query((returns) => [User], { nullable: true })
+	async searchUsers(@Arg("userId") userId: string, @Ctx() ctx: CTX) {
+		try {
+			const { prisma } = ctx;
+			const user = prisma.user.findMany({
+				where: {
+					userId: {
+						contains: userId,
+					},
+				},
+				include: {
+					following: true,
+					follower: true,
+					myPosts: {
+						include: {
+							images: true,
+							author: true,
+							likers: {
+								include: {
+									user: true,
+								},
+							},
+							comments: {
+								include: {
+									author: true,
+								},
+							},
+						},
+					},
+				},
+			});
+
+			return user;
+		} catch (err) {
+			console.log(err);
+			throw new Error(err);
+		}
+	}
+
 	@Mutation((returns) => User, { nullable: true })
 	async unFollowUser(
 		@Arg("data") data: followUnfollowUserInput,

@@ -23,6 +23,7 @@ cache.writeData({
 		isLoggedIn: false,
 		user: null,
 		allPosts: [],
+		otherUser: null,
 	},
 });
 
