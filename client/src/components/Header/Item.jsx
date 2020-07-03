@@ -29,7 +29,7 @@ const Span = styled.span`
 
 export const OTHER_USER_INFO = gql`
 	query {
-		user @client {
+		otherUser @client {
 			id
 			userId
 			name
@@ -100,13 +100,12 @@ const Item = ({ users, setSearchUsersVisible }) => {
 	);
 
 	const onItemClick = (user) => {
-		console.log(user);
 		setSearchUsersVisible(false);
 		client.writeQuery({
 			query: OTHER_USER_INFO,
 			data: { otherUser: user },
 		});
-		navigate("/otherUser");
+		navigate("/user");
 	};
 
 	const generateItem = users.map((v, i) => {

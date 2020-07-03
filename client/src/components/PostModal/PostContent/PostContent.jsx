@@ -1,11 +1,11 @@
 import React from "react";
 
 import { Wrapper } from "./style";
-// const Contents = ({ contents }) => {
-const Contents = () => {
+
+const Contents = ({ content }) => {
 	return (
 		<Wrapper>
-			<div style={{ fontWeight: "bold", color: "black" }}>내용내용내용</div>
+			<div style={{ fontWeight: "bold", color: "black" }}>{content}</div>
 		</Wrapper>
 	);
 };

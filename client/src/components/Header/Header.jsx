@@ -105,8 +105,11 @@ const Header = () => {
 			data: {
 				isLoggedIn: false,
 				user: null,
+				allPosts: [],
+				otherUser: null,
 			},
 		});
+		navigate("/");
 	}, [client]);
 
 	// Header : 입력할 때마다 "onDelaySearch1 실행"만 출력,_.debounce의 long 출력 안됨
@@ -173,7 +176,7 @@ const Header = () => {
 							type="user"
 							style={{ fontSize: "23px" }}
 							onClick={() => {
-								navigate("/profile");
+								navigate("/user");
 							}}
 						/>
 					</Col>

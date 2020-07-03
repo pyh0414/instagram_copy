@@ -7,7 +7,6 @@ import gql from "graphql-tag";
 import { Wrapper, CommentInput } from "./style";
 import { ALL_POSTS_INFO } from "../../../type";
 
-// createCommentInput: {content:String, postId:number}
 const CREATE_COMMNET = gql`
 	mutation _createComment($comment: createCommentInput!) {
 		createComment(comment: $comment) {

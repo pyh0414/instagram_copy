@@ -3,7 +3,6 @@ import React from "react";
 import { ImgCustom } from "./style";
 
 const Comments = ({ comments }) => {
-	console.log(comments);
 	const reply = comments.map((v, i) => {
 		return (
 			<div key={i} style={{ marginTop: "8px" }}>
