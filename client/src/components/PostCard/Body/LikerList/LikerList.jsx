@@ -10,10 +10,12 @@ import { Wrapper } from "./style";
 const FOLLOW_USER = gql`
 	mutation _followUser($data: followUnfollowUserInput!) {
 		followUser(data: $data) {
-			id
-			name
-			userId
-			profile
+			following {
+				id
+				userId
+				name
+				profile
+			}
 		}
 	}
 `;
@@ -21,21 +23,29 @@ const FOLLOW_USER = gql`
 const UNFOLLOW_USER = gql`
 	mutation _unFollowUser($data: followUnfollowUserInput!) {
 		unFollowUser(data: $data) {
-			id
-			name
-			userId
-			profile
+			following {
+				id
+				userId
+				name
+				profile
+			}
 		}
 	}
 `;
 
 const ShowLikerItem = ({ liker, user }) => {
 	const client = useApolloClient();
+
+	const data = {
+		me: parseInt(user.id),
+		you: parseInt(liker.id),
+	};
+
 	const [followUser] = useMutation(FOLLOW_USER, {
 		update: async (cache, data) => {
-			const newFollowUser = data.data.followUser;
+			const result = data.data.followUser;
 			const newUser = produce(user, (draft) => {
-				draft.following.push(newFollowUser);
+				draft.following = result.following;
 			});
 
 			client.writeQuery({
@@ -47,14 +57,10 @@ const ShowLikerItem = ({ liker, user }) => {
 
 	const [unFollowUser] = useMutation(UNFOLLOW_USER, {
 		update: async (cache, data) => {
-			const deletedFollowUser = data.data.unFollowUser;
-
-			const newUnFollowings = user.following.filter(
-				(v) => v.id !== deletedFollowUser.id
-			);
+			const result = data.data.unFollowUser;
 
 			const newUser = produce(user, (draft) => {
-				draft.following = newUnFollowings;
+				draft.following = result.following;
 			});
 
 			client.writeQuery({
@@ -65,11 +71,6 @@ const ShowLikerItem = ({ liker, user }) => {
 	});
 
 	const follow = useCallback(() => {
-		const data = {
-			me: parseInt(user.id),
-			you: parseInt(liker.id),
-		};
-
 		followUser({
 			variables: {
 				data,
@@ -83,10 +84,7 @@ const ShowLikerItem = ({ liker, user }) => {
 	}, []);
 
 	const unFollow = useCallback(() => {
-		const data = {
-			me: parseInt(user.id),
-			you: parseInt(liker.id),
-		};
+		console.log(user.id, liker.id);
 		unFollowUser({
 			variables: {
 				data,

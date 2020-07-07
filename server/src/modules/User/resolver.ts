@@ -8,8 +8,10 @@ import {
 	CTX,
 	AuthPayload,
 	followUnfollowUserInput,
+	updateUserInput,
 } from "./type";
 import getHashedPassword from "../../utils/getHashedPassword";
+import getUserWithToken from "../../utils/getUserWithToken";
 import generateToken from "../../utils/generateToken";
 
 @Resolver()
@@ -70,41 +72,6 @@ export class UserResolver {
 	}
 
 	@Mutation((returns) => User, { nullable: true })
-	async unFollowUser(
-		@Arg("data") data: followUnfollowUserInput,
-		@Ctx() ctx: CTX
-	) {
-		try {
-			const { prisma } = ctx;
-			const { me, you } = data;
-
-			const unFolloweUser = await prisma.user.findOne({
-				where: {
-					id: you,
-				},
-			});
-
-			await prisma.user.update({
-				where: {
-					id: me,
-				},
-				data: {
-					following: {
-						disconnect: {
-							id: you,
-						},
-					},
-				},
-			});
-
-			return unFolloweUser;
-		} catch (err) {
-			console.log(err);
-			throw new Error("err");
-		}
-	}
-
-	@Mutation((returns) => User, { nullable: true })
 	async followUser(
 		@Arg("data") data: followUnfollowUserInput,
 		@Ctx() ctx: CTX
@@ -126,13 +93,96 @@ export class UserResolver {
 				},
 			});
 
-			const folloUser = await prisma.user.findOne({
+			const user = await prisma.user.findOne({
 				where: {
-					id: you,
+					id: me,
+				},
+				include: {
+					following: true,
 				},
 			});
 
-			return folloUser;
+			return user;
+		} catch (err) {
+			console.log(err);
+			throw new Error("err");
+		}
+	}
+
+	@Mutation((returns) => User, { nullable: true })
+	async unFollowUser(
+		@Arg("data") data: followUnfollowUserInput,
+		@Ctx() ctx: CTX
+	) {
+		try {
+			const { prisma } = ctx;
+			const { me, you } = data;
+
+			await prisma.user.update({
+				where: {
+					id: me,
+				},
+				data: {
+					following: {
+						disconnect: {
+							id: you,
+						},
+					},
+				},
+			});
+
+			const user = await prisma.user.findOne({
+				where: {
+					id: me,
+				},
+				include: {
+					following: true,
+				},
+			});
+
+			return user;
+		} catch (err) {
+			console.log(err);
+			throw new Error("err");
+		}
+	}
+
+	@Mutation((returns) => User, { nullable: true })
+	async updateUser(@Arg("data") data: updateUserInput, @Ctx() ctx: CTX) {
+		try {
+			const { prisma } = ctx;
+			const { name, userPw, profile } = data;
+
+			const userId = await getUserWithToken(ctx);
+
+			const result = await prisma.user.findOne({
+				where: {
+					userId,
+				},
+				select: {
+					userPw: true,
+				},
+			});
+
+			let password;
+
+			if (userPw) {
+				password = await getHashedPassword(userPw);
+			} else {
+				password = result.userPw;
+			}
+
+			const updatedUser = await prisma.user.update({
+				where: {
+					userId,
+				},
+				data: {
+					profile,
+					name,
+					userPw: password,
+				},
+			});
+			return updatedUser;
 		} catch (err) {
 			console.log(err);
 			throw new Error("err");
