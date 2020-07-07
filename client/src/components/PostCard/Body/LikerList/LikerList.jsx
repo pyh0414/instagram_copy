@@ -1,6 +1,5 @@
 import React, { useCallback } from "react";
-import { useMutation } from "@apollo/react-hooks";
-import { useApolloClient } from "@apollo/react-hooks";
+import { useApolloClient, useMutation } from "@apollo/react-hooks";
 import produce from "immer";
 import { GET_ME } from "../Body";
 import gql from "graphql-tag";
@@ -65,7 +64,7 @@ const ShowLikerItem = ({ liker, user }) => {
 		},
 	});
 
-	const onFollow = useCallback(() => {
+	const follow = useCallback(() => {
 		const data = {
 			me: parseInt(user.id),
 			you: parseInt(liker.id),
@@ -129,7 +128,7 @@ const ShowLikerItem = ({ liker, user }) => {
 						alt="follow img"
 					/>
 					<span>{liker.userId}</span>
-					<Button type="danger" onClick={onFollow}>
+					<Button type="primary" onClick={follow}>
 						팔로우
 					</Button>
 				</div>
