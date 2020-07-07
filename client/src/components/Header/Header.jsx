@@ -99,16 +99,9 @@ const Header = () => {
 		},
 	});
 
-	const onLogout = useCallback(() => {
+	const onLogout = useCallback(async () => {
 		localStorage.clear();
-		client.writeData({
-			data: {
-				isLoggedIn: false,
-				user: null,
-				allPosts: [],
-				otherUser: null,
-			},
-		});
+		client.resetStore();
 		navigate("/");
 	}, [client]);
 
@@ -176,6 +169,11 @@ const Header = () => {
 							type="user"
 							style={{ fontSize: "23px" }}
 							onClick={() => {
+								client.writeData({
+									data: {
+										otherUser: null,
+									},
+								});
 								navigate("/user");
 							}}
 						/>
