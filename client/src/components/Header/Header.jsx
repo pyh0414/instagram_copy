@@ -101,7 +101,13 @@ const Header = () => {
 
 	const onLogout = useCallback(async () => {
 		localStorage.clear();
-		client.resetStore();
+		await client.writeData({
+			data: {
+				isLoggedIn: false,
+				user: null,
+				otherUser: null,
+			},
+		});
 		navigate("/");
 	}, [client]);
 
