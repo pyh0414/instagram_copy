@@ -58,6 +58,7 @@ const fullUserInfo = gql`
 		id
 		userId
 		profile
+		name
 		following {
 			...follow_info
 		}
