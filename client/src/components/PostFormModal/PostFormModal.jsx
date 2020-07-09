@@ -1,69 +1,19 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import { Modal, Form, Input, Button, message, Popconfirm } from "antd";
-import { useMutation, useLazyQuery, useQuery } from "@apollo/react-hooks";
+import { useMutation, useLazyQuery } from "@apollo/react-hooks";
 import { useApolloClient } from "@apollo/react-hooks";
 import { UploadOutlined } from "@ant-design/icons";
 import Icon from "@ant-design/icons";
-import gql from "graphql-tag";
 import produce from "immer";
 
-import { ALL_POSTS_INFO } from "../../../src/type";
-import { GET_ME } from "../../components/PostCard/Body/Body";
-
-const MULTIPLE_FILE_UPLOAD = gql`
-	mutation _postMultipleFileUpload($files: [Upload!]!) {
-		multipleFileUpload(files: $files)
-	}
-`;
-
-const SINGLE_FILE_UPLOAD = gql`
-	mutation _signUpSingleFileUpload($file: Upload!) {
-		singleFileUpload(file: $file)
-	}
-`;
-
-const FILE_REMOVE = gql`
-	query _postFileRemove($src: String!) {
-		fileRemove(src: $src)
-	}
-`;
-
-const CREATE_POST = gql`
-	mutation _createPost($post: createPostInput!) {
-		createPost(post: $post) {
-			id
-			content
-			author {
-				id
-				profile
-				userId
-			}
-			images {
-				id
-				src
-				postId
-			}
-			likers {
-				userId
-				postId
-				user {
-					id
-					profile
-				}
-			}
-			comments {
-				id
-				content
-				postId
-				author {
-					id
-					userId
-					profile
-				}
-			}
-		}
-	}
-`;
+import { VALIDATE_ALL_POSTS } from "../../typeValidate";
+import {
+	MUTATION_CREATE_POST,
+	MUTATION_MULTIPLE_FILE_UPLOAD,
+	MUTATION_SINGLE_FILE_UPLOAD,
+} from "../../action/mutation";
+import { QUERY_FILE_REMOVE } from "../../action/query";
+import { VALIDATE_USER } from "../../typeValidate";
 
 const PostForm = ({ setmodalVisibleProps }) => {
 	const [modalVisible, setmodalVisible] = useState(true);
@@ -75,15 +25,16 @@ const PostForm = ({ setmodalVisibleProps }) => {
 
 	const client = useApolloClient();
 
-	const { data } = useQuery(GET_ME);
-	const user = data.user;
-
-	const [createPost] = useMutation(CREATE_POST, {
+	const [createPost] = useMutation(MUTATION_CREATE_POST, {
 		update: async (cache, data) => {
 			const newPost = data.data.createPost;
 			const currentAllPosts = await cache.readQuery({
-				query: ALL_POSTS_INFO,
+				query: VALIDATE_ALL_POSTS,
 			}).allPosts;
+
+			const user = await cache.readQuery({
+				query: VALIDATE_USER,
+			}).user;
 
 			const allPosts = [newPost, ...currentAllPosts];
 
@@ -91,8 +42,11 @@ const PostForm = ({ setmodalVisibleProps }) => {
 				draft.myPosts.push(newPost);
 			});
 
-			client.writeQuery({ query: ALL_POSTS_INFO, data: { allPosts } });
-			client.writeQuery({ query: GET_ME, data: { user: userWithNewPost } });
+			client.writeQuery({
+				query: VALIDATE_USER,
+				data: { user: userWithNewPost },
+			});
+			client.writeQuery({ query: VALIDATE_ALL_POSTS, data: { allPosts } });
 		},
 		onCompleted: () => {
 			setmodalVisibleProps(false);
@@ -100,13 +54,13 @@ const PostForm = ({ setmodalVisibleProps }) => {
 		},
 	});
 
-	const [singleFileUpload] = useMutation(SINGLE_FILE_UPLOAD, {
+	const [singleFileUpload] = useMutation(MUTATION_SINGLE_FILE_UPLOAD, {
 		onCompleted: ({ singleFileUpload }) => {
 			setImages(singleFileUpload);
 		},
 	});
 
-	const [multipleFileUpload] = useMutation(MULTIPLE_FILE_UPLOAD, {
+	const [multipleFileUpload] = useMutation(MUTATION_MULTIPLE_FILE_UPLOAD, {
 		onCompleted: async ({ multipleFileUpload }) => {
 			const newImages = await multipleFileUpload.reduce((acc, image, i) => {
 				return [...acc, image];
@@ -115,7 +69,7 @@ const PostForm = ({ setmodalVisibleProps }) => {
 		},
 	});
 
-	const [fileRemove] = useLazyQuery(FILE_REMOVE, {
+	const [fileRemove] = useLazyQuery(QUERY_FILE_REMOVE, {
 		onCompleted: async ({ fileRemove: willRemoveImage }) => {
 			const newImages = await images.filter(
 				(image) => image !== willRemoveImage
@@ -127,12 +81,12 @@ const PostForm = ({ setmodalVisibleProps }) => {
 	const onHandleOk = useCallback(() => {
 		setmodalVisibleProps(false);
 		setmodalVisible(false);
-	}, []);
+	}, [setmodalVisibleProps, setmodalVisible]);
 
 	const onHandleCancel = useCallback(() => {
 		setmodalVisibleProps(false);
 		setmodalVisible(false);
-	}, []);
+	}, [setmodalVisibleProps, setmodalVisible]);
 
 	const onChangeContent = useCallback((e) => {
 		setContent(e.target.value);

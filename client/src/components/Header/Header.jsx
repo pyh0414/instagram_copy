@@ -8,82 +8,14 @@ import {
 	LogoutOutlined,
 	HeartOutlined,
 } from "@ant-design/icons";
-
 import { navigate } from "@reach/router";
-import styled from "styled-components";
-import gql from "graphql-tag";
 import _ from "lodash";
 
-import { HeaderWrapper, InstagramLogo, Search } from "./style";
+import { HeaderWrapper, InstagramLogo, Search, SearchUsers } from "./style";
+import { QUERY_OTHER_USER } from "../../action/query";
 import PostFormModal from "../PostFormModal";
 import HeaderInput from "./HeaderInput";
 import Item from "./Item";
-
-const SearchUsers = styled.div`
-	margin-top: 3px;
-	background-color: #ffffff;
-	border: 1px solid gray;
-	position: absolute;
-	z-index: 1;
-	height: auto;
-	width: 240px;
-`;
-
-const SEARCH_USER = gql`
-	query _searchUser($userId: String!) {
-		searchUsers(userId: $userId) {
-			id
-			userId
-			name
-			profile
-			following {
-				id
-				userId
-				name
-				profile
-			}
-			follower {
-				id
-				userId
-				name
-				profile
-			}
-			myPosts {
-				id
-				content
-				author {
-					id
-					userId
-					name
-					profile
-				}
-				images {
-					id
-					src
-				}
-				likers {
-					user {
-						id
-						userId
-						name
-						profile
-					}
-				}
-				comments {
-					id
-					content
-					postId
-					author {
-						id
-						userId
-						name
-						profile
-					}
-				}
-			}
-		}
-	}
-`;
 
 const Header = () => {
 	const [modalVisible, setmodalVisible] = useState(false);
@@ -92,7 +24,7 @@ const Header = () => {
 
 	const client = useApolloClient();
 
-	const [searchUser] = useLazyQuery(SEARCH_USER, {
+	const [searchUser] = useLazyQuery(QUERY_OTHER_USER, {
 		onCompleted: ({ searchUsers }) => {
 			setSearchUsers(searchUsers);
 			setSearchUsersVisible(true);
@@ -113,9 +45,9 @@ const Header = () => {
 
 	// Header : 입력할 때마다 "onDelaySearch1 실행"만 출력,_.debounce의 long 출력 안됨
 	// HeaderInput : 입력할 때마다 "onDelaySearch1 실행"만 출력,_.debounce의 long 출력 안됨
-	const onDelaySearch1 = (userId) => {
-		_.debounce((userId) => {}, 500);
-	};
+	// const onDelaySearch1 = (userId) => {
+	// 	_.debounce((userId) => {}, 500);
+	// };
 
 	// Header : 입력할 때마다 700ms 이후 userId 출력
 	// HeaderInput : 입력하고 700ms 이후 userId 출력, 여기서 userId는 가장 마지막에 입력한 값, 클로저 ?

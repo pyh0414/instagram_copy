@@ -2,69 +2,9 @@ import React, { useState, useCallback } from "react";
 import { useLazyQuery, useApolloClient } from "@apollo/react-hooks";
 import { Input, Button, message } from "antd";
 import { navigate } from "@reach/router";
-import gql from "graphql-tag";
 
 import { Wrapper, CustomForm } from "./style";
-
-const SIGN_IN = gql`
-	query _signIn($user: signInInput!) {
-		signIn(user: $user) {
-			user {
-				id
-				userId
-				name
-				profile
-				following {
-					id
-					userId
-					name
-					profile
-				}
-				follower {
-					id
-					userId
-					name
-					profile
-				}
-				myPosts {
-					id
-					content
-					author {
-						id
-						userId
-						name
-						profile
-					}
-					images {
-						id
-						src
-					}
-					likers {
-						user {
-							id
-							userId
-							name
-							profile
-						}
-					}
-					comments {
-						id
-						content
-						postId
-						author {
-							id
-							userId
-							name
-							profile
-						}
-					}
-				}
-			}
-			token
-			message
-		}
-	}
-`;
+import { QUERY_SIGN_IN } from "../../action/query";
 
 const SignIn = () => {
 	const [userId, setChangeUserId] = useState("");
@@ -73,7 +13,7 @@ const SignIn = () => {
 	const client = useApolloClient();
 	const antdMessage = message;
 
-	const [signIn] = useLazyQuery(SIGN_IN, {
+	const [signIn] = useLazyQuery(QUERY_SIGN_IN, {
 		onCompleted: ({ signIn: { user, token, message } }) => {
 			if (user) {
 				antdMessage.success(message, 0.7);

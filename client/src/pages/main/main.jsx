@@ -6,13 +6,12 @@ import { Col, Row } from "antd";
 import PostCard from "../../components/PostCard";
 import UserInfo from "../../components/UserInfo";
 import Messenger from "../../components/Messenger";
-
-import { ALL_POSTS_INFO } from "../../type";
-
+import { CLIENT_ALL_POSTS } from "../../action/client";
 import { Wrapper, Side } from "./style";
 
 const Main = () => {
-	const { data } = useQuery(ALL_POSTS_INFO);
+	const { data } = useQuery(CLIENT_ALL_POSTS);
+
 	return (
 		<div style={{ backgroundColor: "whilte" }}>
 			<Wrapper>

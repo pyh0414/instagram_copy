@@ -1,29 +1,20 @@
 import React, { useCallback } from "react";
 import { HeartTwoTone, HeartOutlined } from "@ant-design/icons";
 import { useMutation, useApolloClient } from "@apollo/react-hooks";
-import { ALL_POSTS_INFO } from "../../../../type";
-import gql from "graphql-tag";
 import produce from "immer";
 
 import { Wrapper } from "./style";
-
-const LIKE_TO_POST = gql`
-	mutation _likeToPost($data: likeOrUnlikeToPostInput!) {
-		likeToPost(data: $data)
-	}
-`;
-
-const UNLIKE_TO_POST = gql`
-	mutation _unLikeToPost($data: likeOrUnlikeToPostInput!) {
-		unLikeToPost(data: $data)
-	}
-`;
+import {
+	MUTATION_UNLIKE_TO_POST,
+	MUTATION_LIKE_TO_POST,
+} from "../../../../action/mutation";
+import { VALIDATE_ALL_POSTS } from "../../../../typeValidate";
 
 const LikeIcon = ({ postId, user, likers }) => {
 	const likeChecked = likers.find((v) => v.user.id === user.id);
 	const client = useApolloClient();
 
-	const [likeToPost] = useMutation(LIKE_TO_POST, {
+	const [likeToPost] = useMutation(MUTATION_LIKE_TO_POST, {
 		context: {
 			headers: {
 				authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -33,7 +24,7 @@ const LikeIcon = ({ postId, user, likers }) => {
 			const result = data.data.likeToPost;
 			if (result) {
 				const currentAllPost = await cache.readQuery({
-					query: ALL_POSTS_INFO,
+					query: VALIDATE_ALL_POSTS,
 				}).allPosts;
 
 				const currentPostIndex = currentAllPost.findIndex(
@@ -45,14 +36,14 @@ const LikeIcon = ({ postId, user, likers }) => {
 				});
 
 				client.writeQuery({
-					query: ALL_POSTS_INFO,
+					query: VALIDATE_ALL_POSTS,
 					data: { allPosts },
 				});
 			}
 		},
 	});
 
-	const [unLikeToPost] = useMutation(UNLIKE_TO_POST, {
+	const [unLikeToPost] = useMutation(MUTATION_UNLIKE_TO_POST, {
 		context: {
 			headers: {
 				authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -63,7 +54,7 @@ const LikeIcon = ({ postId, user, likers }) => {
 
 			if (result) {
 				const currentAllPost = await cache.readQuery({
-					query: ALL_POSTS_INFO,
+					query: VALIDATE_ALL_POSTS,
 				}).allPosts;
 
 				const currentPostIndex = currentAllPost.findIndex(
@@ -76,7 +67,7 @@ const LikeIcon = ({ postId, user, likers }) => {
 				});
 
 				client.writeQuery({
-					query: ALL_POSTS_INFO,
+					query: VALIDATE_ALL_POSTS,
 					data: { allPosts },
 				});
 			}
@@ -102,7 +93,7 @@ const LikeIcon = ({ postId, user, likers }) => {
 				},
 			});
 		}
-	});
+	}, [user.id, postId, unLikeToPost, likeToPost, likeChecked]);
 
 	return (
 		<Wrapper>

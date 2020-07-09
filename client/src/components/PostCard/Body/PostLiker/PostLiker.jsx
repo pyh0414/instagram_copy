@@ -1,7 +1,6 @@
 import React, { useRef, useCallback } from "react";
 
-import Item from "../LikerList/LikerList";
-
+import Item from "../FollowUnfollowUser";
 import { Wrapper, ShowLikers } from "./style";
 
 const Liker = ({ likers, user }) => {
@@ -22,7 +21,7 @@ const Liker = ({ likers, user }) => {
 				<div id="header">좋아요</div>
 				<div id="items">
 					{likers.map((v, i) => {
-						return <Item liker={v.user} user={user} key={i} />;
+						return <Item user={v.user} loggedInUser={user} key={i} />;
 					})}
 				</div>
 			</ShowLikers>

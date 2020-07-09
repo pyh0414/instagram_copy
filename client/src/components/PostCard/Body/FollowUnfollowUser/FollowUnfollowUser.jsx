@@ -1,37 +1,14 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback } from "react";
 import { useApolloClient, useMutation } from "@apollo/react-hooks";
 import produce from "immer";
-import { GET_ME } from "../Body";
-import gql from "graphql-tag";
 import { Button } from "antd";
 
+import {
+	MUTATION_UNFOLLOW_USER,
+	MUTATION_FOLLOW_USER,
+} from "../../../../action/mutation";
+import { VALIDATE_LOGGED_IN_USER } from "../../../../typeValidate";
 import { Wrapper } from "./style";
-
-const FOLLOW_USER = gql`
-	mutation _followUser($data: followUnfollowUserInput!) {
-		followUser(data: $data) {
-			following {
-				id
-				userId
-				name
-				profile
-			}
-		}
-	}
-`;
-
-const UNFOLLOW_USER = gql`
-	mutation _unFollowUser($data: followUnfollowUserInput!) {
-		unFollowUser(data: $data) {
-			following {
-				id
-				userId
-				name
-				profile
-			}
-		}
-	}
-`;
 
 const FollowUnfollowUser = ({ user, loggedInUser }) => {
 	const client = useApolloClient();
@@ -41,7 +18,7 @@ const FollowUnfollowUser = ({ user, loggedInUser }) => {
 		you: parseInt(user.id),
 	};
 
-	const [followUser] = useMutation(FOLLOW_USER, {
+	const [followUser] = useMutation(MUTATION_FOLLOW_USER, {
 		update: async (cache, data) => {
 			const result = data.data.followUser;
 			const newUser = produce(loggedInUser, (draft) => {
@@ -49,13 +26,13 @@ const FollowUnfollowUser = ({ user, loggedInUser }) => {
 			});
 
 			client.writeQuery({
-				query: GET_ME,
+				query: VALIDATE_LOGGED_IN_USER,
 				data: { user: newUser },
 			});
 		},
 	});
 
-	const [unFollowUser] = useMutation(UNFOLLOW_USER, {
+	const [unFollowUser] = useMutation(MUTATION_UNFOLLOW_USER, {
 		update: async (cache, data) => {
 			const result = await data.data.unFollowUser;
 
@@ -64,7 +41,7 @@ const FollowUnfollowUser = ({ user, loggedInUser }) => {
 			});
 
 			await client.writeQuery({
-				query: GET_ME,
+				query: VALIDATE_LOGGED_IN_USER,
 				data: { user: newUser },
 			});
 		},
@@ -81,7 +58,7 @@ const FollowUnfollowUser = ({ user, loggedInUser }) => {
 				},
 			},
 		});
-	});
+	}, [data, followUser]);
 
 	// useCallback 2번쨰 인자로 []를 넣으면 user 페이지에서 unfollow에 문제가 생김
 	const unFollow = useCallback(() => {
@@ -95,7 +72,7 @@ const FollowUnfollowUser = ({ user, loggedInUser }) => {
 				},
 			},
 		});
-	});
+	}, [data, unFollowUser]);
 
 	const isFollowing = loggedInUser.following.some((v) => {
 		// 현재 user를 내가 팔로잉 하고 있는지

@@ -2,36 +2,20 @@ import React, { useState, useCallback } from "react";
 import { useApolloClient } from "@apollo/react-hooks";
 import { useMutation } from "@apollo/react-hooks";
 import produce from "immer";
-import gql from "graphql-tag";
 
+import { MUTATION_CREATE_COMMNET } from "../../../action/mutation";
 import { Wrapper, CommentInput } from "./style";
-import { ALL_POSTS_INFO } from "../../../type";
+import { VALIDATE_ALL_POSTS } from "../../../typeValidate";
 
-const CREATE_COMMNET = gql`
-	mutation _createComment($comment: createCommentInput!) {
-		createComment(comment: $comment) {
-			id
-			content
-			postId
-			author {
-				id
-				userId
-				profile
-				name
-			}
-		}
-	}
-`;
 const Comment = ({ postId }) => {
 	const [content, setContent] = useState("");
 
 	const client = useApolloClient();
-
-	const [createComment] = useMutation(CREATE_COMMNET, {
+	const [createComment] = useMutation(MUTATION_CREATE_COMMNET, {
 		update: async (cache, data) => {
 			const newComment = data.data.createComment;
 			const currentAllPost = await cache.readQuery({
-				query: ALL_POSTS_INFO,
+				query: VALIDATE_ALL_POSTS,
 			}).allPosts;
 
 			const currentPostIndex = currentAllPost.findIndex(
@@ -43,7 +27,7 @@ const Comment = ({ postId }) => {
 			});
 
 			client.writeQuery({
-				query: ALL_POSTS_INFO,
+				query: VALIDATE_ALL_POSTS,
 				data: { allPosts },
 			});
 		},
@@ -69,7 +53,7 @@ const Comment = ({ postId }) => {
 				setContent("");
 			}
 		},
-		[content]
+		[content, createComment, postId]
 	);
 
 	return (

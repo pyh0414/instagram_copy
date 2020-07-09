@@ -1,9 +1,9 @@
 import React, { useRef } from "react";
-import gql from "graphql-tag";
 import styled from "styled-components";
 import { navigate } from "@reach/router";
 import { useApolloClient } from "@apollo/react-hooks";
 
+import { VALIDATE_OTHER_USER } from "../../typeValidate";
 const Wrapper = styled.div`
 	padding: 10px 68px 10px 8px;
 	cursor: pointer;
@@ -27,62 +27,6 @@ const Span = styled.span`
 	color: black;
 `;
 
-export const OTHER_USER_INFO = gql`
-	query {
-		otherUser @client {
-			id
-			userId
-			name
-			profile
-			following {
-				id
-				userId
-				name
-				profile
-			}
-			follower {
-				id
-				userId
-				name
-				profile
-			}
-			myPosts {
-				id
-				content
-				author {
-					id
-					userId
-					name
-					profile
-				}
-				images {
-					id
-					src
-				}
-				likers {
-					user {
-						id
-						userId
-						name
-						profile
-					}
-				}
-				comments {
-					id
-					content
-					postId
-					author {
-						id
-						userId
-						name
-						profile
-					}
-				}
-			}
-		}
-	}
-`;
-
 const Item = ({ users, setSearchUsersVisible }) => {
 	const client = useApolloClient();
 	const itemWrapper = useRef();
@@ -102,7 +46,7 @@ const Item = ({ users, setSearchUsersVisible }) => {
 	const onItemClick = (user) => {
 		setSearchUsersVisible(false);
 		client.writeQuery({
-			query: OTHER_USER_INFO,
+			query: VALIDATE_OTHER_USER,
 			data: { otherUser: user },
 		});
 		navigate("/user");

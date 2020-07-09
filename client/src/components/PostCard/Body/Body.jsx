@@ -1,72 +1,15 @@
 import React from "react";
-import gql from "graphql-tag";
 import { useQuery } from "@apollo/react-hooks";
 
 import LikeIcon from "./LikeIcon/LikeIcon";
 import Liker from "./PostLiker/PostLiker";
 import Content from "./PostContent/PostContent";
 import Comment from "./PostComment/PostComment";
-
 import { Wrapper } from "./style";
-
-export const GET_ME = gql`
-	query {
-		user @client {
-			id
-			userId
-			name
-			profile
-			following {
-				id
-				userId
-				name
-				profile
-			}
-			follower {
-				id
-				userId
-				name
-				profile
-			}
-			myPosts {
-				id
-				content
-				author {
-					id
-					userId
-					name
-					profile
-				}
-				images {
-					id
-					src
-				}
-				likers {
-					user {
-						id
-						userId
-						name
-						profile
-					}
-				}
-				comments {
-					id
-					content
-					postId
-					author {
-						id
-						userId
-						name
-						profile
-					}
-				}
-			}
-		}
-	}
-`;
+import { CLIENT_LOGGED_IN_USER } from "../../../action/client";
 
 const Body = ({ post }) => {
-	const { data } = useQuery(GET_ME);
+	const { data } = useQuery(CLIENT_LOGGED_IN_USER);
 
 	return (
 		<Wrapper>
