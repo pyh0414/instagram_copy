@@ -3,6 +3,7 @@ import { useApolloClient, useMutation, useQuery } from "@apollo/react-hooks";
 import { EditOutlined } from "@ant-design/icons";
 import { Row, Col, Button } from "antd";
 import produce from "immer";
+import gql from "graphql-tag";
 
 import {
 	Wrapper,
@@ -13,7 +14,11 @@ import {
 	RefWrapper,
 	ShowFollow,
 } from "./style";
-import { CLIENT_LOGGED_IN_USER, CLIENT_OTHER_USER } from "../../action/client";
+import {
+	CLIENT_LOGGED_IN_USER,
+	CLIENT_OTHER_USER,
+	CLIENT_LOGGED_IN_AND_OTHER_USER,
+} from "../../action/client";
 import {
 	MUTATION_FOLLOW_USER,
 	MUTATION_UNFOLLOW_USER,
@@ -29,12 +34,12 @@ const User = () => {
 	const showFollowingRef = useRef();
 	const showFollowerRef = useRef();
 
-	const { data: myData } = useQuery(CLIENT_LOGGED_IN_USER);
-	const { data: otherData } = useQuery(CLIENT_OTHER_USER);
+	const { data } = useQuery(CLIENT_LOGGED_IN_AND_OTHER_USER);
 
-	const me = myData.user;
-	const you = otherData.otherUser;
-	let currentPageUser;
+	const me = data.user;
+	const you = data.otherUser;
+
+	let currentPageUser = me;
 	let isMeFollowYou;
 
 	if (you) {
@@ -42,10 +47,9 @@ const User = () => {
 			return v.id === you.id;
 		});
 		currentPageUser = you;
-	} else {
-		currentPageUser = me;
 	}
-	console.log(currentPageUser);
+	console.log(me);
+	console.log(you);
 	const client = useApolloClient();
 
 	const onFollowingMouseOver = useCallback(() => {

@@ -34,9 +34,22 @@ const CLIENT_OTHER_USER = gql`
 	${fullUserInfo}
 `;
 
+const CLIENT_LOGGED_IN_AND_OTHER_USER = gql`
+	query {
+		user @client {
+			...full_user_info
+		}
+		otherUser @client {
+			...full_user_info
+		}
+	}
+	${fullUserInfo}
+`;
+
 export {
 	IS_LOGGED_IN,
 	CLIENT_ALL_POSTS,
 	CLIENT_LOGGED_IN_USER,
 	CLIENT_OTHER_USER,
+	CLIENT_LOGGED_IN_AND_OTHER_USER,
 };
