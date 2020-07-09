@@ -37,9 +37,9 @@ const PostCarousel = ({ onCloseModal, post, me }) => {
 							paddingLeft: "20px",
 						}}
 					>
-						<PostContent contents={post.content} />
+						<PostContent content={post.content} />
 
-						<div style={{ overflow: "scroll", height: "300px" }}>
+						<div style={{ overflow: "scroll", height: "270px" }}>
 							<PostComment comments={post.comments} />
 						</div>
 					</div>
