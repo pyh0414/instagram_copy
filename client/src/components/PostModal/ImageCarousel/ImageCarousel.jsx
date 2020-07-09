@@ -9,7 +9,6 @@ import {
 } from "./style";
 
 const ImageCarousel = ({ images }) => {
-	console.log(images);
 	const setting = {
 		dots: true,
 		speed: 500,
