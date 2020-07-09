@@ -22,7 +22,7 @@ const FollowUnfollowUser = ({ user, loggedInUser }) => {
 		update: async (cache, data) => {
 			const result = data.data.followUser;
 			const newUser = produce(loggedInUser, (draft) => {
-				draft.following = result.following;
+				draft.following = result.me.following;
 			});
 
 			client.writeQuery({
@@ -34,13 +34,13 @@ const FollowUnfollowUser = ({ user, loggedInUser }) => {
 
 	const [unFollowUser] = useMutation(MUTATION_UNFOLLOW_USER, {
 		update: async (cache, data) => {
-			const result = await data.data.unFollowUser;
+			const result = data.data.unFollowUser;
 
-			const newUser = await produce(loggedInUser, (draft) => {
-				draft.following = result.following;
+			const newUser = produce(loggedInUser, (draft) => {
+				draft.following = result.me.following;
 			});
 
-			await client.writeQuery({
+			client.writeQuery({
 				query: VALIDATE_LOGGED_IN_USER,
 				data: { user: newUser },
 			});
