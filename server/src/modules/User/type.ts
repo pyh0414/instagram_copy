@@ -63,6 +63,18 @@ export class signInInput {
 }
 
 @InputType()
+export class updateUserInput {
+	@Field()
+	name: string;
+
+	@Field()
+	userPw: string;
+
+	@Field()
+	profile: string;
+}
+
+@InputType()
 export class createUserInput {
 	@Field({ nullable: false })
 	userId: string;
@@ -84,6 +96,15 @@ export class followUnfollowUserInput {
 
 	@Field()
 	you: number;
+}
+
+@ObjectType()
+export class followUnfollowUserRetrun {
+	@Field()
+	me: User;
+
+	@Field()
+	you: User;
 }
 
 @ObjectType()

@@ -9,6 +9,7 @@ import {
 	AuthPayload,
 	followUnfollowUserInput,
 	updateUserInput,
+	followUnfollowUserRetrun,
 } from "./type";
 import getHashedPassword from "../../utils/getHashedPassword";
 import getUserWithToken from "../../utils/getUserWithToken";
@@ -71,7 +72,7 @@ export class UserResolver {
 		}
 	}
 
-	@Mutation((returns) => User, { nullable: true })
+	@Mutation((returns) => followUnfollowUserRetrun, { nullable: true })
 	async followUser(
 		@Arg("data") data: followUnfollowUserInput,
 		@Ctx() ctx: CTX
@@ -93,7 +94,7 @@ export class UserResolver {
 				},
 			});
 
-			const user = await prisma.user.findOne({
+			const user1 = await prisma.user.findOne({
 				where: {
 					id: me,
 				},
@@ -102,14 +103,26 @@ export class UserResolver {
 				},
 			});
 
-			return user;
+			const user2 = await prisma.user.findOne({
+				where: {
+					id: you,
+				},
+				include: {
+					follower: true,
+				},
+			});
+
+			return {
+				me: user1,
+				you: user2,
+			};
 		} catch (err) {
 			console.log(err);
 			throw new Error("err");
 		}
 	}
 
-	@Mutation((returns) => User, { nullable: true })
+	@Mutation((returns) => followUnfollowUserRetrun, { nullable: true })
 	async unFollowUser(
 		@Arg("data") data: followUnfollowUserInput,
 		@Ctx() ctx: CTX
@@ -131,7 +144,7 @@ export class UserResolver {
 				},
 			});
 
-			const user = await prisma.user.findOne({
+			const user1 = await prisma.user.findOne({
 				where: {
 					id: me,
 				},
@@ -140,7 +153,19 @@ export class UserResolver {
 				},
 			});
 
-			return user;
+			const user2 = await prisma.user.findOne({
+				where: {
+					id: you,
+				},
+				include: {
+					follower: true,
+				},
+			});
+
+			return {
+				me: user1,
+				you: user2,
+			};
 		} catch (err) {
 			console.log(err);
 			throw new Error("err");

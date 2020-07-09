@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 
-import { fullPostInfo, userInfo, followInfo } from "../fragment";
+import { fullPostInfo, userInfo, fullUserInfo } from "../fragment";
 
 const MUTATION_CREATE_POST = gql`
 	mutation _createPost($post: createPostInput!) {
@@ -67,23 +67,29 @@ const MUTATION_UPDATE_USER = gql`
 const MUTATION_FOLLOW_USER = gql`
 	mutation _followUser($data: followUnfollowUserInput!) {
 		followUser(data: $data) {
-			following {
-				...follow_info
+			me {
+				...full_user_info
+			}
+			you {
+				...full_user_info
 			}
 		}
 	}
-	${followInfo}
+	${fullUserInfo}
 `;
 
 const MUTATION_UNFOLLOW_USER = gql`
 	mutation _unFollowUser($data: followUnfollowUserInput!) {
 		unFollowUser(data: $data) {
-			following {
-				...follow_info
+			me {
+				...full_user_info
+			}
+			you {
+				...full_user_info
 			}
 		}
 	}
-	${followInfo}
+	${fullUserInfo}
 `;
 
 export {
