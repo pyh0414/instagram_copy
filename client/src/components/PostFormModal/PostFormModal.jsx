@@ -13,7 +13,7 @@ import {
 	MUTATION_SINGLE_FILE_UPLOAD,
 } from "../../action/mutation";
 import { QUERY_FILE_REMOVE } from "../../action/query";
-import { VALIDATE_USER } from "../../typeValidate";
+import { VALIDATE_LOGGED_IN_USER } from "../../typeValidate";
 
 const PostForm = ({ setmodalVisibleProps }) => {
 	const [modalVisible, setmodalVisible] = useState(true);
@@ -33,7 +33,7 @@ const PostForm = ({ setmodalVisibleProps }) => {
 			}).allPosts;
 
 			const user = await cache.readQuery({
-				query: VALIDATE_USER,
+				query: VALIDATE_LOGGED_IN_USER,
 			}).user;
 
 			const allPosts = [newPost, ...currentAllPosts];
@@ -43,7 +43,7 @@ const PostForm = ({ setmodalVisibleProps }) => {
 			});
 
 			client.writeQuery({
-				query: VALIDATE_USER,
+				query: VALIDATE_LOGGED_IN_USER,
 				data: { user: userWithNewPost },
 			});
 			client.writeQuery({ query: VALIDATE_ALL_POSTS, data: { allPosts } });
