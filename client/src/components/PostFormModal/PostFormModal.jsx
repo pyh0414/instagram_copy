@@ -26,13 +26,13 @@ const PostForm = ({ setmodalVisibleProps }) => {
 	const client = useApolloClient();
 
 	const [createPost] = useMutation(MUTATION_CREATE_POST, {
-		update: async (cache, data) => {
+		update: (cache, data) => {
 			const newPost = data.data.createPost;
-			const currentAllPosts = await cache.readQuery({
+			const currentAllPosts = cache.readQuery({
 				query: VALIDATE_ALL_POSTS,
 			}).allPosts;
 
-			const user = await cache.readQuery({
+			const user = cache.readQuery({
 				query: VALIDATE_LOGGED_IN_USER,
 			}).user;
 
@@ -46,7 +46,11 @@ const PostForm = ({ setmodalVisibleProps }) => {
 				query: VALIDATE_LOGGED_IN_USER,
 				data: { user: userWithNewPost },
 			});
-			client.writeQuery({ query: VALIDATE_ALL_POSTS, data: { allPosts } });
+
+			client.writeQuery({
+				query: VALIDATE_ALL_POSTS,
+				data: { allPosts },
+			});
 		},
 		onCompleted: () => {
 			setmodalVisibleProps(false);
