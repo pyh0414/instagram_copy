@@ -3,7 +3,6 @@ import { useApolloClient, useMutation, useQuery } from "@apollo/react-hooks";
 import { EditOutlined } from "@ant-design/icons";
 import { Row, Col, Button } from "antd";
 import produce from "immer";
-import gql from "graphql-tag";
 
 import {
 	Wrapper,
@@ -14,33 +13,14 @@ import {
 	RefWrapper,
 	ShowFollow,
 } from "./style";
-import { GET_ME } from "../../components/PostCard/Body/Body";
-import { OTHER_USER_INFO } from "../../components/Header/Item";
+import { CLIENT_LOGGED_IN_USER, CLIENT_OTHER_USER } from "../../action/client";
+import {
+	MUTATION_FOLLOW_USER,
+	MUTATION_UNFOLLOW_USER,
+} from "../../action/mutation";
 import PostModal from "../../components/PostModal";
 import UserUpdateModal from "../../components/UserUpdateModal";
 import Item from "../../components/PostCard/Body/FollowUnfollowUser";
-
-const FOLLOW_USER = gql`
-	mutation _followUser($data: followUnfollowUserInput!) {
-		followUser(data: $data) {
-			id
-			name
-			userId
-			profile
-		}
-	}
-`;
-
-const UNFOLLOW_USER = gql`
-	mutation _unFollowUser($data: followUnfollowUserInput!) {
-		unFollowUser(data: $data) {
-			id
-			name
-			userId
-			profile
-		}
-	}
-`;
 
 const User = () => {
 	const [postModal, setPostModal] = useState(false);
@@ -49,23 +29,23 @@ const User = () => {
 	const showFollowingRef = useRef();
 	const showFollowerRef = useRef();
 
-	const { data: myData } = useQuery(GET_ME);
-	const { data: otherData } = useQuery(OTHER_USER_INFO);
+	const { data: myData } = useQuery(CLIENT_LOGGED_IN_USER);
+	const { data: otherData } = useQuery(CLIENT_OTHER_USER);
 
 	const me = myData.user;
 	const you = otherData.otherUser;
-	let currentUser;
+	let currentPageUser;
 	let isMeFollowYou;
 
 	if (you) {
 		isMeFollowYou = me.following.some((v) => {
 			return v.id === you.id;
 		});
-		currentUser = you;
+		currentPageUser = you;
 	} else {
-		currentUser = me;
+		currentPageUser = me;
 	}
-
+	console.log(currentPageUser);
 	const client = useApolloClient();
 
 	const onFollowingMouseOver = useCallback(() => {
@@ -96,36 +76,35 @@ const User = () => {
 		[]
 	);
 
-	const [followUser] = useMutation(FOLLOW_USER, {
+	const [followUser] = useMutation(MUTATION_FOLLOW_USER, {
 		update: async (cache, data) => {
-			const meWithNewFollowing = produce(me, (draft) => {
-				draft.following.push(you);
+			const result = data.data.followUser;
+			const newMe = produce(me, (draft) => {
+				draft.following = result.me.following;
 			});
 
-			const youWithNewFollower = produce(you, (draft) => {
-				draft.follower.push(you);
+			const newYou = produce(you, (draft) => {
+				draft.follower = result.you.follower;
 			});
 
 			client.writeData({
 				data: {
-					user: meWithNewFollowing,
-					otherUser: youWithNewFollower,
+					user: newMe,
+					otherUser: newYou,
 				},
 			});
 		},
 	});
 
-	const [unFollowUser] = useMutation(UNFOLLOW_USER, {
+	const [unFollowUser] = useMutation(MUTATION_UNFOLLOW_USER, {
 		update: async (cache, data) => {
-			const meWithUnFollowing = me.following.filter((v) => v.id !== you.id);
-			const youWithUnFollower = you.follower.filter((v) => v.id !== me.id);
-
+			const result = data.data.unFollowUser;
 			const newMe = produce(me, (draft) => {
-				draft.following = meWithUnFollowing;
+				draft.following = result.me.following;
 			});
 
 			const newYou = produce(you, (draft) => {
-				draft.follower = youWithUnFollower;
+				draft.follower = result.you.follower;
 			});
 
 			client.writeData({
@@ -153,7 +132,7 @@ const User = () => {
 				},
 			},
 		});
-	});
+	}, [followUser, me, you]);
 
 	const unFollow = useCallback(() => {
 		const data = {
@@ -170,7 +149,7 @@ const User = () => {
 				},
 			},
 		});
-	});
+	}, [unFollowUser, me, you]);
 
 	return (
 		<div>
@@ -180,7 +159,7 @@ const User = () => {
 						<Col span={9}>
 							{
 								<UserImage
-									src={`http://localhost:4000/${currentUser.profile}`}
+									src={`http://localhost:4000/${currentPageUser.profile}`}
 								/>
 							}
 						</Col>
@@ -193,9 +172,11 @@ const User = () => {
 										color: "#262626",
 									}}
 								>
-									{currentUser.userId}
+									{currentPageUser.userId}
 								</span>
-								<span style={{ marginLeft: "10px" }}>{currentUser.name}</span>
+								<span style={{ marginLeft: "10px" }}>
+									{currentPageUser.name}
+								</span>
 							</div>
 
 							{!you ? (
@@ -222,7 +203,7 @@ const User = () => {
 
 							<CustomUl>
 								<li>
-									게시글<span>{currentUser.myPosts.length}</span>
+									게시글<span>{currentPageUser.myPosts.length}</span>
 								</li>
 
 								<RefWrapper
@@ -230,12 +211,12 @@ const User = () => {
 									onMouseOut={onFollowingMouseOut}
 								>
 									<li>
-										팔로잉<span>{currentUser.following.length}</span>
+										팔로잉<span>{currentPageUser.following.length}</span>
 									</li>
 									<ShowFollow ref={showFollowingRef}>
 										<div id="header">팔로잉</div>
 										<div id="items">
-											{currentUser.following.map((v, i) => (
+											{currentPageUser.following.map((v, i) => (
 												<Item user={v} loggedInUser={me} key={i} />
 											))}
 										</div>
@@ -246,12 +227,12 @@ const User = () => {
 									onMouseOut={onFollowerMouseOut}
 								>
 									<li>
-										팔로워<span>{currentUser.follower.length}</span>
+										팔로워<span>{currentPageUser.follower.length}</span>
 									</li>
 									<ShowFollow ref={showFollowerRef}>
 										<div id="header">팔로워</div>
 										<div id="items">
-											{currentUser.follower.map((v, i) => (
+											{currentPageUser.follower.map((v, i) => (
 												<Item user={v} loggedInUser={me} key={i} />
 											))}
 										</div>
@@ -263,7 +244,7 @@ const User = () => {
 					</Row>
 				</UserInfo>
 				<Row>
-					{currentUser.myPosts.map((v, i) => {
+					{currentPageUser.myPosts.map((v, i) => {
 						return (
 							<Col span={8} key={i} style={{ marginTop: "10px" }}>
 								<div style={{ height: "250px" }}>
@@ -277,12 +258,16 @@ const User = () => {
 					})}
 				</Row>
 				{postModal && (
-					<PostModal onCloseModal={onCloseModal} post={post} me={currentUser} />
+					<PostModal
+						onCloseModal={onCloseModal}
+						post={post}
+						me={currentPageUser}
+					/>
 				)}
 				{userUpdateModal && (
 					<UserUpdateModal
 						onCloseModalProps={setUserUpdateModal}
-						me={currentUser}
+						me={currentPageUser}
 					/>
 				)}
 			</Wrapper>
