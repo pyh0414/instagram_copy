@@ -3,32 +3,15 @@ import { useMutation, useLazyQuery } from "@apollo/react-hooks";
 import { UploadOutlined } from "@ant-design/icons";
 import { Input, Button, message } from "antd";
 import { navigate } from "@reach/router";
-import gql from "graphql-tag";
 
 import { Foot, Wrapper, FormCustom, ImageCustom } from "./style";
 
 import signUpValidation from "../../utils/signUpValidation";
-
-const GET_USER = gql`
-	query _signUpGetUser($userId: String!) {
-		user(userId: $userId) {
-			userId
-			name
-		}
-	}
-`;
-
-const SINGLE_FILE_UPLOAD = gql`
-	mutation _signUpSingleFileUpload($file: Upload!) {
-		singleFileUpload(file: $file)
-	}
-`;
-
-const CREATE_USER = gql`
-	mutation _signUpCreateUser($user: createUserInput!) {
-		createUser(user: $user)
-	}
-`;
+import {
+	MUTATION_SINGLE_FILE_UPLOAD,
+	MUTATION_CREATE_USER,
+} from "../../action/mutation";
+import { QUERY_USER_DUPLICATE_CHECK } from "../../action/query";
 
 const SignUp = () => {
 	const [userId, setChangeUserId] = useState("");
@@ -41,7 +24,7 @@ const SignUp = () => {
 
 	const imageInput = useRef();
 
-	const [createUser] = useMutation(CREATE_USER, {
+	const [createUser] = useMutation(MUTATION_CREATE_USER, {
 		onCompleted: ({ createUser }) => {
 			if (createUser) {
 				message.success("가입 성공 되었습니다.", 0.7, () => {
@@ -54,14 +37,14 @@ const SignUp = () => {
 			}
 		},
 	});
-	const [singleFileUpload] = useMutation(SINGLE_FILE_UPLOAD, {
+	const [singleFileUpload] = useMutation(MUTATION_SINGLE_FILE_UPLOAD, {
 		onCompleted: (data) => {
 			const filePath = data.singleFileUpload;
 			setProfile(filePath[0]);
 		},
 	});
 
-	const [getUser] = useLazyQuery(GET_USER, {
+	const [getUser] = useLazyQuery(QUERY_USER_DUPLICATE_CHECK, {
 		onCompleted: (data) => {
 			setHasSameIdChecked(true);
 			if (data.user) {
