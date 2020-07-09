@@ -3,7 +3,6 @@ import { useApolloClient, useMutation, useQuery } from "@apollo/react-hooks";
 import { EditOutlined } from "@ant-design/icons";
 import { Row, Col, Button } from "antd";
 import produce from "immer";
-import gql from "graphql-tag";
 
 import {
 	Wrapper,
@@ -14,11 +13,7 @@ import {
 	RefWrapper,
 	ShowFollow,
 } from "./style";
-import {
-	CLIENT_LOGGED_IN_USER,
-	CLIENT_OTHER_USER,
-	CLIENT_LOGGED_IN_AND_OTHER_USER,
-} from "../../action/client";
+import { CLIENT_LOGGED_IN_AND_OTHER_USER } from "../../action/client";
 import {
 	MUTATION_FOLLOW_USER,
 	MUTATION_UNFOLLOW_USER,
@@ -34,6 +29,7 @@ const User = () => {
 	const showFollowingRef = useRef();
 	const showFollowerRef = useRef();
 
+	const client = useApolloClient();
 	const { data } = useQuery(CLIENT_LOGGED_IN_AND_OTHER_USER);
 
 	const me = data.user;
@@ -48,9 +44,6 @@ const User = () => {
 		});
 		currentPageUser = you;
 	}
-	console.log(me);
-	console.log(you);
-	const client = useApolloClient();
 
 	const onFollowingMouseOver = useCallback(() => {
 		showFollowingRef.current.style.display = "block";
@@ -269,10 +262,7 @@ const User = () => {
 					/>
 				)}
 				{userUpdateModal && (
-					<UserUpdateModal
-						onCloseModalProps={setUserUpdateModal}
-						me={currentPageUser}
-					/>
+					<UserUpdateModal onCloseModalProps={setUserUpdateModal} me={me} />
 				)}
 			</Wrapper>
 		</div>
