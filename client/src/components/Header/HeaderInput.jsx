@@ -5,11 +5,10 @@ const HeaderInput = ({ onDelaySearch }) => {
 	const [userId, setUserId] = useState("");
 	const onChangeUserId = useCallback(
 		(e) => {
-			const userId = e.target.value;
-			setUserId(userId);
-			onDelaySearch(userId);
+			setUserId(e.target.value);
+			onDelaySearch(e.target.value);
 		},
-		[userId]
+		[onDelaySearch]
 	);
 
 	return (

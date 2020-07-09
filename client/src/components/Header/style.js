@@ -21,3 +21,13 @@ export const Search = styled.div`
 	display: block;
 	margin: 0px auto;
 `;
+
+export const SearchUsers = styled.div`
+	margin-top: 3px;
+	background-color: #ffffff;
+	border: 1px solid gray;
+	position: absolute;
+	z-index: 1;
+	height: auto;
+	width: 240px;
+`;
