@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 
-import { fullPostInfo, followInfo, fullUserInfo } from "./fragment";
+import { fullPostInfo, fullUserInfo } from "./fragment";
 
 const VALIDATE_ALL_POSTS = gql`
 	query {
