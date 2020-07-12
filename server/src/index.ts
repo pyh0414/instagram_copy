@@ -30,7 +30,7 @@ const main = async () => {
 	});
 
 	server.express.use("/images", express.static("images"));
-	server.express.use(authMiddleware);
+	// server.express.use(authMiddleware);
 
 	const options = {
 		cors: {
@@ -38,6 +38,7 @@ const main = async () => {
 			origin: "*",
 		},
 		endpoint: "/graphql",
+		subscriptions: "/graphql",
 	};
 
 	server.start(options, (): void => {
