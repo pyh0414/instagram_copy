@@ -7,6 +7,7 @@ import { ApolloProvider } from "@apollo/react-hooks";
 import { ApolloClient } from "apollo-client";
 import { InMemoryCache } from "apollo-cache-inmemory";
 import { createUploadLink } from "apollo-upload-client";
+import { persistCache } from "apollo-cache-persist";
 
 import "antd/dist/antd.css"; // or 'antd/dist/antd.less' // antd를 사용하기 위함
 import App from "./App";
@@ -25,7 +26,6 @@ const httpWithUploadLink = createUploadLink({
 });
 
 const link = split(
-	// split based on operation type
 	({ query }) => {
 		const definition = getMainDefinition(query);
 		return (
@@ -44,14 +44,18 @@ const client = new ApolloClient({
 	resolvers: {},
 });
 
-// const client = new ApolloClient({
-// 	cache,
-// 	link: createUploadLink({
-// 		uri: "http://localhost:4000/graphql",
-// 	}),
-// 	connectToDevTools: true,
-// 	resolvers: {},
-// });
+async function setupPersistence() {
+	try {
+		await persistCache({
+			cache: cache,
+			storage: window.localStorage,
+		});
+	} catch (err) {
+		console.log(err);
+	}
+}
+
+setupPersistence();
 
 cache.writeData({
 	data: {
@@ -59,6 +63,7 @@ cache.writeData({
 		user: null,
 		allPosts: [],
 		otherUser: null,
+		allRooms: [],
 	},
 });
 
