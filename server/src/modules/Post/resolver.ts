@@ -33,7 +33,6 @@ export class PostResolver {
 			return null;
 		} catch (err) {
 			console.log(err);
-			throw new Error(err);
 		}
 	}
 
@@ -61,7 +60,6 @@ export class PostResolver {
 			return false;
 		} catch (err) {
 			console.log(err);
-			throw new Error(err);
 		}
 	}
 
@@ -110,7 +108,28 @@ export class PostResolver {
 				},
 				include: {
 					images: true,
-					author: true,
+					author: {
+						include: {
+							following: true,
+							follower: true,
+							myPosts: {
+								include: {
+									images: true,
+									author: true,
+									likers: {
+										include: {
+											user: true,
+										},
+									},
+									comments: {
+										include: {
+											author: true,
+										},
+									},
+								},
+							},
+						},
+					},
 					likers: {
 						include: {
 							user: true,
@@ -127,7 +146,6 @@ export class PostResolver {
 			return fullPost;
 		} catch (err) {
 			console.log(err);
-			throw new Error(err);
 		}
 	}
 
@@ -135,7 +153,6 @@ export class PostResolver {
 	async getAllPosts(@Ctx() ctx: CTX) {
 		try {
 			const { prisma } = ctx;
-
 			const posts = await prisma.post.findMany({
 				include: {
 					images: true,
@@ -152,10 +169,10 @@ export class PostResolver {
 					},
 				},
 			});
+
 			return posts;
 		} catch (err) {
 			console.log(err);
-			throw new Error(err);
 		}
 	}
 }

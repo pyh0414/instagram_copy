@@ -7,19 +7,24 @@ import PostCard from "../../components/PostCard";
 import UserInfo from "../../components/UserInfo";
 import Messenger from "../../components/Messenger";
 import { CLIENT_ALL_POSTS } from "../../action/client";
+import { CLIENT_LOGGED_IN_USER } from "../../action/client";
 import { Wrapper, Side } from "./style";
 
 const Main = () => {
-	const { data } = useQuery(CLIENT_ALL_POSTS);
+	const { data: posts, loading: postsLoading } = useQuery(CLIENT_ALL_POSTS);
+	const { data: loggedInUser, loading: loggedInUserLoading } = useQuery(
+		CLIENT_LOGGED_IN_USER
+	);
 
 	return (
 		<div style={{ backgroundColor: "whilte" }}>
 			<Wrapper>
 				<Row>
 					<Col md={16}>
-						{data.allPosts.map((post) => {
-							return <PostCard key={post.id} post={post} />;
-						})}
+						{!postsLoading &&
+							posts.allPosts.map((post) => {
+								return <PostCard key={post.id} post={post} />;
+							})}
 					</Col>
 
 					<Col
@@ -30,9 +35,10 @@ const Main = () => {
 						}}
 					>
 						<Side>
-							{/* <UserInfo user={user} /> */}
-							{/* <UserInfo />
-							<Messenger /> */}
+							{!loggedInUserLoading && (
+								<UserInfo loggedInUser={loggedInUser.user} />
+							)}
+							<Messenger />
 						</Side>
 					</Col>
 				</Row>
