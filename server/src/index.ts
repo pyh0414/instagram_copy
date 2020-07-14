@@ -9,12 +9,19 @@ import { UserResolver } from "./modules/User/resolver";
 import { FileResolver } from "./modules/File/resolver";
 import { PostResolver } from "./modules/Post/resolver";
 import { CommentResolver } from "./modules/Comment/resolver";
+import { RoomResolver } from "./modules/Room/resolver";
 
 import { authMiddleware } from "./middleware/authMiddleware";
 
 const main = async () => {
 	const schema = await buildSchema({
-		resolvers: [UserResolver, FileResolver, PostResolver, CommentResolver],
+		resolvers: [
+			UserResolver,
+			FileResolver,
+			PostResolver,
+			CommentResolver,
+			RoomResolver,
+		],
 		validate: false,
 	});
 	const prisma = new PrismaClient();
