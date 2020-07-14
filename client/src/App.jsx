@@ -7,8 +7,8 @@ import Pages from "./pages";
 import SignIn from "./pages/signIn";
 import SignUp from "./pages/signUp";
 
-import { QUERY_ALL_POSTS } from "./action/query";
-import { VALIDATE_ALL_POSTS } from "./typeValidate";
+import { QUERY_ALL_POSTS, QUERY_ALL_ROOMS } from "./action/query";
+import { VALIDATE_ALL_POSTS, VALIDATE_ALL_ROOMS } from "./typeValidate";
 import { IS_LOGGED_IN } from "./action/client";
 
 const App = () => {
@@ -27,6 +27,23 @@ const App = () => {
 				query: VALIDATE_ALL_POSTS,
 				data: {
 					allPosts,
+				},
+			});
+		},
+	});
+
+	useQuery(QUERY_ALL_ROOMS, {
+		context: {
+			headers: {
+				authorization: "Bearer pass",
+			},
+		},
+		onCompleted: async (data) => {
+			const allRooms = data.getAllRooms;
+			client.writeQuery({
+				query: VALIDATE_ALL_ROOMS,
+				data: {
+					allRooms,
 				},
 			});
 		},
