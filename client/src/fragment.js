@@ -1,5 +1,7 @@
 import gql from "graphql-tag";
 
+import { roomUserInfo, chatUserInfo } from "./fragment/room";
+
 const userInfo = gql`
 	fragment user_info on User {
 		id
@@ -34,7 +36,10 @@ const fullPostInfo = gql`
 		id
 		content
 		author {
-			...user_info
+			id
+			userId
+			name
+			profile
 		}
 		images {
 			id
@@ -73,4 +78,28 @@ const fullUserInfo = gql`
 	${fullPostInfo}
 `;
 
-export { userInfo, commentInfo, fullPostInfo, fullUserInfo, followInfo };
+const fullRoomInfo = gql`
+	fragment full_room_info on Room {
+		id
+		name
+		owner {
+			...room_user_info
+		}
+		chats {
+			content
+			user {
+				...chat_user_info
+			}
+		}
+	}
+	${roomUserInfo}
+	${chatUserInfo}
+`;
+export {
+	userInfo,
+	commentInfo,
+	fullPostInfo,
+	fullUserInfo,
+	followInfo,
+	fullRoomInfo,
+};
