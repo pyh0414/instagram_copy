@@ -1,5 +1,4 @@
 import jwt from "jsonwebtoken";
-import { nextTick } from "process";
 import express from "express";
 
 export const authMiddleware = async (
@@ -10,7 +9,6 @@ export const authMiddleware = async (
 	if (req.method === "OPTIONS") {
 		return next();
 	}
-
 	const token: string = req.headers.authorization.split("Bearer ")[1];
 	if (token === "pass") {
 		return next();
