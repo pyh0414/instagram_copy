@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 
-import { fullPostInfo, fullUserInfo } from "./fragment";
+import { fullPostInfo, fullUserInfo, fullRoomInfo } from "./fragment";
 
 const VALIDATE_ALL_POSTS = gql`
 	query {
@@ -9,6 +9,15 @@ const VALIDATE_ALL_POSTS = gql`
 		}
 	}
 	${fullPostInfo}
+`;
+
+const VALIDATE_ALL_ROOMS = gql`
+	query {
+		allRooms {
+			...full_room_info
+		}
+	}
+	${fullRoomInfo}
 `;
 
 const VALIDATE_LOGGED_IN_USER = gql`
@@ -29,4 +38,9 @@ const VALIDATE_OTHER_USER = gql`
 	${fullUserInfo}
 `;
 
-export { VALIDATE_ALL_POSTS, VALIDATE_LOGGED_IN_USER, VALIDATE_OTHER_USER };
+export {
+	VALIDATE_ALL_POSTS,
+	VALIDATE_LOGGED_IN_USER,
+	VALIDATE_OTHER_USER,
+	VALIDATE_ALL_ROOMS,
+};

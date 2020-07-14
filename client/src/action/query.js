@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 
-import { fullUserInfo, fullPostInfo } from "../fragment";
+import { fullUserInfo, fullPostInfo, fullRoomInfo } from "../fragment";
 
 const QUERY_ALL_POSTS = gql`
 	query {
@@ -48,10 +48,20 @@ const QUERY_USER_DUPLICATE_CHECK = gql`
 	}
 `;
 
+const QUERY_ALL_ROOMS = gql`
+	query {
+		getAllRooms {
+			...full_room_info
+		}
+	}
+	${fullRoomInfo}
+`;
+
 export {
 	QUERY_ALL_POSTS,
 	QUERY_FILE_REMOVE,
 	QUERY_SIGN_IN,
 	QUERY_USER_DUPLICATE_CHECK,
 	QUERY_OTHER_USER,
+	QUERY_ALL_ROOMS,
 };

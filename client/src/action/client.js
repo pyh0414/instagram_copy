@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import { fullPostInfo, fullUserInfo } from "../fragment";
+import { fullPostInfo, fullUserInfo, fullRoomInfo } from "../fragment";
 
 const IS_LOGGED_IN = gql`
 	query {
@@ -46,10 +46,20 @@ const CLIENT_LOGGED_IN_AND_OTHER_USER = gql`
 	${fullUserInfo}
 `;
 
+const CLIENT_ALL_ROOMS = gql`
+	query {
+		allRooms @client {
+			...full_room_info
+		}
+	}
+	${fullRoomInfo}
+`;
+
 export {
 	IS_LOGGED_IN,
 	CLIENT_ALL_POSTS,
 	CLIENT_LOGGED_IN_USER,
 	CLIENT_OTHER_USER,
 	CLIENT_LOGGED_IN_AND_OTHER_USER,
+	CLIENT_ALL_ROOMS,
 };

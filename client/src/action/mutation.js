@@ -1,6 +1,11 @@
 import gql from "graphql-tag";
 
-import { fullPostInfo, userInfo, fullUserInfo } from "../fragment";
+import {
+	fullPostInfo,
+	userInfo,
+	fullUserInfo,
+	fullRoomInfo,
+} from "../fragment";
 
 const MUTATION_CREATE_POST = gql`
 	mutation _createPost($post: createPostInput!) {
@@ -9,6 +14,15 @@ const MUTATION_CREATE_POST = gql`
 		}
 	}
 	${fullPostInfo}
+`;
+
+const MUTATION_CREATE_ROOM = gql`
+	mutation _createRoom($room: createRoomInput!) {
+		createRoom(room: $room) {
+			...full_room_info
+		}
+	}
+	${fullRoomInfo}
 `;
 
 const MUTATION_MULTIPLE_FILE_UPLOAD = gql`
@@ -103,4 +117,5 @@ export {
 	MUTATION_UPDATE_USER,
 	MUTATION_FOLLOW_USER,
 	MUTATION_UNFOLLOW_USER,
+	MUTATION_CREATE_ROOM,
 };

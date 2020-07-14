@@ -4,18 +4,15 @@ import { Button } from "antd";
 
 import { Wrapper } from "./style";
 
-// const RoomItem = ({ room }) => {
-const RoomItem = () => {
-	const onRemoveRoom = useCallback([]);
+const RoomItem = ({ room }) => {
+	const onRemoveRoom = useCallback((roomId) => () => {}, []);
 
-	const onEnterRoom = useCallback([]);
-	const room = {
-		id: "!!",
-	};
+	const onEnterRoom = useCallback((roomId) => () => {}, []);
+
 	return (
 		<Wrapper>
-			{/* <span>{room.name}</span> */}
-			<span>방제목</span>
+			<span>{room.name}</span>
+
 			{/* {user && user.id === room.master ? ( */}
 			{true ? (
 				<>
