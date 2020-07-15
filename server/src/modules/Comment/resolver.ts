@@ -45,10 +45,8 @@ export class CommentResolver {
 				},
 			});
 			return fullComment;
-			// return PostId, content, User, id
 		} catch (err) {
 			console.log(err);
-			throw new Error(err);
 		}
 	}
 }
