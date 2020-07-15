@@ -1,6 +1,7 @@
 import gql from "graphql-tag";
 
-import { roomUserInfo, chatUserInfo } from "./fragment/room";
+import { roomUserInfo } from "./fragment/room";
+import { chatUserInfo } from "./fragment/chat";
 
 const userInfo = gql`
 	fragment user_info on User {
@@ -78,6 +79,16 @@ const fullUserInfo = gql`
 	${fullPostInfo}
 `;
 
+const fullChatInfo = gql`
+	fragment full_chat_info on Chat {
+		content
+		user {
+			...chat_user_info
+		}
+	}
+	${chatUserInfo}
+`;
+
 const fullRoomInfo = gql`
 	fragment full_room_info on Room {
 		id
@@ -86,14 +97,12 @@ const fullRoomInfo = gql`
 			...room_user_info
 		}
 		chats {
-			content
-			user {
-				...chat_user_info
-			}
+			...full_chat_info
 		}
 	}
 	${roomUserInfo}
 	${chatUserInfo}
+	${fullChatInfo}
 `;
 export {
 	userInfo,
@@ -102,4 +111,5 @@ export {
 	fullUserInfo,
 	followInfo,
 	fullRoomInfo,
+	fullChatInfo,
 };

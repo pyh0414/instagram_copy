@@ -8,12 +8,4 @@ const roomUserInfo = gql`
 	}
 `;
 
-const chatUserInfo = gql`
-	fragment chat_user_info on User {
-		id
-		userId
-		profile
-	}
-`;
-
-export { roomUserInfo, chatUserInfo };
+export { roomUserInfo };
