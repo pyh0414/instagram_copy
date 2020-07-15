@@ -5,7 +5,10 @@ import produce from "immer";
 
 import { HeaderWrapper } from "./style";
 import { MUTATION_CREATE_ROOM } from "../../../action/mutation";
-import { SUBSCRIPTION_CREATE_ROOM } from "../../../action/subscription";
+import {
+	SUBSCRIPTION_CREATE_ROOM,
+	SUBSCRIPTION_REMOVE_ROOM,
+} from "../../../action/subscription";
 import { VALIDATE_ALL_ROOMS } from "../../../typeValidate";
 import { CLIENT_ALL_ROOMS } from "../../../action/client";
 
@@ -15,7 +18,14 @@ import RoomItem from "./RoomItem";
 const Room = () => {
 	const [roomName, setRoomName] = useState("");
 
-	const [createRoom] = useMutation(MUTATION_CREATE_ROOM);
+	const [createRoom] = useMutation(MUTATION_CREATE_ROOM, {
+		update: (cache, data) => {
+			if (!data.data.createRoom) {
+				return message.error("방 생성에 실패하였습니다.", 0.7);
+			}
+			return message.success("방을 생성하였습니다.", 0.7);
+		},
+	});
 	const { data } = useQuery(CLIENT_ALL_ROOMS);
 	const allRooms = data.allRooms;
 	// const { subscribeToMore, ...data } = useQuery(QUERY_ALL_ROOMS, {
@@ -31,7 +41,6 @@ const Room = () => {
 			const newRoom = result.subscriptionData.data.createRoomEvent;
 			const currentRooms = result.client.readQuery({ query: CLIENT_ALL_ROOMS })
 				.allRooms;
-
 			const allRooms = produce(currentRooms, (draft) => {
 				draft.push(newRoom);
 			});
@@ -44,6 +53,24 @@ const Room = () => {
 			});
 		},
 	});
+
+	useSubscription(SUBSCRIPTION_REMOVE_ROOM, {
+		onSubscriptionData: (result) => {
+			const deletedRoom = result.subscriptionData.data.removeRoomEvent;
+			const currentRooms = result.client.readQuery({ query: CLIENT_ALL_ROOMS })
+				.allRooms;
+			const roomsWithdeletedRoom = currentRooms.filter(
+				(v) => v.id !== deletedRoom.id
+			);
+			result.client.writeQuery({
+				query: VALIDATE_ALL_ROOMS,
+				data: {
+					allRooms: roomsWithdeletedRoom,
+				},
+			});
+		},
+	});
+
 	const onChnageRoomName = useCallback((e) => {
 		setRoomName(e.target.value);
 	}, []);

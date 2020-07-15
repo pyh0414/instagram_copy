@@ -39,21 +39,3 @@ export class createRoomInput {
 	@Field({ nullable: false })
 	name: string;
 }
-
-type roomOwnerInfo = {
-	id: true;
-	profile: string;
-	userId: string;
-};
-
-@ObjectType()
-export class createRoomSubscriptionPayload {
-	@Field()
-	name: string;
-
-	@Field((type) => User)
-	owner: User;
-
-	@Field((type) => Chat, { nullable: true })
-	chats?: [Chat];
-}

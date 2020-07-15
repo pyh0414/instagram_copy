@@ -11,4 +11,13 @@ const SUBSCRIPTION_CREATE_ROOM = gql`
 	${fullRoomInfo}
 `;
 
-export { SUBSCRIPTION_CREATE_ROOM };
+const SUBSCRIPTION_REMOVE_ROOM = gql`
+	subscription {
+		removeRoomEvent {
+			...full_room_info
+		}
+	}
+	${fullRoomInfo}
+`;
+
+export { SUBSCRIPTION_CREATE_ROOM, SUBSCRIPTION_REMOVE_ROOM };

@@ -18,11 +18,8 @@ const MUTATION_CREATE_POST = gql`
 
 const MUTATION_CREATE_ROOM = gql`
 	mutation _createRoom($room: createRoomInput!) {
-		createRoom(room: $room) {
-			...full_room_info
-		}
+		createRoom(room: $room)
 	}
-	${fullRoomInfo}
 `;
 
 const MUTATION_MULTIPLE_FILE_UPLOAD = gql`
@@ -106,6 +103,12 @@ const MUTATION_UNFOLLOW_USER = gql`
 	${fullUserInfo}
 `;
 
+const MUTATION_REMOVE_ROOM = gql`
+	mutation _removeRoom($roomId: String!) {
+		removeRoom(roomId: $roomId)
+	}
+`;
+
 export {
 	MUTATION_LIKE_TO_POST,
 	MUTATION_UNLIKE_TO_POST,
@@ -118,4 +121,5 @@ export {
 	MUTATION_FOLLOW_USER,
 	MUTATION_UNFOLLOW_USER,
 	MUTATION_CREATE_ROOM,
+	MUTATION_REMOVE_ROOM,
 };
