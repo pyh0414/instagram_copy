@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 
-import { fullRoomInfo } from "../fragment";
+import { fullRoomInfo, fullChatInfo } from "../fragment";
 
 const SUBSCRIPTION_CREATE_ROOM = gql`
 	subscription {
@@ -20,4 +20,17 @@ const SUBSCRIPTION_REMOVE_ROOM = gql`
 	${fullRoomInfo}
 `;
 
-export { SUBSCRIPTION_CREATE_ROOM, SUBSCRIPTION_REMOVE_ROOM };
+const SUBSCRIPTION_CREATE_CHAT = gql`
+	subscription {
+		createChatEvent {
+			...full_chat_info
+		}
+	}
+	${fullChatInfo}
+`;
+
+export {
+	SUBSCRIPTION_CREATE_ROOM,
+	SUBSCRIPTION_REMOVE_ROOM,
+	SUBSCRIPTION_CREATE_CHAT,
+};

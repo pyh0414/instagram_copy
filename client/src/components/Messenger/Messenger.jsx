@@ -1,52 +1,37 @@
-import React, { useEffect } from "react";
+import React, { useState } from "react";
+import { useQuery } from "@apollo/react-hooks";
 
 import Room from "./Room";
 import Chat from "./Chat";
 
 import { Wrapper } from "./style";
+import { CLIENT_ALL_ROOMS } from "../../action/client";
 
 const Messenger = () => {
-	useEffect(() => {
-		// roomSocket &&
-		// 	roomSocket.on("remove_room_success", (roomId) => {
-		// 		dispatch({
-		// 			type: REMOVE_ROOM_SUCCESS,
-		// 			data: roomId,
-		// 		});
-		// 	});
-		// roomSocket &&
-		// 	roomSocket.on("make_room_success", (room) => {
-		// 		const { id, name, master } = room;
-		// 		dispatch({
-		// 			type: MAKE_ROOM_SUCCESS,
-		// 			data: { id, name, master },
-		// 		});
-		// 	});
-		// roomSocket &&
-		// 	roomSocket.on("send_message_success", (data) => {
-		// 		dispatch({
-		// 			type: SEND_MESSAGE_SUCCESS,
-		// 			data,
-		// 		});
-		// 	});
-		// roomSocket &&
-		// 	roomSocket.on("enter_room_success", (room) => {
-		// 		dispatch({
-		// 			type: ENTER_ROOM_SUCCESS,
-		// 			data: room,
-		// 		});
-		// 	});
-		// roomSocket &&
-		// 	roomSocket.on("out_room_success", () => {
-		// 		dispatch({
-		// 			type: OUT_ROOM_SUCCESS,
-		// 		});
-		// 	});
-	}, []);
+	const [currentRoomId, setCurrentRoomId] = useState(-1);
+	const { data } = useQuery(CLIENT_ALL_ROOMS);
 
-	// const { currentRoom } = useSelector((state) => state.chat);
-	const currentRoom = true;
-	return <Wrapper>{currentRoom ? <Chat /> : <Room />}</Wrapper>;
+	const onEnterRoom = (roomId) => {
+		setCurrentRoomId(roomId);
+	};
+
+	const onLeaveRoom = () => {
+		setCurrentRoomId(-1);
+	};
+
+	return (
+		<Wrapper>
+			{currentRoomId > 0 ? (
+				<Chat
+					currentRoomId={currentRoomId}
+					allRooms={data.allRooms}
+					onLeaveRoom={onLeaveRoom}
+				/>
+			) : (
+				<Room allRooms={data.allRooms} onEnterRoom={onEnterRoom} />
+			)}
+		</Wrapper>
+	);
 };
 
 export default Messenger;

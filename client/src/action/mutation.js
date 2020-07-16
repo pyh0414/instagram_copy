@@ -1,11 +1,6 @@
 import gql from "graphql-tag";
 
-import {
-	fullPostInfo,
-	userInfo,
-	fullUserInfo,
-	fullRoomInfo,
-} from "../fragment";
+import { fullPostInfo, userInfo, fullUserInfo } from "../fragment";
 
 const MUTATION_CREATE_POST = gql`
 	mutation _createPost($post: createPostInput!) {
@@ -14,12 +9,6 @@ const MUTATION_CREATE_POST = gql`
 		}
 	}
 	${fullPostInfo}
-`;
-
-const MUTATION_CREATE_ROOM = gql`
-	mutation _createRoom($room: createRoomInput!) {
-		createRoom(room: $room)
-	}
 `;
 
 const MUTATION_MULTIPLE_FILE_UPLOAD = gql`
@@ -109,6 +98,18 @@ const MUTATION_REMOVE_ROOM = gql`
 	}
 `;
 
+const MUTATION_CREATE_ROOM = gql`
+	mutation _createRoom($room: createRoomInput!) {
+		createRoom(room: $room)
+	}
+`;
+
+const MUTATION_CREATE_CHAT = gql`
+	mutation _createChat($data: createChatInput!) {
+		createChat(data: $data)
+	}
+`;
+
 export {
 	MUTATION_LIKE_TO_POST,
 	MUTATION_UNLIKE_TO_POST,
@@ -122,4 +123,5 @@ export {
 	MUTATION_UNFOLLOW_USER,
 	MUTATION_CREATE_ROOM,
 	MUTATION_REMOVE_ROOM,
+	MUTATION_CREATE_CHAT,
 };

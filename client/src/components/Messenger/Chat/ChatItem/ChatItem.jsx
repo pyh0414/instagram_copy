@@ -1,31 +1,21 @@
 import React from "react";
+import { useQuery } from "@apollo/react-hooks";
 
 import { Me, You } from "./style";
 
-// const ChatItem = ({ item }) => {
-const ChatItem = () => {
-	const item = {
-		content: "댓글입니다!!",
-		User: {
-			id: "whwlsvy12",
-			profile: "http://assets.stickpng.com/thumbs/580b57fcd9996e24bc43c521.png",
-		},
-	};
-
-	const user = {
-		id: "EY152",
-	};
+const ChatItem = ({ chat, loggedInUser }) => {
+	const isMyChat = loggedInUser.id === chat.user.id;
 	return (
 		<>
-			{user && user.id === item.User.id ? (
+			{isMyChat ? (
 				<Me>
-					<div> {item.content}</div>
+					<div> {chat.content}</div>
 				</Me>
 			) : (
 				<You>
-					<img src={item.User.profile} alt="user profile" />
-					<span> {item.User.id}</span>
-					<div> {item.content}</div>
+					<img src={`http://localhost:4000/${chat.user.profile}`} />
+					<span> {chat.user.userId}</span>
+					<div> {chat.content}</div>
 				</You>
 			)}
 		</>

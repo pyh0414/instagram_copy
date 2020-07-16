@@ -1,45 +1,71 @@
 import React, { useState, useCallback } from "react";
+import { useMutation, useSubscription } from "@apollo/react-hooks";
 import { Input, Button } from "antd";
-import Icon from "@ant-design/icons";
+import produce from "immer";
 
 import { Wrapper } from "./style";
+import { MUTATION_CREATE_CHAT } from "../../../../action/mutation";
+import { SUBSCRIPTION_CREATE_CHAT } from "../../../../action/subscription";
+import { VALIDATE_ALL_ROOMS } from "../../../../typeValidate";
 
-const Foot = () => {
+const Foot = ({ onLeaveRoom, currentRoomId, allRooms }) => {
 	const [content, setContent] = useState("");
 
+	const [createChat] = useMutation(MUTATION_CREATE_CHAT);
 	const onChangeContent = useCallback((e) => {
 		setContent(e.target.value);
 	}, []);
 
+	useSubscription(SUBSCRIPTION_CREATE_CHAT, {
+		onSubscriptionData: (result) => {
+			const newChat = result.subscriptionData.data.createChatEvent;
+
+			const roomIndex = allRooms.findIndex(
+				(room) => room.id === newChat.room.id
+			);
+
+			const allRoomsWithNewChat = produce(allRooms, (draft) => {
+				draft[roomIndex].chats.push(newChat);
+			});
+
+			result.client.writeQuery({
+				query: VALIDATE_ALL_ROOMS,
+				data: {
+					allRooms: allRoomsWithNewChat,
+				},
+			});
+		},
+	});
+
 	const onEnterPress = useCallback(
 		(e) => {
 			if (e.key === "Enter" && content.trim()) {
-				// axios.post(
-				// 	`/room/${currentRoom.roomId}/chat`,
-				// 	{ content },
-				// 	{ withCredentials: true }
-				// );
+				const data = { content, roomId: parseInt(currentRoomId) };
+				createChat({
+					variables: { data },
+					context: {
+						headers: {
+							authorization: `Bearer ${localStorage.getItem("token")}`,
+						},
+					},
+				});
 				setContent("");
 			}
 		},
-		[content]
+		[content, createChat, currentRoomId]
 	);
-	const onOutRoom = useCallback(() => {
-		// axios
-		// 	.post(`/room/${currentRoom.roomId}/out`, {}, { withCredentials: true })
-		// 	.then((room) => {
-		// 		roomSocket.emit("out_room_request", room.data);
-		// 	});
-	}, []);
+
+	const leaveRoom = () => {
+		onLeaveRoom();
+	};
 	return (
 		<Wrapper>
 			<Input
 				value={content}
 				onChange={onChangeContent}
-				suffix={<Icon type="edit" />}
 				onKeyPress={onEnterPress}
 			/>
-			<Button style={{ height: "100%" }} onClick={onOutRoom}>
+			<Button style={{ height: "100%" }} onClick={leaveRoom}>
 				나가기
 			</Button>
 		</Wrapper>

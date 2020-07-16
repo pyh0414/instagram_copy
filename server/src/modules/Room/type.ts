@@ -19,8 +19,8 @@ export class Room {
 	@Field()
 	name: string;
 
-	@Field((type) => User)
-	owner: User;
+	@Field((type) => User, { nullable: true })
+	owner?: User;
 
 	@Field((type) => Chat, { nullable: true })
 	chats?: Chat[];

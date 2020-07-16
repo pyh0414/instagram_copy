@@ -85,6 +85,9 @@ const fullChatInfo = gql`
 		user {
 			...chat_user_info
 		}
+		room {
+			id
+		}
 	}
 	${chatUserInfo}
 `;

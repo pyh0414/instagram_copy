@@ -49,7 +49,12 @@ export class RoomResolver {
 				},
 				include: {
 					owner: true,
-					chats: true,
+					chats: {
+						include: {
+							user: true,
+							room: true,
+						},
+					},
 				},
 			});
 			await publish(newRoom);
@@ -75,7 +80,12 @@ export class RoomResolver {
 				},
 				include: {
 					owner: true,
-					chats: true,
+					chats: {
+						include: {
+							user: true,
+							room: true,
+						},
+					},
 				},
 			});
 
@@ -102,19 +112,14 @@ export class RoomResolver {
 						},
 					},
 					chats: {
-						select: {
-							content: true,
-							user: {
-								select: {
-									id: true,
-									userId: true,
-									profile: true,
-								},
-							},
+						include: {
+							user: true,
+							room: true,
 						},
 					},
 				},
 			});
+
 			return rooms;
 		} catch (err) {
 			console.log(err);

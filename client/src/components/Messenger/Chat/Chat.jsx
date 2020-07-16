@@ -1,24 +1,27 @@
 import React from "react";
+import { useQuery } from "@apollo/react-hooks";
 
 import ChatItem from "./ChatItem";
 import Foot from "./Foot";
+import { CLIENT_LOGGED_IN_USER } from "../../../action/client";
 
-const Index = () => {
-	const currentRoom = {
-		chats: [1, 2, 3, 4],
-	};
+const Chat = ({ allRooms, onLeaveRoom, currentRoomId }) => {
+	const { data, loading } = useQuery(CLIENT_LOGGED_IN_USER);
+	const currentRoom = allRooms.find((v) => v.id === currentRoomId);
 	return (
 		<>
 			<div style={{ height: "93%", overflow: "scroll" }}>
-				{currentRoom.chats.length > 0 &&
-					currentRoom.chats.map((v, i) => {
-						// return <ChatItem item={v} key={v.id} />;
-						return <ChatItem key={Math.random()} />;
-					})}
+				{currentRoom.chats.map((v, i) => {
+					return <ChatItem chat={v} key={i} loggedInUser={data.user} />;
+				})}
 			</div>
-			<Foot />
+			<Foot
+				onLeaveRoom={onLeaveRoom}
+				currentRoomId={currentRoomId}
+				allRooms={allRooms}
+			/>
 		</>
 	);
 };
 
-export default Index;
+export default Chat;

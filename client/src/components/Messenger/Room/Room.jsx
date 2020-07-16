@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { useMutation, useQuery, useSubscription } from "@apollo/react-hooks";
+import { useMutation, useSubscription } from "@apollo/react-hooks";
 import { Button, Input, message } from "antd";
 import produce from "immer";
 
@@ -10,12 +10,10 @@ import {
 	SUBSCRIPTION_REMOVE_ROOM,
 } from "../../../action/subscription";
 import { VALIDATE_ALL_ROOMS } from "../../../typeValidate";
-import { CLIENT_ALL_ROOMS } from "../../../action/client";
 
-import RoomShow from "./RoomShow";
 import RoomItem from "./RoomItem";
 
-const Room = () => {
+const Room = ({ allRooms, onEnterRoom }) => {
 	const [roomName, setRoomName] = useState("");
 
 	const [createRoom] = useMutation(MUTATION_CREATE_ROOM, {
@@ -26,8 +24,6 @@ const Room = () => {
 			return message.success("방을 생성하였습니다.", 0.7);
 		},
 	});
-	const { data } = useQuery(CLIENT_ALL_ROOMS);
-	const allRooms = data.allRooms;
 	// const { subscribeToMore, ...data } = useQuery(QUERY_ALL_ROOMS, {
 	// 	context: {
 	// 		headers: {
@@ -39,16 +35,15 @@ const Room = () => {
 	useSubscription(SUBSCRIPTION_CREATE_ROOM, {
 		onSubscriptionData: (result) => {
 			const newRoom = result.subscriptionData.data.createRoomEvent;
-			const currentRooms = result.client.readQuery({ query: CLIENT_ALL_ROOMS })
-				.allRooms;
-			const allRooms = produce(currentRooms, (draft) => {
+
+			const roomsWithCreatedRoom = produce(allRooms, (draft) => {
 				draft.push(newRoom);
 			});
 
 			result.client.writeQuery({
 				query: VALIDATE_ALL_ROOMS,
 				data: {
-					allRooms,
+					allRooms: roomsWithCreatedRoom,
 				},
 			});
 		},
@@ -57,15 +52,13 @@ const Room = () => {
 	useSubscription(SUBSCRIPTION_REMOVE_ROOM, {
 		onSubscriptionData: (result) => {
 			const deletedRoom = result.subscriptionData.data.removeRoomEvent;
-			const currentRooms = result.client.readQuery({ query: CLIENT_ALL_ROOMS })
-				.allRooms;
-			const roomsWithdeletedRoom = currentRooms.filter(
+			const roomsWithDeletedRoom = allRooms.filter(
 				(v) => v.id !== deletedRoom.id
 			);
 			result.client.writeQuery({
 				query: VALIDATE_ALL_ROOMS,
 				data: {
-					allRooms: roomsWithdeletedRoom,
+					allRooms: roomsWithDeletedRoom,
 				},
 			});
 		},
@@ -91,7 +84,7 @@ const Room = () => {
 		});
 
 		setRoomName("");
-	}, [roomName]);
+	}, [roomName, createRoom]);
 
 	return (
 		<>
@@ -106,7 +99,7 @@ const Room = () => {
 				</Button>
 			</HeaderWrapper>
 			{allRooms.map((v, i) => (
-				<RoomItem room={v} key={i} />
+				<RoomItem room={v} key={i} onEnterRoom={onEnterRoom} />
 			))}
 			{/* <RoomShow
 				result={data}
