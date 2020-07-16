@@ -12,9 +12,7 @@ import { Wrapper, Side } from "./style";
 
 const Main = () => {
 	const { data: posts, loading: postsLoading } = useQuery(CLIENT_ALL_POSTS);
-	const { data: loggedInUser, loading: loggedInUserLoading } = useQuery(
-		CLIENT_LOGGED_IN_USER
-	);
+	const { data: loggedInUser } = useQuery(CLIENT_LOGGED_IN_USER);
 
 	return (
 		<div style={{ backgroundColor: "whilte" }}>
@@ -35,9 +33,8 @@ const Main = () => {
 						}}
 					>
 						<Side>
-							{!loggedInUserLoading && (
-								<UserInfo loggedInUser={loggedInUser.user} />
-							)}
+							<UserInfo loggedInUser={loggedInUser.user} />
+
 							<Messenger />
 						</Side>
 					</Col>
