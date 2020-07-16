@@ -10,6 +10,7 @@ import { FileResolver } from "./modules/File/resolver";
 import { PostResolver } from "./modules/Post/resolver";
 import { CommentResolver } from "./modules/Comment/resolver";
 import { RoomResolver } from "./modules/Room/resolver";
+import { ChatResolver } from "./modules/Chat/resolver";
 
 import { authMiddleware } from "./middleware/authMiddleware";
 
@@ -21,6 +22,7 @@ const main = async () => {
 			PostResolver,
 			CommentResolver,
 			RoomResolver,
+			ChatResolver,
 		],
 		validate: false,
 	});
