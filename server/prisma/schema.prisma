@@ -13,29 +13,31 @@ generator client {
 // schema 정의
 
 model User {
-  id        Int       @id @default(autoincrement())
-  name      String
-  userId    String    @unique
-  userPw    String
-  profile   String
-  createdAt DateTime  @default(now())
-  myPosts   Post[]    @relation("_PostToUser")
-  comments  Comment[] @relation("_CommentToUser")
-  follower  User[]    @relation("_FollowerFollowing", references: [id]) // 나를 등록한 사람
-  following User[]    @relation("_FollowerFollowing", references: [id]) // 내가 등록한 사람
-  likePosts Post[]    @relation("_likeToPost")
+  id             Int          @id @default(autoincrement())
+  name           String
+  userId         String       @unique
+  userPw         String
+  profile        String
+  createdAt      DateTime     @default(now())
+  myPosts        Post[]       @relation("_PostToUser")
+  comments       Comment[]    @relation("_CommentToUser")
+  follower       User[]       @relation("followerFollowing", references: [id]) // 나를 등록한 사람
+  following      User[]       @relation("followerFollowing", references: [id]) // 내가 등록한 사람
+  likedPosts     likeToPost[]
+  possessedRooms Room[]       @relation("_RoomOwner")
+  chats          Chat[]       @relation("_ChatToUser")
 }
 
 model Post {
-  id          Int       @id @default(autoincrement())
-  content     String
-  createdAt   DateTime  @default(now())
-  author      User      @relation("_PostToUser", fields: [authorId], references: [id])
-  authorId    Int
-  comments    Comment[] @relation("_CommentToPost")
-  hashTags    HashTag[] @relation("_HashTagToPost", references: [id])
-  images      Image[]   @relation("_ImageToPost")
-  likeAuthors User[]    @relation("_likeToPost")
+  id        Int             @id @default(autoincrement())
+  content   String
+  createdAt DateTime        @default(now())
+  author    User            @relation("_PostToUser", fields: [authorId], references: [id])
+  authorId  Int
+  comments  Comment[]       @relation("_CommentToPost")
+  images    Image[]         @relation("_ImageToPost")
+  likers    likeToPost[]
+  hashtags  hashtagToPost[]
 }
 
 model Comment {
@@ -49,10 +51,10 @@ model Comment {
 }
 
 model HashTag {
-  id        Int      @id @default(autoincrement())
-  content   String
-  createdAt DateTime @default(now())
-  posts     Post[]   @relation("_HashTagToPost", references: [id])
+  id             Int             @id @default(autoincrement())
+  content        String
+  createdAt      DateTime        @default(now())
+  hashtagedPosts hashtagToPost[]
 }
 
 model Image {
@@ -61,4 +63,44 @@ model Image {
   createdAt DateTime @default(now())
   post      Post     @relation("_ImageToPost", fields: [postId], references: [id])
   postId    Int
+}
+
+model Room {
+  id        Int      @id @default(autoincrement())
+  name      String
+  owner     User     @relation("_RoomOwner", fields: [ownerId], references: [id])
+  ownerId   Int
+  createdAt DateTime @default(now())
+  chats     Chat[]   @relation("_ChatToRoom")
+}
+
+model Chat {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  content   String
+  room      Room?    @relation("_ChatToRoom", fields: [roomId], references: [id])
+  roomId    Int?
+  user      User?    @relation("_ChatToUser", fields: [userId], references: [id])
+  userId    Int?
+}
+
+// user[] <--> post[]
+model likeToPost {
+  post      Post     @relation(fields: [postId], references: [id])
+  postId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  createdAt DateTime @default(now())
+
+  @@id([postId, userId])
+}
+
+// user[] <--> post[]
+model hashtagToPost {
+  post      Post    @relation(fields: [postId], references: [id])
+  postId    Int
+  hashtag   HashTag @relation(fields: [hashtagId], references: [id])
+  hashtagId Int
+
+  @@id([postId, hashtagId])
 }
