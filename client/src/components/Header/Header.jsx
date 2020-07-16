@@ -121,9 +121,9 @@ const Header = () => {
 							}}
 						/>
 					</Col>
-					<Col md={3}>
+					{/* <Col md={3}>
 						<HeartOutlined type="heart" style={{ fontSize: "23px" }} />
-					</Col>
+					</Col> */}
 					<Col md={3}>
 						<FormOutlined
 							type="form"
