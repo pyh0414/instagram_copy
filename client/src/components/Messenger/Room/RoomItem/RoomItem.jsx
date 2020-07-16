@@ -1,12 +1,12 @@
 import React from "react";
 import { useQuery, useMutation } from "@apollo/react-hooks";
-import { Button, message } from "antd";
+import { Button, message, Spin } from "antd";
 
 import { Wrapper } from "./style";
 import { CLIENT_LOGGED_IN_USER } from "../../../../action/client";
 import { MUTATION_REMOVE_ROOM } from "../../../../action/mutation";
 
-const RoomItem = ({ room }) => {
+const RoomItem = ({ room, onEnterRoom }) => {
 	const { data: loggedInUser, loading: loggedInUserLoading } = useQuery(
 		CLIENT_LOGGED_IN_USER
 	);
@@ -30,14 +30,20 @@ const RoomItem = ({ room }) => {
 			},
 		});
 	};
-	const onEnterRoom = (roomId) => () => {};
-
-	if (loggedInUserLoading) {
-		return <div>loding...</div>;
-	}
+	const enterRoom = (roomId) => () => {
+		onEnterRoom(roomId);
+	};
 
 	const isRoomCreatedByLoggeinUser =
 		room.owner.userId === loggedInUser.user.userId;
+
+	if (loggedInUserLoading) {
+		return (
+			<div>
+				<Spin size="large" />
+			</div>
+		);
+	}
 
 	return (
 		<Wrapper>
@@ -47,7 +53,7 @@ const RoomItem = ({ room }) => {
 				style={{ float: "right" }}
 				type="primary"
 				size="small"
-				onClick={onEnterRoom(room.id)}
+				onClick={enterRoom(room.id)}
 			>
 				입장
 			</Button>

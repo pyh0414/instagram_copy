@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { useApolloClient, useLazyQuery } from "@apollo/react-hooks";
 import OutsideClickHandler from "react-outside-click-handler";
-import { Col, Row } from "antd";
+import { Col, Row, Spin } from "antd";
 import {
 	UserOutlined,
 	FormOutlined,
@@ -12,6 +12,7 @@ import { navigate } from "@reach/router";
 import _ from "lodash";
 
 import { HeaderWrapper, InstagramLogo, Search, SearchUsers } from "./style";
+import instagramLogo from "../../images/instagram_logo.png";
 import { QUERY_OTHER_USER } from "../../action/query";
 import PostFormModal from "../PostFormModal";
 import HeaderInput from "./HeaderInput";
@@ -24,7 +25,7 @@ const Header = () => {
 
 	const client = useApolloClient();
 
-	const [searchUser] = useLazyQuery(QUERY_OTHER_USER, {
+	const [searchUser, { loading }] = useLazyQuery(QUERY_OTHER_USER, {
 		onCompleted: ({ searchUsers }) => {
 			setSearchUsers(searchUsers);
 			setSearchUsersVisible(true);
@@ -67,7 +68,7 @@ const Header = () => {
 		<HeaderWrapper>
 			<Col md={7}>
 				<InstagramLogo
-					src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/220px-Instagram_logo_2016.svg.png"
+					src={instagramLogo}
 					onClick={() => {
 						navigate("/");
 					}}
@@ -90,12 +91,16 @@ const Header = () => {
 								setSearchUsersVisible(false);
 							}}
 						>
-							<SearchUsers>
-								<Item
-									users={searchUsers}
-									setSearchUsersVisible={setSearchUsersVisible}
-								/>
-							</SearchUsers>
+							{loading ? (
+								<Spin size="large" />
+							) : (
+								<SearchUsers>
+									<Item
+										users={searchUsers}
+										setSearchUsersVisible={setSearchUsersVisible}
+									/>
+								</SearchUsers>
+							)}
 						</OutsideClickHandler>
 					)}
 				</Search>
