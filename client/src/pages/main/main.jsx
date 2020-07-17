@@ -19,9 +19,17 @@ const Main = () => {
 			<Wrapper>
 				<Row>
 					<Col md={16}>
-						{posts.allPosts.map((post) => {
-							return <PostCard key={post.id} post={post} />;
-						})}
+						<div
+							style={{
+								marginTop: "13px",
+								overflow: "scroll",
+								height: "100vh",
+							}}
+						>
+							{posts.allPosts.map((post) => {
+								return <PostCard key={post.id} post={post} />;
+							})}
+						</div>
 					</Col>
 
 					<Col
@@ -33,7 +41,6 @@ const Main = () => {
 					>
 						<Side>
 							<UserInfo loggedInUser={loggedInUser.user} />
-
 							<Messenger />
 						</Side>
 					</Col>
