@@ -11,7 +11,7 @@ import { CLIENT_LOGGED_IN_USER } from "../../action/client";
 import { Wrapper, Side } from "./style";
 
 const Main = () => {
-	const { data: posts, loading: postsLoading } = useQuery(CLIENT_ALL_POSTS);
+	const { data: posts } = useQuery(CLIENT_ALL_POSTS);
 	const { data: loggedInUser } = useQuery(CLIENT_LOGGED_IN_USER);
 
 	return (
@@ -19,10 +19,9 @@ const Main = () => {
 			<Wrapper>
 				<Row>
 					<Col md={16}>
-						{!postsLoading &&
-							posts.allPosts.map((post) => {
-								return <PostCard key={post.id} post={post} />;
-							})}
+						{posts.allPosts.map((post) => {
+							return <PostCard key={post.id} post={post} />;
+						})}
 					</Col>
 
 					<Col
