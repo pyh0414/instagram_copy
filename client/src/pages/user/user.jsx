@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useRef } from "react";
 import { useApolloClient, useMutation, useQuery } from "@apollo/react-hooks";
-import { EditOutlined } from "@ant-design/icons";
 import { Row, Col, Button } from "antd";
 import produce from "immer";
 
@@ -44,7 +43,6 @@ const User = () => {
 		});
 		currentPageUser = you;
 	}
-
 	const onFollowingMouseOver = useCallback(() => {
 		showFollowingRef.current.style.display = "block";
 	}, []);
@@ -176,9 +174,9 @@ const User = () => {
 								</span>
 							</div>
 
-							{!you ? (
+							{!you || (you && you.id === me.id) ? (
 								<div>
-									<Button
+									{/* <Button
 										style={{ marginTop: "10px" }}
 										onClick={() => {
 											setUserUpdateModal(true);
@@ -186,7 +184,7 @@ const User = () => {
 									>
 										<EditOutlined />
 										개인정보 수정
-									</Button>
+									</Button> */}
 								</div>
 							) : isMeFollowYou ? (
 								<Button type="danger" onClick={unFollow}>
