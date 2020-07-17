@@ -39,7 +39,7 @@ const main = async () => {
 	});
 
 	server.express.use("/images", express.static("images"));
-	// server.express.use(authMiddleware);
+	server.express.use(authMiddleware);
 
 	const options = {
 		cors: {
