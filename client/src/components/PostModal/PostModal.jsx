@@ -29,7 +29,7 @@ const PostCarousel = ({ onCloseModal, post, me }) => {
 							paddingBottom: "14px",
 						}}
 					>
-						<UserInfo me={me} />
+						<UserInfo loggedInUser={me} />
 					</div>
 
 					<div
