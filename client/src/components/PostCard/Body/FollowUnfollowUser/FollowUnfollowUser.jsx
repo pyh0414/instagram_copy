@@ -35,7 +35,6 @@ const FollowUnfollowUser = ({ user, loggedInUser }) => {
 	const [unFollowUser] = useMutation(MUTATION_UNFOLLOW_USER, {
 		update: async (cache, data) => {
 			const result = data.data.unFollowUser;
-
 			const newUser = produce(loggedInUser, (draft) => {
 				draft.following = result.me.following;
 			});
@@ -81,11 +80,19 @@ const FollowUnfollowUser = ({ user, loggedInUser }) => {
 	});
 
 	const selfLiked = loggedInUser.id === user.id;
+	// 현재 user가 나인지, 내가 나를 follow할 필요는 없음
+
+	if (selfLiked) {
+		return (
+			<Wrapper>
+				<img src={`http://localhost:4000/${user.profile}`} alt="follow img" />
+				<span>{user.userId}</span>
+			</Wrapper>
+		);
+	}
 	return (
 		<Wrapper>
-			{selfLiked ? (
-				<div></div>
-			) : isFollowing ? (
+			{isFollowing ? (
 				<div>
 					<img src={`http://localhost:4000/${user.profile}`} alt="follow img" />
 					<span>{user.userId}</span>
