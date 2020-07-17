@@ -2,12 +2,7 @@ import React, { useState, useCallback } from "react";
 import { useApolloClient, useLazyQuery } from "@apollo/react-hooks";
 import OutsideClickHandler from "react-outside-click-handler";
 import { Col, Row, Spin } from "antd";
-import {
-	UserOutlined,
-	FormOutlined,
-	LogoutOutlined,
-	HeartOutlined,
-} from "@ant-design/icons";
+import { UserOutlined, FormOutlined, LogoutOutlined } from "@ant-design/icons";
 import { navigate } from "@reach/router";
 import _ from "lodash";
 
@@ -121,9 +116,7 @@ const Header = () => {
 							}}
 						/>
 					</Col>
-					{/* <Col md={3}>
-						<HeartOutlined type="heart" style={{ fontSize: "23px" }} />
-					</Col> */}
+
 					<Col md={3}>
 						<FormOutlined
 							type="form"
