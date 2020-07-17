@@ -6,7 +6,7 @@ import Foot from "./Foot";
 import { CLIENT_LOGGED_IN_USER } from "../../../action/client";
 
 const Chat = ({ allRooms, onLeaveRoom, currentRoomId }) => {
-	const { data, loading } = useQuery(CLIENT_LOGGED_IN_USER);
+	const { data } = useQuery(CLIENT_LOGGED_IN_USER);
 	const currentRoom = allRooms.find((v) => v.id === currentRoomId);
 	return (
 		<>
