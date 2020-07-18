@@ -7,7 +7,9 @@ import { CLIENT_LOGGED_IN_USER } from "../../../action/client";
 
 const Chat = ({ allRooms, onLeaveRoom, currentRoomId }) => {
 	const { data } = useQuery(CLIENT_LOGGED_IN_USER);
+
 	const currentRoom = allRooms.find((v) => v.id === currentRoomId);
+
 	return (
 		<>
 			<div style={{ height: "93%", overflow: "scroll" }}>

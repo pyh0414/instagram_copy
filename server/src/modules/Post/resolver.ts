@@ -26,7 +26,6 @@ export class PostResolver {
 					},
 				},
 			});
-
 			if (likeToPost) {
 				return true;
 			}

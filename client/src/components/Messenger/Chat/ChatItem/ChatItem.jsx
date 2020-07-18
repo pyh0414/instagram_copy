@@ -4,6 +4,7 @@ import { Me, You } from "./style";
 
 const ChatItem = ({ chat, loggedInUser }) => {
 	const isMyChat = loggedInUser.id === chat.user.id;
+
 	return (
 		<>
 			{isMyChat ? (

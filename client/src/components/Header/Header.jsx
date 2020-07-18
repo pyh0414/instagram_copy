@@ -20,16 +20,18 @@ const Header = () => {
 
 	const client = useApolloClient();
 
-	const [searchUser, { loading }] = useLazyQuery(QUERY_OTHER_USER, {
-		onCompleted: ({ searchUsers }) => {
-			setSearchUsers(searchUsers);
+	const [searchUser] = useLazyQuery(QUERY_OTHER_USER, {
+		onCompleted: (data) => {
+			const searchedUsers = data.searchUsers;
+
+			setSearchUsers(searchedUsers);
 			setSearchUsersVisible(true);
 		},
 	});
 
-	const onLogout = useCallback(async () => {
+	const onLogout = useCallback(() => {
 		localStorage.clear();
-		await client.writeData({
+		client.writeData({
 			data: {
 				isLoggedIn: false,
 				user: null,
@@ -86,16 +88,12 @@ const Header = () => {
 								setSearchUsersVisible(false);
 							}}
 						>
-							{loading ? (
-								<Spin size="large" />
-							) : (
-								<SearchUsers>
-									<Item
-										users={searchUsers}
-										setSearchUsersVisible={setSearchUsersVisible}
-									/>
-								</SearchUsers>
-							)}
+							<SearchUsers>
+								<Item
+									users={searchUsers}
+									setSearchUsersVisible={setSearchUsersVisible}
+								/>
+							</SearchUsers>
 						</OutsideClickHandler>
 					)}
 				</Search>

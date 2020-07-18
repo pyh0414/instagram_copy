@@ -33,14 +33,14 @@ const Room = ({ allRooms, onEnterRoom }) => {
 	// });
 
 	useSubscription(SUBSCRIPTION_CREATE_ROOM, {
-		onSubscriptionData: (result) => {
-			const newRoom = result.subscriptionData.data.createRoomEvent;
+		onSubscriptionData: (data) => {
+			const newRoom = data.subscriptionData.data.createRoomEvent;
 
 			const roomsWithCreatedRoom = produce(allRooms, (draft) => {
 				draft.push(newRoom);
 			});
 
-			result.client.writeQuery({
+			data.client.writeQuery({
 				query: VALIDATE_ALL_ROOMS,
 				data: {
 					allRooms: roomsWithCreatedRoom,
@@ -50,12 +50,13 @@ const Room = ({ allRooms, onEnterRoom }) => {
 	});
 
 	useSubscription(SUBSCRIPTION_REMOVE_ROOM, {
-		onSubscriptionData: (result) => {
-			const deletedRoom = result.subscriptionData.data.removeRoomEvent;
+		onSubscriptionData: (data) => {
+			const deletedRoom = data.subscriptionData.data.removeRoomEvent;
+
 			const roomsWithDeletedRoom = allRooms.filter(
 				(v) => v.id !== deletedRoom.id
 			);
-			result.client.writeQuery({
+			data.client.writeQuery({
 				query: VALIDATE_ALL_ROOMS,
 				data: {
 					allRooms: roomsWithDeletedRoom,
@@ -102,7 +103,7 @@ const Room = ({ allRooms, onEnterRoom }) => {
 				<RoomItem room={v} key={i} onEnterRoom={onEnterRoom} />
 			))}
 			{/* <RoomShow
-				result={data}
+				data={data}
 				subscribeToNewComments={() =>
 					subscribeToMore({
 						document: SUBSCRIPTION_CREATE_ROOM,

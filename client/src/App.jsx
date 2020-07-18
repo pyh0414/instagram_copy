@@ -13,15 +13,15 @@ import { IS_LOGGED_IN } from "./action/client";
 
 const App = () => {
 	const client = useApolloClient();
+	const { data } = useQuery(IS_LOGGED_IN);
 
-	const { data, loading } = useQuery(IS_LOGGED_IN);
 	useQuery(QUERY_ALL_POSTS, {
 		context: {
 			headers: {
 				authorization: "Bearer pass",
 			},
 		},
-		onCompleted: async (data) => {
+		onCompleted: (data) => {
 			const allPosts = data.getAllPosts;
 			client.writeQuery({
 				query: VALIDATE_ALL_POSTS,
@@ -38,7 +38,7 @@ const App = () => {
 				authorization: "Bearer pass",
 			},
 		},
-		onCompleted: async (data) => {
+		onCompleted: (data) => {
 			const allRooms = data.getAllRooms;
 			client.writeQuery({
 				query: VALIDATE_ALL_ROOMS,
@@ -48,10 +48,6 @@ const App = () => {
 			});
 		},
 	});
-
-	if (loading) {
-		return <div>loading....</div>;
-	}
 
 	return data.isLoggedIn ? (
 		<Pages />

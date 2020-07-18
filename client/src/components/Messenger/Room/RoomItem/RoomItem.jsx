@@ -12,8 +12,10 @@ const RoomItem = ({ room, onEnterRoom }) => {
 	);
 
 	const [removeRoom] = useMutation(MUTATION_REMOVE_ROOM, {
-		update: (cache, data) => {
-			if (!data.data.removeRoom) {
+		update: (data) => {
+			const removedRoom = data.data.removeRoom;
+
+			if (removedRoom) {
 				return message.error("방 삭제에 실패하였습니다.", 0.7);
 			}
 			return message.success("방을 삭제하였습니다.", 0.7);

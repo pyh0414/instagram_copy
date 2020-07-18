@@ -17,8 +17,8 @@ const Foot = ({ onLeaveRoom, currentRoomId, allRooms }) => {
 	}, []);
 
 	useSubscription(SUBSCRIPTION_CREATE_CHAT, {
-		onSubscriptionData: (result) => {
-			const newChat = result.subscriptionData.data.createChatEvent;
+		onSubscriptionData: (data) => {
+			const newChat = data.subscriptionData.data.createChatEvent;
 
 			const roomIndex = allRooms.findIndex(
 				(room) => room.id === newChat.room.id
@@ -28,7 +28,7 @@ const Foot = ({ onLeaveRoom, currentRoomId, allRooms }) => {
 				draft[roomIndex].chats.push(newChat);
 			});
 
-			result.client.writeQuery({
+			data.client.writeQuery({
 				query: VALIDATE_ALL_ROOMS,
 				data: {
 					allRooms: allRoomsWithNewChat,

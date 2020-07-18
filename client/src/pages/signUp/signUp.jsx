@@ -25,8 +25,9 @@ const SignUp = () => {
 	const imageInput = useRef();
 
 	const [createUser] = useMutation(MUTATION_CREATE_USER, {
-		onCompleted: ({ createUser }) => {
-			if (createUser) {
+		onCompleted: (data) => {
+			const createdUser = data.createUser;
+			if (createdUser) {
 				message.success("가입 성공 되었습니다.", 0.7, () => {
 					navigate("/");
 				});
@@ -46,8 +47,9 @@ const SignUp = () => {
 
 	const [getUser] = useLazyQuery(QUERY_USER_DUPLICATE_CHECK, {
 		onCompleted: (data) => {
+			const user = data.user;
 			setHasSameIdChecked(true);
-			if (data.user) {
+			if (user) {
 				setHasSameId(true);
 				return message.error("중복된 아이디 입니다", 0.5);
 			} else {

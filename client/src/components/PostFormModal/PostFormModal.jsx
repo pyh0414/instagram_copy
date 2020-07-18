@@ -28,6 +28,7 @@ const PostForm = ({ setmodalVisibleProps }) => {
 	const [createPost] = useMutation(MUTATION_CREATE_POST, {
 		update: (cache, data) => {
 			const newPost = data.data.createPost;
+
 			const currentAllPosts = cache.readQuery({
 				query: VALIDATE_ALL_POSTS,
 			}).allPosts;
@@ -59,14 +60,17 @@ const PostForm = ({ setmodalVisibleProps }) => {
 	});
 
 	const [singleFileUpload] = useMutation(MUTATION_SINGLE_FILE_UPLOAD, {
-		onCompleted: ({ singleFileUpload }) => {
-			setImages(singleFileUpload);
+		onCompleted: (data) => {
+			const singleFile = data.singleFileUpload;
+			setImages(singleFile);
 		},
 	});
 
 	const [multipleFileUpload] = useMutation(MUTATION_MULTIPLE_FILE_UPLOAD, {
-		onCompleted: async ({ multipleFileUpload }) => {
-			const newImages = await multipleFileUpload.reduce((acc, image, i) => {
+		onCompleted: (data) => {
+			const multipleFiles = data.multipleFileUpload;
+
+			const newImages = multipleFiles.reduce((acc, image, i) => {
 				return [...acc, image];
 			}, images);
 			setImages(newImages);
@@ -74,10 +78,9 @@ const PostForm = ({ setmodalVisibleProps }) => {
 	});
 
 	const [fileRemove] = useLazyQuery(QUERY_FILE_REMOVE, {
-		onCompleted: async ({ fileRemove: willRemoveImage }) => {
-			const newImages = await images.filter(
-				(image) => image !== willRemoveImage
-			);
+		onCompleted: (data) => {
+			const removedFile = data.fileRemove;
+			const newImages = images.filter((image) => image !== removedFile);
 			setImages(newImages);
 		},
 	});

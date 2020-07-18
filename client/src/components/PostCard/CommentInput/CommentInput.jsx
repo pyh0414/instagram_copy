@@ -14,6 +14,7 @@ const Comment = ({ postId }) => {
 	const [createComment] = useMutation(MUTATION_CREATE_COMMNET, {
 		update: async (cache, data) => {
 			const newComment = data.data.createComment;
+
 			const currentAllPost = await cache.readQuery({
 				query: VALIDATE_ALL_POSTS,
 			}).allPosts;

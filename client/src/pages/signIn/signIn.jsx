@@ -14,7 +14,9 @@ const SignIn = () => {
 	const antdMessage = message;
 
 	const [signIn] = useLazyQuery(QUERY_SIGN_IN, {
-		onCompleted: ({ signIn: { user, token, message } }) => {
+		// onCompleted: ({ signIn: { user, token, message } }) => {
+		onCompleted: (data) => {
+			const { user, token, message } = data.signIn;
 			if (user) {
 				antdMessage.success(message, 0.7);
 				localStorage.setItem("token", token);

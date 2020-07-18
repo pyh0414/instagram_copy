@@ -21,8 +21,9 @@ const LikeIcon = ({ postId, user, likers }) => {
 			},
 		},
 		update: async (cache, data) => {
-			const result = data.data.likeToPost;
-			if (result) {
+			const likedPost = data.data.likeToPost;
+
+			if (likedPost) {
 				const currentAllPost = await cache.readQuery({
 					query: VALIDATE_ALL_POSTS,
 				}).allPosts;
@@ -50,9 +51,9 @@ const LikeIcon = ({ postId, user, likers }) => {
 			},
 		},
 		update: async (cache, data) => {
-			const result = data.data.unLikeToPost;
+			const unLikedPost = data.data.unLikeToPost;
 
-			if (result) {
+			if (unLikedPost) {
 				const currentAllPost = await cache.readQuery({
 					query: VALIDATE_ALL_POSTS,
 				}).allPosts;

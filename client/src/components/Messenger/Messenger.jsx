@@ -9,6 +9,7 @@ import { CLIENT_ALL_ROOMS } from "../../action/client";
 
 const Messenger = () => {
 	const [currentRoomId, setCurrentRoomId] = useState(-1);
+
 	const { data } = useQuery(CLIENT_ALL_ROOMS);
 
 	const onEnterRoom = (roomId) => {
