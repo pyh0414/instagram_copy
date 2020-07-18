@@ -2,14 +2,14 @@ import React from "react";
 
 import { Wrapper, UserProfile, User } from "./style";
 
-const UserInfo = ({ loggedInUser }) => {
+const UserInfo = ({ user }) => {
 	return (
 		<Wrapper>
-			{<UserProfile src={`http://localhost:4000/${loggedInUser.profile}`} />}
+			{<UserProfile src={`http://localhost:4000/${user.profile}`} />}
 
 			<User>
-				{<div style={{ fontWeight: "bold" }}>{loggedInUser.userId}</div>}
-				{<div style={{ color: "#A4A4A4" }}>{loggedInUser.name}</div>}
+				{<div style={{ fontWeight: "bold" }}>{user.userId}</div>}
+				{<div style={{ color: "#A4A4A4" }}>{user.name}</div>}
 			</User>
 		</Wrapper>
 	);

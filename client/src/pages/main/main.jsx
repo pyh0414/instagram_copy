@@ -40,7 +40,7 @@ const Main = () => {
 						}}
 					>
 						<Side>
-							<UserInfo loggedInUser={loggedInUser.user} />
+							<UserInfo user={loggedInUser.user} />
 							<Messenger />
 						</Side>
 					</Col>
