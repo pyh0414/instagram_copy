@@ -4,14 +4,14 @@ import { UploadOutlined } from "@ant-design/icons";
 import { Input, Button, message } from "antd";
 import { navigate } from "@reach/router";
 
-import { Foot, Wrapper, FormCustom, ImageCustom } from "./style";
-
 import signUpValidation from "../../utils/signUpValidation";
 import {
 	MUTATION_SINGLE_FILE_UPLOAD,
 	MUTATION_CREATE_USER,
 } from "../../action/mutation";
 import { QUERY_USER_DUPLICATE_CHECK } from "../../action/query";
+
+import { Foot, Wrapper, FormCustom, ImageCustom } from "./style";
 
 const SignUp = () => {
 	const [userId, setChangeUserId] = useState("");
@@ -27,6 +27,7 @@ const SignUp = () => {
 	const [createUser] = useMutation(MUTATION_CREATE_USER, {
 		onCompleted: (data) => {
 			const createdUser = data.createUser;
+
 			if (createdUser) {
 				message.success("가입 성공 되었습니다.", 0.7, () => {
 					navigate("/");
@@ -41,6 +42,7 @@ const SignUp = () => {
 	const [singleFileUpload] = useMutation(MUTATION_SINGLE_FILE_UPLOAD, {
 		onCompleted: (data) => {
 			const filePath = data.singleFileUpload;
+
 			setProfile(filePath[0]);
 		},
 	});
@@ -48,7 +50,9 @@ const SignUp = () => {
 	const [getUser] = useLazyQuery(QUERY_USER_DUPLICATE_CHECK, {
 		onCompleted: (data) => {
 			const user = data.user;
+
 			setHasSameIdChecked(true);
+
 			if (user) {
 				setHasSameId(true);
 				return message.error("중복된 아이디 입니다", 0.5);

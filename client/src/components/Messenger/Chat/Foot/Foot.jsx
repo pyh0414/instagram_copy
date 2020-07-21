@@ -3,10 +3,11 @@ import { useMutation, useSubscription } from "@apollo/react-hooks";
 import { Input, Button } from "antd";
 import produce from "immer";
 
-import { Wrapper } from "./style";
 import { MUTATION_CREATE_CHAT } from "../../../../action/mutation";
 import { SUBSCRIPTION_CREATE_CHAT } from "../../../../action/subscription";
 import { VALIDATE_ALL_ROOMS } from "../../../../typeValidate";
+
+import { Wrapper } from "./style";
 
 const Foot = ({ onLeaveRoom, currentRoomId, allRooms }) => {
 	const [content, setContent] = useState("");
@@ -55,9 +56,9 @@ const Foot = ({ onLeaveRoom, currentRoomId, allRooms }) => {
 		[content, createChat, currentRoomId]
 	);
 
-	const leaveRoom = () => {
+	const leaveRoom = useCallback(() => {
 		onLeaveRoom();
-	};
+	}, [onLeaveRoom]);
 	return (
 		<Wrapper>
 			<Input

@@ -2,7 +2,7 @@ import React from "react";
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import { Button, message, Spin } from "antd";
 
-import { Wrapper } from "./style";
+import { Wrapper, RoomName } from "./style";
 import { CLIENT_LOGGED_IN_USER } from "../../../../action/client";
 import { MUTATION_REMOVE_ROOM } from "../../../../action/mutation";
 
@@ -49,7 +49,7 @@ const RoomItem = ({ room, onEnterRoom }) => {
 
 	return (
 		<Wrapper>
-			<span>{room.name}</span>
+			<RoomName>{room.name}</RoomName>
 
 			<Button
 				style={{ float: "right" }}

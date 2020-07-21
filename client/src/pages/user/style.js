@@ -1,8 +1,31 @@
 import styled from "styled-components";
 
+export const Info = styled.div`
+	display: flex;
+	justify-content: center;
+`;
+
+export const UserImageWrapper = styled.div`
+	text-align: center;
+	flex-basis: 35%;
+`;
+
+export const UserInfoWrapper = styled.div`
+	text-align: left;
+	flex-basis: 65%;
+	margin-left: 5%;
+`;
+
+export const PostWrapper = styled.div`
+	margin-top: 50px;
+	align-items: center;
+	display: flex;
+`;
+
 export const Wrapper = styled.div`
-	width: 60%;
-	margin: auto;
+	background-color: #fafafa;
+	height: 100%;
+	padding-top: 50px;
 `;
 
 export const UserInfo = styled.div`
@@ -14,7 +37,6 @@ export const UserImage = styled.img`
 	height: 160px;
 	width: 170px;
 	border-radius: 50%;
-	margin-left: 25%;
 `;
 
 export const CustomUl = styled.ul`
@@ -36,7 +58,7 @@ export const CustomUl = styled.ul`
 `;
 
 export const ImgCustom = styled.img`
-	width: 90%;
+	width: 100%;
 	height: 100%;
 	cursor: pointer;
 `;

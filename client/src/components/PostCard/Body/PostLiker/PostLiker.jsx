@@ -1,6 +1,7 @@
 import React, { useRef, useCallback } from "react";
 
 import Item from "../FollowUnfollowUser";
+
 import { Wrapper, ShowLikers } from "./style";
 
 const Liker = ({ likers, user }) => {

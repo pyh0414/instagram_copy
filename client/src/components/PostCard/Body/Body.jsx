@@ -1,12 +1,14 @@
 import React from "react";
 import { useQuery } from "@apollo/react-hooks";
 
+import { CLIENT_LOGGED_IN_USER } from "../../../action/client";
+
 import LikeIcon from "./LikeIcon/LikeIcon";
 import Liker from "./PostLiker/PostLiker";
 import Content from "./PostContent/PostContent";
 import Comment from "./PostComment/PostComment";
+
 import { Wrapper } from "./style";
-import { CLIENT_LOGGED_IN_USER } from "../../../action/client";
 
 const Body = ({ post }) => {
 	const { data } = useQuery(CLIENT_LOGGED_IN_USER);

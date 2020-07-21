@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useApolloClient, useLazyQuery } from "@apollo/react-hooks";
 import { navigate } from "@reach/router";
 
-import { Wrapper, ImgCustom, UserCustom } from "./style";
 import { QUERY_OTHER_USER } from "../../../action/query";
 import { VALIDATE_OTHER_USER } from "../../../typeValidate";
+
+import { Wrapper, ImgCustom, UserCustom } from "./style";
 
 const Head = ({ author }) => {
 	const client = useApolloClient();
@@ -20,7 +21,7 @@ const Head = ({ author }) => {
 		},
 	});
 
-	const onItemClick = () => {
+	const onItemClick = useCallback(() => {
 		const userId = author.userId;
 		searchUser({
 			variables: { userId },
@@ -30,7 +31,7 @@ const Head = ({ author }) => {
 				},
 			},
 		});
-	};
+	}, [author, searchUser]);
 
 	return (
 		<Wrapper onClick={onItemClick} style={{ cursor: "pointer" }}>

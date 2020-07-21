@@ -1,6 +1,5 @@
 import React from "react";
 import { useQuery } from "@apollo/react-hooks";
-
 import { Col, Row } from "antd";
 
 import PostCard from "../../components/PostCard";
@@ -8,6 +7,7 @@ import UserInfo from "../../components/UserInfo";
 import Messenger from "../../components/Messenger";
 import { CLIENT_ALL_POSTS } from "../../action/client";
 import { CLIENT_LOGGED_IN_USER } from "../../action/client";
+
 import { Wrapper, Side } from "./style";
 
 const Main = () => {
@@ -15,13 +15,12 @@ const Main = () => {
 	const { data: loggedInUser } = useQuery(CLIENT_LOGGED_IN_USER);
 
 	return (
-		<div style={{ backgroundColor: "whilte" }}>
+		<div>
 			<Wrapper>
-				<Row>
-					<Col md={16}>
+				<Row justify="center" gutter={[48]}>
+					<Col lg={12} md={18} sm={20} xs={22}>
 						<div
 							style={{
-								marginTop: "13px",
 								overflow: "scroll",
 								height: "100vh",
 							}}
@@ -32,13 +31,7 @@ const Main = () => {
 						</div>
 					</Col>
 
-					<Col
-						md={8}
-						style={{
-							position: "sticky",
-							top: 0,
-						}}
-					>
+					<Col lg={4} md={0} sm={0} xs={0}>
 						<Side>
 							<UserInfo user={loggedInUser.user} />
 							<Messenger />

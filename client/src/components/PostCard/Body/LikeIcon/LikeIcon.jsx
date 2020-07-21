@@ -3,12 +3,13 @@ import { HeartTwoTone, HeartOutlined } from "@ant-design/icons";
 import { useMutation, useApolloClient } from "@apollo/react-hooks";
 import produce from "immer";
 
-import { Wrapper } from "./style";
 import {
 	MUTATION_UNLIKE_TO_POST,
 	MUTATION_LIKE_TO_POST,
 } from "../../../../action/mutation";
 import { VALIDATE_ALL_POSTS } from "../../../../typeValidate";
+
+import { Wrapper } from "./style";
 
 const LikeIcon = ({ postId, user, likers }) => {
 	const likeChecked = likers.find((v) => v.user.id === user.id);
@@ -94,7 +95,7 @@ const LikeIcon = ({ postId, user, likers }) => {
 				},
 			});
 		}
-	}, [user.id, postId, unLikeToPost, likeToPost, likeChecked]);
+	}, [user, postId, unLikeToPost, likeToPost, likeChecked]);
 
 	return (
 		<Wrapper>

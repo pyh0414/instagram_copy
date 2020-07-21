@@ -3,8 +3,9 @@ import { useLazyQuery, useApolloClient } from "@apollo/react-hooks";
 import { Input, Button, message } from "antd";
 import { navigate } from "@reach/router";
 
-import { Wrapper, CustomForm } from "./style";
 import { QUERY_SIGN_IN } from "../../action/query";
+
+import { Wrapper, CustomForm } from "./style";
 
 const SignIn = () => {
 	const [userId, setChangeUserId] = useState("");
@@ -32,17 +33,16 @@ const SignIn = () => {
 		},
 	});
 
-	const onChangeUserId = (e) => {
+	const onChangeUserId = useCallback((e) => {
 		setChangeUserId(e.target.value);
-	};
+	}, []);
 
-	const onChangeUserPw = (e) => {
+	const onChangeUserPw = useCallback((e) => {
 		setChangeUserPw(e.target.value);
-	};
+	}, []);
 
 	const onSubmitForm = useCallback(
 		(e) => {
-			e.preventDefault();
 			const user = { userId, userPw };
 			signIn({
 				variables: { user },

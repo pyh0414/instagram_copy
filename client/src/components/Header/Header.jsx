@@ -1,17 +1,19 @@
 import React, { useState, useCallback } from "react";
 import { useApolloClient, useLazyQuery } from "@apollo/react-hooks";
 import OutsideClickHandler from "react-outside-click-handler";
-import { Col, Row, Spin } from "antd";
+import { Col, Row } from "antd";
 import { UserOutlined, FormOutlined, LogoutOutlined } from "@ant-design/icons";
 import { navigate } from "@reach/router";
 import _ from "lodash";
 
-import { HeaderWrapper, InstagramLogo, Search, SearchUsers } from "./style";
-import instagramLogo from "../../images/instagram_logo.png";
 import { QUERY_OTHER_USER } from "../../action/query";
+
+import instagramLogo from "../../images/instagram_logo.png";
 import PostFormModal from "../PostFormModal";
 import HeaderInput from "./HeaderInput";
 import Item from "./Item";
+
+import { HeaderWrapper, InstagramLogo, Search, SearchUsers } from "./style";
 
 const Header = () => {
 	const [modalVisible, setmodalVisible] = useState(false);
@@ -62,79 +64,85 @@ const Header = () => {
 	}, 500);
 
 	return (
-		<HeaderWrapper>
-			<Col md={7}>
-				<InstagramLogo
-					src={instagramLogo}
-					onClick={() => {
-						navigate("/");
-					}}
-				/>
-			</Col>
-
-			<Col md={7}>
-				<Search>
-					{/* <Input.Search
-						loading={loading ? true : false}
-						size="small"
-						style={{ width: "70%" }}
-						onChange={onChangeUserId}
-						value={userId}
-					/> */}
-					<HeaderInput onDelaySearch={onDelaySearch2} />
-					{searchUsersVisible && (
-						<OutsideClickHandler
-							onOutsideClick={() => {
-								setSearchUsersVisible(false);
-							}}
-						>
-							<SearchUsers>
-								<Item
-									users={searchUsers}
-									setSearchUsersVisible={setSearchUsersVisible}
+		<div
+			style={{
+				borderBottom: "1px solid rgba(0,0,0,0.0975)",
+			}}
+		>
+			<Row justify="center">
+				<Col lg={20} md={20} sm={22} xs={22}>
+					<Row>
+						<HeaderWrapper>
+							<Col xl={5} lg={5} md={4} sm={4} xs={12}>
+								<InstagramLogo
+									src={instagramLogo}
+									onClick={() => {
+										navigate("/");
+									}}
 								/>
-							</SearchUsers>
-						</OutsideClickHandler>
-					)}
-				</Search>
-			</Col>
-			<Col md={7}>
-				<Row>
-					<Col md={3}>
-						<UserOutlined
-							type="user"
-							style={{ fontSize: "23px" }}
-							onClick={() => {
-								client.writeData({
-									data: {
-										otherUser: null,
-									},
-								});
-								navigate("/user");
-							}}
-						/>
-					</Col>
+							</Col>
 
-					<Col md={3}>
-						<FormOutlined
-							type="form"
-							style={{ fontSize: "23px" }}
-							onClick={() => {
-								setmodalVisible(true);
-							}}
-						/>
-					</Col>
-					<Col md={3}>
-						<LogoutOutlined
-							type="logout"
-							style={{ fontSize: "23px" }}
-							onClick={onLogout}
-						/>
-					</Col>
-				</Row>
-			</Col>
-			{modalVisible && <PostFormModal setmodalVisibleProps={setmodalVisible} />}
-		</HeaderWrapper>
+							<Col xl={10} lg={12} md={14} sm={14} xs={0}>
+								<Search>
+									<HeaderInput onDelaySearch={onDelaySearch2} />
+									{searchUsersVisible && (
+										<OutsideClickHandler
+											onOutsideClick={() => {
+												setSearchUsersVisible(false);
+											}}
+										>
+											<SearchUsers>
+												<Item
+													users={searchUsers}
+													setSearchUsersVisible={setSearchUsersVisible}
+												/>
+											</SearchUsers>
+										</OutsideClickHandler>
+									)}
+								</Search>
+							</Col>
+							<Col xl={9} lg={7} md={6} sm={6} xs={12}>
+								<Row justify="start">
+									<Col xl={4} lg={6} md={8} sm={8} xs={6}>
+										<UserOutlined
+											type="user"
+											style={{ fontSize: "23px" }}
+											onClick={() => {
+												client.writeData({
+													data: {
+														otherUser: null,
+													},
+												});
+												navigate("/user");
+											}}
+										/>
+									</Col>
+									<Col xl={4} lg={6} md={8} sm={8} xs={6}>
+										<FormOutlined
+											type="form"
+											style={{ fontSize: "23px" }}
+											onClick={() => {
+												setmodalVisible(true);
+											}}
+										/>
+									</Col>
+									<Col xl={4} lg={6} md={8} sm={8} xs={6}>
+										<LogoutOutlined
+											type="logout"
+											style={{ fontSize: "23px" }}
+											onClick={onLogout}
+										/>
+									</Col>
+								</Row>
+							</Col>
+							{modalVisible && (
+								<PostFormModal setmodalVisibleProps={setmodalVisible} />
+							)}
+						</HeaderWrapper>
+					</Row>
+				</Col>
+			</Row>
+		</div>
 	);
 };
 

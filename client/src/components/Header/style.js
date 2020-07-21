@@ -1,8 +1,8 @@
 import styled from "styled-components";
 
 export const HeaderWrapper = styled.div`
-	height: 55px;
-	border-bottom: 1px solid rgba(0, 0, 0, 0.0975);
+	height: 60px;
+	width: 100%;
 	display: flex;
 	align-items: center;
 	justify-content: center;

@@ -1,25 +1,30 @@
 import React, { useState, useCallback, useRef } from "react";
 import { useApolloClient, useMutation, useQuery } from "@apollo/react-hooks";
-import { Row, Col, Button } from "antd";
+import { Row, Col, Button, Divider } from "antd";
 import produce from "immer";
 
-import {
-	Wrapper,
-	UserInfo,
-	UserImage,
-	CustomUl,
-	ImgCustom,
-	RefWrapper,
-	ShowFollow,
-} from "./style";
 import { CLIENT_LOGGED_IN_AND_OTHER_USER } from "../../action/client";
 import {
 	MUTATION_FOLLOW_USER,
 	MUTATION_UNFOLLOW_USER,
 } from "../../action/mutation";
+
 import PostModal from "../../components/PostModal";
 import UserUpdateModal from "../../components/UserUpdateModal";
 import Item from "../../components/PostCard/Body/FollowUnfollowUser";
+
+import {
+	UserImage,
+	CustomUl,
+	ImgCustom,
+	RefWrapper,
+	ShowFollow,
+	Info,
+	Wrapper,
+	UserImageWrapper,
+	UserInfoWrapper,
+	PostWrapper,
+} from "./style";
 
 const User = () => {
 	const [postModal, setPostModal] = useState(false);
@@ -72,8 +77,9 @@ const User = () => {
 	);
 
 	const [followUser] = useMutation(MUTATION_FOLLOW_USER, {
-		update: async (cache, data) => {
+		update: (data) => {
 			const result = data.data.followUser;
+
 			const newMe = produce(me, (draft) => {
 				draft.following = result.me.following;
 			});
@@ -92,8 +98,9 @@ const User = () => {
 	});
 
 	const [unFollowUser] = useMutation(MUTATION_UNFOLLOW_USER, {
-		update: async (cache, data) => {
+		update: async (data) => {
 			const result = data.data.unFollowUser;
+
 			const newMe = produce(me, (draft) => {
 				draft.following = result.me.following;
 			});
@@ -147,32 +154,27 @@ const User = () => {
 	}, [unFollowUser, me, you]);
 
 	return (
-		<div>
-			<Wrapper>
-				<UserInfo>
-					<Row>
-						<Col span={9}>
-							{
-								<UserImage
-									src={`http://localhost:4000/${currentPageUser.profile}`}
-								/>
-							}
-						</Col>
-						<Col span={15}>
-							<div>
-								<span
-									style={{
-										fontSize: "30px",
-										fontWeight: "700",
-										color: "#262626",
-									}}
-								>
-									{currentPageUser.userId}
-								</span>
-								<span style={{ marginLeft: "10px" }}>
-									{currentPageUser.name}
-								</span>
-							</div>
+		<Wrapper>
+			<Row justify="center">
+				<Col lg={16} md={16} xs={16}>
+					<Info>
+						<UserImageWrapper>
+							<UserImage
+								src={`http://localhost:4000/${currentPageUser.profile}`}
+							/>
+						</UserImageWrapper>
+
+						<UserInfoWrapper>
+							<span
+								style={{
+									fontSize: "30px",
+									fontWeight: "700",
+									color: "#262626",
+								}}
+							>
+								{currentPageUser.userId}
+							</span>
+							<span style={{ marginLeft: "10px" }}>{currentPageUser.name}</span>
 
 							{!you || (you && you.id === me.id) ? (
 								<div>
@@ -234,36 +236,41 @@ const User = () => {
 									</ShowFollow>
 								</RefWrapper>
 							</CustomUl>
-							<div />
-						</Col>
-					</Row>
-				</UserInfo>
-				<Row>
-					{currentPageUser.myPosts.map((v, i) => {
-						return (
-							<Col span={8} key={i} style={{ marginTop: "10px" }}>
-								<div style={{ height: "250px" }}>
-									<ImgCustom
-										src={`http://localhost:4000/${v.images[0].src}`}
-										onClick={onOpenModal(v)}
-									></ImgCustom>
-								</div>
-							</Col>
-						);
-					})}
-				</Row>
-				{postModal && (
-					<PostModal
-						onCloseModal={onCloseModal}
-						post={post}
-						me={currentPageUser}
-					/>
-				)}
-				{userUpdateModal && (
-					<UserUpdateModal onCloseModalProps={setUserUpdateModal} me={me} />
-				)}
-			</Wrapper>
-		</div>
+						</UserInfoWrapper>
+					</Info>
+					<div />
+
+					<Divider
+						orientation="left"
+						style={{ borderBottom: "1px solid rgba(0,0,0,0.0975)" }}
+					></Divider>
+					<PostWrapper>
+						<Row gutter={[24, 32]}>
+							{currentPageUser.myPosts.map((v, i) => {
+								return (
+									<Col lg={8} sm={24}>
+										<ImgCustom
+											src={`http://localhost:4000/${v.images[0].src}`}
+											onClick={onOpenModal(v)}
+										></ImgCustom>
+									</Col>
+								);
+							})}
+						</Row>
+					</PostWrapper>
+					{postModal && (
+						<PostModal
+							onCloseModal={onCloseModal}
+							post={post}
+							me={currentPageUser}
+						/>
+					)}
+					{userUpdateModal && (
+						<UserUpdateModal onCloseModalProps={setUserUpdateModal} me={me} />
+					)}
+				</Col>
+			</Row>
+		</Wrapper>
 	);
 };
 

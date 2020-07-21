@@ -1,24 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { useQuery } from "@apollo/react-hooks";
+
+import { CLIENT_ALL_ROOMS } from "../../action/client";
 
 import Room from "./Room";
 import Chat from "./Chat";
 
 import { Wrapper } from "./style";
-import { CLIENT_ALL_ROOMS } from "../../action/client";
 
 const Messenger = () => {
 	const [currentRoomId, setCurrentRoomId] = useState(-1);
 
 	const { data } = useQuery(CLIENT_ALL_ROOMS);
 
-	const onEnterRoom = (roomId) => {
+	const onEnterRoom = useCallback((roomId) => {
 		setCurrentRoomId(roomId);
-	};
+	}, []);
 
-	const onLeaveRoom = () => {
+	const onLeaveRoom = useCallback(() => {
 		setCurrentRoomId(-1);
-	};
+	}, []);
 
 	return (
 		<Wrapper>

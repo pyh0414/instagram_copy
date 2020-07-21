@@ -8,6 +8,7 @@ export const Modal = styled.div`
 	width: 100%; /* Full width */
 	height: 100%; /* Full height */
 	background-color: black;
+	opacity: 0.93;
 `;
 
 export const ModalContent = styled.div`

@@ -3,7 +3,6 @@ import { useMutation, useSubscription } from "@apollo/react-hooks";
 import { Button, Input, message } from "antd";
 import produce from "immer";
 
-import { HeaderWrapper } from "./style";
 import { MUTATION_CREATE_ROOM } from "../../../action/mutation";
 import {
 	SUBSCRIPTION_CREATE_ROOM,
@@ -12,6 +11,8 @@ import {
 import { VALIDATE_ALL_ROOMS } from "../../../typeValidate";
 
 import RoomItem from "./RoomItem";
+
+import { HeaderWrapper } from "./style";
 
 const Room = ({ allRooms, onEnterRoom }) => {
 	const [roomName, setRoomName] = useState("");
