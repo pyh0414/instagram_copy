@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useRef } from "react";
 import { useApolloClient, useMutation, useQuery } from "@apollo/react-hooks";
+import { UserAddOutlined, UserDeleteOutlined } from "@ant-design/icons";
 import { Row, Col, Button, Divider } from "antd";
 import produce from "immer";
 
@@ -31,6 +32,7 @@ const User = () => {
 	const [postModal, setPostModal] = useState(false);
 	const [userUpdateModal, setUserUpdateModal] = useState(false);
 	const [post, setPost] = useState(null);
+
 	const showFollowingRef = useRef();
 	const showFollowerRef = useRef();
 
@@ -78,7 +80,7 @@ const User = () => {
 	);
 
 	const [followUser] = useMutation(MUTATION_FOLLOW_USER, {
-		update: (data) => {
+		update: (cache, data) => {
 			const result = data.data.followUser;
 
 			const newMe = produce(me, (draft) => {
@@ -99,7 +101,7 @@ const User = () => {
 	});
 
 	const [unFollowUser] = useMutation(MUTATION_UNFOLLOW_USER, {
-		update: async (data) => {
+		update: async (cache, data) => {
 			const result = data.data.unFollowUser;
 
 			const newMe = produce(me, (draft) => {
@@ -177,13 +179,13 @@ const User = () => {
 								>
 									{currentPageUser.userId}
 								</span>
-								<span style={{ marginLeft: "10px" }}>
+								<span style={{ marginLeft: "5px", marginRight: "10px" }}>
 									{currentPageUser.name}
 								</span>
 
 								{!you || (you && you.id === me.id) ? (
-									<div>
-										{/* <Button
+									<></>
+								) : /* <Button
 										style={{ marginTop: "10px" }}
 										onClick={() => {
 											setUserUpdateModal(true);
@@ -191,14 +193,22 @@ const User = () => {
 									>
 										<EditOutlined />
 										개인정보 수정
-									</Button> */}
-									</div>
-								) : isMeFollowYou ? (
-									<Button type="danger" onClick={unFollow}>
+									</Button> */
+
+								isMeFollowYou ? (
+									<Button
+										type="danger"
+										icon={<UserDeleteOutlined />}
+										onClick={unFollow}
+									>
 										언팔로우
 									</Button>
 								) : (
-									<Button type="primary" onClick={follow}>
+									<Button
+										type="primary"
+										icon={<UserAddOutlined />}
+										onClick={follow}
+									>
 										팔로우
 									</Button>
 								)}
@@ -257,6 +267,7 @@ const User = () => {
 											<ImgCustom
 												src={`http://localhost:4000/${v.images[0].src}`}
 												onClick={onOpenModal(v)}
+												key={i}
 											></ImgCustom>
 										</Col>
 									);
