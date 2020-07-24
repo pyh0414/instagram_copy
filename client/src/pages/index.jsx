@@ -1,7 +1,6 @@
 import React from "react";
 import { Router } from "@reach/router";
 
-import Header from "../components/Header";
 import Main from "./main";
 import User from "./user";
 
