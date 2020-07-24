@@ -15,14 +15,12 @@ const Liker = ({ likers, user }) => {
 	}, []);
 
 	return (
-		<>
-			<span
-				onMouseOver={onLikerMouseOver}
-				onMouseOut={onLikerMouseOut}
-				style={{ color: "black", marginTop: "5px", cursor: "pointer" }}
-			>
-				{likers.length}명
-			</span>
+		<div
+			onMouseOver={onLikerMouseOver}
+			onMouseOut={onLikerMouseOut}
+			style={{ marginTop: "5px", cursor: "pointer" }}
+		>
+			<span style={{ color: "black" }}>{likers.length}명</span>
 			<span>이 좋아합니다</span>
 			<ShowLikers ref={showLikersRef}>
 				<div id="header">좋아요</div>
@@ -32,7 +30,7 @@ const Liker = ({ likers, user }) => {
 					})}
 				</div>
 			</ShowLikers>
-		</>
+		</div>
 	);
 };
 
