@@ -19,9 +19,8 @@ const FollowUnfollowUser = ({ user, loggedInUser }) => {
 	};
 
 	const [followUser] = useMutation(MUTATION_FOLLOW_USER, {
-		update: async (data) => {
+		update: async (cache, data) => {
 			const result = data.data.followUser;
-
 			const newUser = produce(loggedInUser, (draft) => {
 				draft.following = result.me.following;
 			});
@@ -34,7 +33,7 @@ const FollowUnfollowUser = ({ user, loggedInUser }) => {
 	});
 
 	const [unFollowUser] = useMutation(MUTATION_UNFOLLOW_USER, {
-		update: async (data) => {
+		update: async (cache, data) => {
 			const result = data.data.unFollowUser;
 
 			const newUser = produce(loggedInUser, (draft) => {
