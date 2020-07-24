@@ -1,12 +1,13 @@
 import React, { useState, useCallback } from "react";
-import { useApolloClient, useLazyQuery } from "@apollo/react-hooks";
+import { useApolloClient, useLazyQuery, useQuery } from "@apollo/react-hooks";
 import OutsideClickHandler from "react-outside-click-handler";
-import { Col, Row } from "antd";
+import { Col, Row, Avatar } from "antd";
 import { UserOutlined, FormOutlined, LogoutOutlined } from "@ant-design/icons";
 import { navigate } from "@reach/router";
 import _ from "lodash";
 
 import { QUERY_OTHER_USER } from "../../action/query";
+import { CLIENT_LOGGED_IN_USER } from "../../action/client";
 
 import instagramLogo from "../../images/instagram_logo.png";
 import PostFormModal from "../PostFormModal";
@@ -27,7 +28,7 @@ const Header = () => {
 	const [searchUsersVisible, setSearchUsersVisible] = useState(false);
 
 	const client = useApolloClient();
-
+	const { data } = useQuery(CLIENT_LOGGED_IN_USER);
 	const [searchUser] = useLazyQuery(QUERY_OTHER_USER, {
 		onCompleted: (data) => {
 			const searchedUsers = data.searchUsers;
@@ -105,7 +106,7 @@ const Header = () => {
 							</Col>
 							<Col xl={9} lg={7} md={6} sm={6} xs={12}>
 								<Row justify="start">
-									<Col xl={4} lg={6} md={8} sm={8} xs={6}>
+									<Col xl={4} lg={6} md={6} sm={6} xs={6}>
 										<UserOutlined
 											type="user"
 											style={{ fontSize: "23px" }}
@@ -119,7 +120,7 @@ const Header = () => {
 											}}
 										/>
 									</Col>
-									<Col xl={4} lg={6} md={8} sm={8} xs={6}>
+									<Col xl={4} lg={6} md={6} sm={6} xs={6}>
 										<FormOutlined
 											type="form"
 											style={{ fontSize: "23px" }}
@@ -128,11 +129,17 @@ const Header = () => {
 											}}
 										/>
 									</Col>
-									<Col xl={4} lg={6} md={8} sm={8} xs={6}>
+									<Col xl={4} lg={6} md={6} sm={6} xs={6}>
 										<LogoutOutlined
 											type="logout"
 											style={{ fontSize: "23px" }}
 											onClick={onLogout}
+										/>
+									</Col>
+
+									<Col xl={4} lg={6} md={6} sm={6} xs={6}>
+										<Avatar
+											src={`http://localhost:4000/${data.user.profile}`}
 										/>
 									</Col>
 								</Row>
