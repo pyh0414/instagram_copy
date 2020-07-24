@@ -23,7 +23,6 @@ export const PostWrapper = styled.div`
 `;
 
 export const Wrapper = styled.div`
-	background-color: #fafafa;
 	height: 100%;
 	padding-top: 5vh;
 `;
