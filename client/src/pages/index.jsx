@@ -3,6 +3,7 @@ import { Router } from "@reach/router";
 
 import Main from "./main";
 import User from "./user";
+import "./index.css";
 
 const Pages = () => {
 	return (
