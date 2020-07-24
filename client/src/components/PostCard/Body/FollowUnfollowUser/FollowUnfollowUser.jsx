@@ -1,4 +1,5 @@
 import React, { useCallback } from "react";
+import { UserAddOutlined, UserDeleteOutlined } from "@ant-design/icons";
 import { useApolloClient, useMutation } from "@apollo/react-hooks";
 import produce from "immer";
 import { Button } from "antd";
@@ -97,15 +98,19 @@ const FollowUnfollowUser = ({ user, loggedInUser }) => {
 				<div>
 					<img src={`http://localhost:4000/${user.profile}`} alt="follow img" />
 					<span>{user.userId}</span>
-					<Button type="danger" onClick={unFollow}>
-						팔로우 취소
+					<Button
+						type="danger"
+						onClick={unFollow}
+						icon={<UserDeleteOutlined />}
+					>
+						언팔로우
 					</Button>
 				</div>
 			) : (
 				<div>
 					<img src={`http://localhost:4000/${user.profile}`} alt="follow img" />
 					<span>{user.userId}</span>
-					<Button type="primary" onClick={follow}>
+					<Button type="primary" onClick={follow} icon={<UserAddOutlined />}>
 						팔로우
 					</Button>
 				</div>
