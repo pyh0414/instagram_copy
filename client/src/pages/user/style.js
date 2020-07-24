@@ -25,7 +25,7 @@ export const PostWrapper = styled.div`
 export const Wrapper = styled.div`
 	background-color: #fafafa;
 	height: 100%;
-	padding-top: 50px;
+	padding-top: 5vh;
 `;
 
 export const UserInfo = styled.div`

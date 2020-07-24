@@ -12,6 +12,7 @@ import {
 import PostModal from "../../components/PostModal";
 import UserUpdateModal from "../../components/UserUpdateModal";
 import Item from "../../components/PostCard/Body/FollowUnfollowUser";
+import Header from "../../components/Header";
 
 import {
 	UserImage,
@@ -154,31 +155,35 @@ const User = () => {
 	}, [unFollowUser, me, you]);
 
 	return (
-		<Wrapper>
-			<Row justify="center">
-				<Col lg={16} md={16} xs={16}>
-					<Info>
-						<UserImageWrapper>
-							<UserImage
-								src={`http://localhost:4000/${currentPageUser.profile}`}
-							/>
-						</UserImageWrapper>
+		<>
+			<Header />
+			<Wrapper>
+				<Row justify="center">
+					<Col lg={16} md={16} xs={16}>
+						<Info>
+							<UserImageWrapper>
+								<UserImage
+									src={`http://localhost:4000/${currentPageUser.profile}`}
+								/>
+							</UserImageWrapper>
 
-						<UserInfoWrapper>
-							<span
-								style={{
-									fontSize: "30px",
-									fontWeight: "700",
-									color: "#262626",
-								}}
-							>
-								{currentPageUser.userId}
-							</span>
-							<span style={{ marginLeft: "10px" }}>{currentPageUser.name}</span>
+							<UserInfoWrapper>
+								<span
+									style={{
+										fontSize: "30px",
+										fontWeight: "700",
+										color: "#262626",
+									}}
+								>
+									{currentPageUser.userId}
+								</span>
+								<span style={{ marginLeft: "10px" }}>
+									{currentPageUser.name}
+								</span>
 
-							{!you || (you && you.id === me.id) ? (
-								<div>
-									{/* <Button
+								{!you || (you && you.id === me.id) ? (
+									<div>
+										{/* <Button
 										style={{ marginTop: "10px" }}
 										onClick={() => {
 											setUserUpdateModal(true);
@@ -187,90 +192,91 @@ const User = () => {
 										<EditOutlined />
 										개인정보 수정
 									</Button> */}
-								</div>
-							) : isMeFollowYou ? (
-								<Button type="danger" onClick={unFollow}>
-									언팔로우
-								</Button>
-							) : (
-								<Button type="primary" onClick={follow}>
-									팔로우
-								</Button>
-							)}
+									</div>
+								) : isMeFollowYou ? (
+									<Button type="danger" onClick={unFollow}>
+										언팔로우
+									</Button>
+								) : (
+									<Button type="primary" onClick={follow}>
+										팔로우
+									</Button>
+								)}
 
-							<CustomUl>
-								<li>
-									게시글<span>{currentPageUser.myPosts.length}</span>
-								</li>
-
-								<RefWrapper
-									onMouseOver={onFollowingMouseOver}
-									onMouseOut={onFollowingMouseOut}
-								>
+								<CustomUl>
 									<li>
-										팔로잉<span>{currentPageUser.following.length}</span>
+										게시글<span>{currentPageUser.myPosts.length}</span>
 									</li>
-									<ShowFollow ref={showFollowingRef}>
-										<div id="header">팔로잉</div>
-										<div id="items">
-											{currentPageUser.following.map((v, i) => (
-												<Item user={v} loggedInUser={me} key={i} />
-											))}
-										</div>
-									</ShowFollow>
-								</RefWrapper>
-								<RefWrapper
-									onMouseOver={onFollowerMouseOver}
-									onMouseOut={onFollowerMouseOut}
-								>
-									<li>
-										팔로워<span>{currentPageUser.follower.length}</span>
-									</li>
-									<ShowFollow ref={showFollowerRef}>
-										<div id="header">팔로워</div>
-										<div id="items">
-											{currentPageUser.follower.map((v, i) => (
-												<Item user={v} loggedInUser={me} key={i} />
-											))}
-										</div>
-									</ShowFollow>
-								</RefWrapper>
-							</CustomUl>
-						</UserInfoWrapper>
-					</Info>
-					<div />
 
-					<Divider
-						orientation="left"
-						style={{ borderBottom: "1px solid rgba(0,0,0,0.0975)" }}
-					></Divider>
-					<PostWrapper>
-						<Row gutter={[24, 32]}>
-							{currentPageUser.myPosts.map((v, i) => {
-								return (
-									<Col lg={8} sm={24}>
-										<ImgCustom
-											src={`http://localhost:4000/${v.images[0].src}`}
-											onClick={onOpenModal(v)}
-										></ImgCustom>
-									</Col>
-								);
-							})}
-						</Row>
-					</PostWrapper>
-					{postModal && (
-						<PostModal
-							onCloseModal={onCloseModal}
-							post={post}
-							me={currentPageUser}
-						/>
-					)}
-					{userUpdateModal && (
-						<UserUpdateModal onCloseModalProps={setUserUpdateModal} me={me} />
-					)}
-				</Col>
-			</Row>
-		</Wrapper>
+									<RefWrapper
+										onMouseOver={onFollowingMouseOver}
+										onMouseOut={onFollowingMouseOut}
+									>
+										<li>
+											팔로잉<span>{currentPageUser.following.length}</span>
+										</li>
+										<ShowFollow ref={showFollowingRef}>
+											<div id="header">팔로잉</div>
+											<div id="items">
+												{currentPageUser.following.map((v, i) => (
+													<Item user={v} loggedInUser={me} key={i} />
+												))}
+											</div>
+										</ShowFollow>
+									</RefWrapper>
+									<RefWrapper
+										onMouseOver={onFollowerMouseOver}
+										onMouseOut={onFollowerMouseOut}
+									>
+										<li>
+											팔로워<span>{currentPageUser.follower.length}</span>
+										</li>
+										<ShowFollow ref={showFollowerRef}>
+											<div id="header">팔로워</div>
+											<div id="items">
+												{currentPageUser.follower.map((v, i) => (
+													<Item user={v} loggedInUser={me} key={i} />
+												))}
+											</div>
+										</ShowFollow>
+									</RefWrapper>
+								</CustomUl>
+							</UserInfoWrapper>
+						</Info>
+						<div />
+
+						<Divider
+							orientation="left"
+							style={{ borderBottom: "1px solid rgba(0,0,0,0.0975)" }}
+						></Divider>
+						<PostWrapper>
+							<Row gutter={[24, 32]}>
+								{currentPageUser.myPosts.map((v, i) => {
+									return (
+										<Col lg={8} sm={24}>
+											<ImgCustom
+												src={`http://localhost:4000/${v.images[0].src}`}
+												onClick={onOpenModal(v)}
+											></ImgCustom>
+										</Col>
+									);
+								})}
+							</Row>
+						</PostWrapper>
+						{postModal && (
+							<PostModal
+								onCloseModal={onCloseModal}
+								post={post}
+								me={currentPageUser}
+							/>
+						)}
+						{userUpdateModal && (
+							<UserUpdateModal onCloseModalProps={setUserUpdateModal} me={me} />
+						)}
+					</Col>
+				</Row>
+			</Wrapper>
+		</>
 	);
 };
 

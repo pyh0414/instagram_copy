@@ -13,7 +13,13 @@ import PostFormModal from "../PostFormModal";
 import HeaderInput from "./HeaderInput";
 import Item from "./Item";
 
-import { HeaderWrapper, InstagramLogo, Search, SearchUsers } from "./style";
+import {
+	HeaderWrapper,
+	InstagramLogo,
+	Search,
+	SearchUsers,
+	Wrapper,
+} from "./style";
 
 const Header = () => {
 	const [modalVisible, setmodalVisible] = useState(false);
@@ -64,11 +70,7 @@ const Header = () => {
 	}, 500);
 
 	return (
-		<div
-			style={{
-				borderBottom: "1px solid rgba(0,0,0,0.0975)",
-			}}
-		>
+		<Wrapper>
 			<Row justify="center">
 				<Col lg={20} md={20} sm={22} xs={22}>
 					<Row>
@@ -142,7 +144,7 @@ const Header = () => {
 					</Row>
 				</Col>
 			</Row>
-		</div>
+		</Wrapper>
 	);
 };
 

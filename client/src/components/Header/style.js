@@ -1,5 +1,15 @@
 import styled from "styled-components";
 
+export const Wrapper = styled.div`
+	background: white;
+	position: sticky;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.0975);
+	top: 0px;
+	z-index: 1;
+	width: 100%;
+	height: 60px;
+`;
+
 export const HeaderWrapper = styled.div`
 	height: 60px;
 	width: 100%;

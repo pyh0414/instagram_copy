@@ -1,10 +1,5 @@
 import styled from "styled-components";
 
-export const Wrapper = styled.div`
-	margin-top: 5px;
-	cursor: pointer;
-`;
-
 export const ShowLikers = styled.div`
 	background-color: #ffffff;
 	border: 1px solid gray;

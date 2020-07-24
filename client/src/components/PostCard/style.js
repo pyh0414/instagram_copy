@@ -7,5 +7,5 @@ export const Wrapper = styled.div`
 `;
 
 export const Container = styled.div`
-	padding-top: 40px;
+	margin-top: 40px;
 `;
