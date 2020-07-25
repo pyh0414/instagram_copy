@@ -4,6 +4,7 @@ import { buildSchema } from "type-graphql";
 import { GraphQLServer } from "graphql-yoga";
 import { PrismaClient } from "@prisma/client";
 import express from "express";
+import dotenv from "dotenv";
 
 import { UserResolver } from "./modules/User/resolver";
 import { FileResolver } from "./modules/File/resolver";
@@ -13,6 +14,8 @@ import { RoomResolver } from "./modules/Room/resolver";
 import { ChatResolver } from "./modules/Chat/resolver";
 
 import { authMiddleware } from "./middleware/authMiddleware";
+
+dotenv.config();
 
 const main = async () => {
 	const schema = await buildSchema({
@@ -39,7 +42,7 @@ const main = async () => {
 	});
 
 	server.express.use("/images", express.static("images"));
-	server.express.use(authMiddleware);
+	// server.express.use(authMiddleware);
 
 	const options = {
 		cors: {
