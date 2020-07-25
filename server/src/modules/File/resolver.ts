@@ -4,6 +4,10 @@ import { SINGLE_FILE_UPLOAD } from "./type";
 
 import uploadFile from "../../utils/uploadFile";
 import removeFile from "../../utils/removeFile";
+import { s3UploadFile } from "../../utils/s3UploadFile";
+
+import AWS from "aws-sdk";
+const uuid = require("uuid/v4");
 
 @Resolver()
 export class FileResolver {
@@ -20,19 +24,18 @@ export class FileResolver {
 		}
 	}
 
-	@Mutation((returns) => [String]!, { nullable: false })
+	@Mutation((returns) => [String]!, { nullable: true })
 	async singleFileUpload(
 		@Arg("file", () => GraphQLUpload!)
 		file: SINGLE_FILE_UPLOAD
 	) {
 		try {
-			await await uploadFile(file);
+			await uploadFile(file);
 			const filePath = [];
 			filePath.push(`images/${file.filename}`);
 			return filePath;
 		} catch (err) {
 			console.log(err);
-			throw new Error(err);
 		}
 	}
 

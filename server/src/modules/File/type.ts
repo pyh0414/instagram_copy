@@ -1,10 +1,19 @@
 import { Stream } from "stream";
 import { ObjectType, Field, InputType } from "type-graphql";
 
+// local;
 export type SINGLE_FILE_UPLOAD = {
 	filename: string;
 	createReadStream: () => Stream;
 };
+
+// s3;
+// export type SINGLE_FILE_UPLOAD = {
+// 	filename: string;
+// 	mimetype: string;
+// 	encoding: string;
+// 	createReadStream: () => Stream;
+// };
 
 // export type MULTIPLE_FILE_UPLOAD = (
 // 	map: any,
