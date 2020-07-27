@@ -208,7 +208,7 @@ const PostForm = ({ setmodalVisibleProps }) => {
 							>
 								<div style={{ display: "inline-block" }}>
 									<img
-										src={`http://localhost:4000/${profile}`}
+										src={`http://${process.env.REACT_APP_DEV_SERVER}/${profile}`}
 										style={{ width: "200px" }}
 										alt={profile}
 									/>

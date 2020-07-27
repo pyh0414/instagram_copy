@@ -209,7 +209,11 @@ const SignUp = () => {
 						프로필 업로드
 					</Button>
 					<br />
-					{profile && <ImageCustom src={`http://localhost:4000/${profile}`} />}
+					{profile && (
+						<ImageCustom
+							src={`http://${process.env.REACT_APP_DEV_SERVER}/${profile}`}
+						/>
+					)}
 				</div>
 				<br />
 				<Button type="submit" htmlType="submit" style={{ width: "100%" }}>

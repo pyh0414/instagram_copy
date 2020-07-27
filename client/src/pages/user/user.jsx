@@ -165,7 +165,7 @@ const User = () => {
 						<Info>
 							<UserImageWrapper>
 								<UserImage
-									src={`http://localhost:4000/${currentPageUser.profile}`}
+									src={`http://${process.env.REACT_APP_DEV_SERVER}/${currentPageUser.profile}`}
 								/>
 							</UserImageWrapper>
 
@@ -265,7 +265,7 @@ const User = () => {
 									return (
 										<Col lg={8} sm={24}>
 											<ImgCustom
-												src={`http://localhost:4000/${v.images[0].src}`}
+												src={`http://${process.env.REACT_APP_DEV_SERVER}/${v.images[0].src}`}
 												onClick={onOpenModal(v)}
 												key={i}
 											></ImgCustom>

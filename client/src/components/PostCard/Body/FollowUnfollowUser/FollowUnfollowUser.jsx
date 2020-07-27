@@ -87,7 +87,10 @@ const FollowUnfollowUser = ({ user, loggedInUser }) => {
 	if (selfLiked) {
 		return (
 			<Wrapper>
-				<img src={`http://localhost:4000/${user.profile}`} alt="follow img" />
+				<img
+					src={`http://${process.env.REACT_APP_DEV_SERVER}/${user.profile}`}
+					alt="follow img"
+				/>
 				<span>{user.userId}</span>
 			</Wrapper>
 		);
@@ -96,7 +99,10 @@ const FollowUnfollowUser = ({ user, loggedInUser }) => {
 		<Wrapper>
 			{isFollowing ? (
 				<div>
-					<img src={`http://localhost:4000/${user.profile}`} alt="follow img" />
+					<img
+						src={`http://${process.env.REACT_APP_DEV_SERVER}/${user.profile}`}
+						alt="follow img"
+					/>
 					<span>{user.userId}</span>
 					<Button
 						type="danger"
@@ -108,7 +114,10 @@ const FollowUnfollowUser = ({ user, loggedInUser }) => {
 				</div>
 			) : (
 				<div>
-					<img src={`http://localhost:4000/${user.profile}`} alt="follow img" />
+					<img
+						src={`http://${process.env.REACT_APP_DEV_SERVER}/${user.profile}`}
+						alt="follow img"
+					/>
 					<span>{user.userId}</span>
 					<Button type="primary" onClick={follow} icon={<UserAddOutlined />}>
 						팔로우

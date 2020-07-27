@@ -15,14 +15,14 @@ import App from "./App";
 const cache = new InMemoryCache();
 
 const wsLink = new WebSocketLink({
-	uri: "ws://localhost:4000/graphql",
+	uri: `ws://${process.env.REACT_APP_DEV_SERVER}/graphql`,
 	options: {
 		reconnect: true,
 	},
 });
 
 const httpWithUploadLink = createUploadLink({
-	uri: "http://localhost:4000/graphql",
+	uri: `http://${process.env.REACT_APP_DEV_SERVER}/graphql`,
 });
 
 const link = split(

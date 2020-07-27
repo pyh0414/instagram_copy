@@ -5,7 +5,11 @@ import { Wrapper, UserProfile, User } from "./style";
 const UserInfo = ({ user }) => {
 	return (
 		<Wrapper>
-			{<UserProfile src={`http://localhost:4000/${user.profile}`} />}
+			{
+				<UserProfile
+					src={`http://${process.env.REACT_APP_DEV_SERVER}/${user.profile}`}
+				/>
+			}
 
 			<User>
 				{<div style={{ fontWeight: "bold" }}>{user.userId}</div>}
