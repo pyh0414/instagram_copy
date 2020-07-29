@@ -10,7 +10,7 @@ import Header from "../../components/Header";
 import { CLIENT_ALL_POSTS } from "../../action/client";
 import { CLIENT_LOGGED_IN_USER } from "../../action/client";
 
-import { Wrapper, Side } from "./style";
+import { Wrapper } from "./style";
 
 const Main = () => {
 	const { data: posts } = useQuery(CLIENT_ALL_POSTS);
@@ -28,11 +28,20 @@ const Main = () => {
 						})}
 					</Col>
 
-					<Col lg={4} md={0} sm={0} xs={0}>
-						<Side>
-							<UserInfo user={loggedInUser.user} />
-							<Messenger />
-						</Side>
+					<Col
+						lg={4}
+						md={0}
+						sm={0}
+						xs={0}
+						style={{
+							height: "60%",
+							width: "300px",
+							position: "sticky",
+							top: "10vh",
+						}}
+					>
+						<UserInfo user={loggedInUser.user} />
+						<Messenger />
 					</Col>
 				</Row>
 			</Wrapper>
