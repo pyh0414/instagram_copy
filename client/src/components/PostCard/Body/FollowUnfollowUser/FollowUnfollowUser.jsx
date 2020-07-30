@@ -88,7 +88,7 @@ const FollowUnfollowUser = ({ user, loggedInUser }) => {
 		return (
 			<Wrapper>
 				<img
-					src={`http://${process.env.REACT_APP_DEV_SERVER}/${user.profile}`}
+					src={`http://${process.env.REACT_APP_SERVER_DOMAIN}/${user.profile}`}
 					alt="follow img"
 				/>
 				<span>{user.userId}</span>
@@ -100,7 +100,7 @@ const FollowUnfollowUser = ({ user, loggedInUser }) => {
 			{isFollowing ? (
 				<div>
 					<img
-						src={`http://${process.env.REACT_APP_DEV_SERVER}/${user.profile}`}
+						src={`http://${process.env.REACT_APP_SERVER_DOMAIN}/${user.profile}`}
 						alt="follow img"
 					/>
 					<span>{user.userId}</span>
@@ -115,7 +115,7 @@ const FollowUnfollowUser = ({ user, loggedInUser }) => {
 			) : (
 				<div>
 					<img
-						src={`http://${process.env.REACT_APP_DEV_SERVER}/${user.profile}`}
+						src={`http://${process.env.REACT_APP_SERVER_DOMAIN}/${user.profile}`}
 						alt="follow img"
 					/>
 					<span>{user.userId}</span>

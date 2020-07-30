@@ -7,7 +7,9 @@ const Comments = ({ comments }) => {
 		return (
 			<div key={i} style={{ marginTop: "8px" }}>
 				<span>
-					<ImgCustom src={`http://localhost:4000/${v.author.profile}`} />
+					<ImgCustom
+						src={`http://${process.env.REACT_APP_SERVER_DOMAIN}/${v.author.profile}`}
+					/>
 				</span>
 				<span
 					style={{ fontWeight: "bold", color: "#202020", marginLeft: "5px" }}

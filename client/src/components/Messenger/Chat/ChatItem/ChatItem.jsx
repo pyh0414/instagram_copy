@@ -14,7 +14,7 @@ const ChatItem = ({ chat, loggedInUser }) => {
 			) : (
 				<You>
 					<img
-						src={`http://${process.env.REACT_APP_DEV_SERVER}/${chat.user.profile}`}
+						src={`http://${process.env.REACT_APP_SERVER_DOMAIN}/${chat.user.profile}`}
 						alt="chatUserProfile"
 					/>
 					<span> {chat.user.userId}</span>

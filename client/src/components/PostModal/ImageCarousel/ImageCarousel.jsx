@@ -44,7 +44,9 @@ const ImageCarousel = ({ images }) => {
 						{images.map((v, i) => {
 							return (
 								<MultiImageWrapper key={i}>
-									<MultiImage src={`http://localhost:4000/${v.src}`} />
+									<MultiImage
+										src={`http://${process.env.REACT_APP_SERVER_DOMAIN}/${v.src}`}
+									/>
 								</MultiImageWrapper>
 							);
 						})}
@@ -52,7 +54,9 @@ const ImageCarousel = ({ images }) => {
 				</div>
 			) : (
 				<SingleImageWrapper>
-					<SingleImage src={`http://localhost:4000/${images[0].src}`} />
+					<SingleImage
+						src={`http://${process.env.REACT_APP_SERVER_DOMAIN}/${images[0].src}`}
+					/>
 				</SingleImageWrapper>
 			)}
 		</div>

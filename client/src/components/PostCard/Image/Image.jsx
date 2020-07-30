@@ -7,7 +7,7 @@ const Image = ({ images }) => {
 		<>
 			{
 				<ImgCustom
-					src={`http://${process.env.REACT_APP_DEV_SERVER}/${images[0].src}`}
+					src={`http://${process.env.REACT_APP_SERVER_DOMAIN}/${images[0].src}`}
 				/>
 			}
 		</>

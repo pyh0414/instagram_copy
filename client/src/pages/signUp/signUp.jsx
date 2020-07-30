@@ -211,7 +211,7 @@ const SignUp = () => {
 					<br />
 					{profile && (
 						<ImageCustom
-							src={`http://${process.env.REACT_APP_DEV_SERVER}/${profile}`}
+							src={`http://${process.env.REACT_APP_SERVER_DOMAIN}/${profile}`}
 						/>
 					)}
 				</div>

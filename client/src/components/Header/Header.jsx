@@ -139,7 +139,7 @@ const Header = () => {
 
 									<Col xl={4} lg={6} md={6} sm={6} xs={6}>
 										<Avatar
-											src={`http://${process.env.REACT_APP_DEV_SERVER}/${data.user.profile}`}
+											src={`http://${process.env.REACT_APP_SERVER_DOMAIN}/${data.user.profile}`}
 										/>
 									</Col>
 								</Row>
