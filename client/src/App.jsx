@@ -16,11 +16,7 @@ const App = () => {
 	const { data } = useQuery(IS_LOGGED_IN);
 
 	useQuery(QUERY_ALL_POSTS, {
-		context: {
-			headers: {
-				authorization: "Bearer pass",
-			},
-		},
+		context: {},
 		onCompleted: (data) => {
 			const allPosts = data.getAllPosts;
 			client.writeQuery({
@@ -33,11 +29,7 @@ const App = () => {
 	});
 
 	useQuery(QUERY_ALL_ROOMS, {
-		context: {
-			headers: {
-				authorization: "Bearer pass",
-			},
-		},
+		context: {},
 		onCompleted: (data) => {
 			const allRooms = data.getAllRooms;
 			client.writeQuery({

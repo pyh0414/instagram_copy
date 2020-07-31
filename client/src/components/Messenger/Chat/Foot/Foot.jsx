@@ -44,11 +44,6 @@ const Foot = ({ onLeaveRoom, currentRoomId, allRooms }) => {
 				const data = { content, roomId: parseInt(currentRoomId) };
 				createChat({
 					variables: { data },
-					context: {
-						headers: {
-							authorization: `Bearer ${localStorage.getItem("token")}`,
-						},
-					},
 				});
 				setContent("");
 			}

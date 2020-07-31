@@ -109,20 +109,10 @@ const PostForm = ({ setmodalVisibleProps }) => {
 			if (files.length > 1) {
 				multipleFileUpload({
 					variables: { files },
-					context: {
-						headers: {
-							authorization: `Bearer ${localStorage.getItem("token")}`,
-						},
-					},
 				});
 			} else {
 				singleFileUpload({
 					variables: { file: files[0] },
-					context: {
-						headers: {
-							authorization: `Bearer ${localStorage.getItem("token")}`,
-						},
-					},
 				});
 			}
 		},
@@ -133,11 +123,6 @@ const PostForm = ({ setmodalVisibleProps }) => {
 		(src) => () => {
 			fileRemove({
 				variables: { src },
-				context: {
-					headers: {
-						authorization: `Bearer ${localStorage.getItem("token")}`,
-					},
-				},
 			});
 		},
 		[fileRemove]
@@ -154,11 +139,6 @@ const PostForm = ({ setmodalVisibleProps }) => {
 		setImages([]);
 		createPost({
 			variables: { post },
-			context: {
-				headers: {
-					authorization: `Bearer ${localStorage.getItem("token")}`,
-				},
-			},
 		});
 	}, [content, images, createPost]);
 

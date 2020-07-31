@@ -61,11 +61,6 @@ const UserUpdateModal = ({ onCloseModalProps, me }) => {
 
 		updateUser({
 			variables: { data },
-			context: {
-				headers: {
-					authorization: `Bearer ${localStorage.getItem("token")}`,
-				},
-			},
 		});
 	}, [name, userPw, profile, updateUser]);
 
@@ -99,11 +94,6 @@ const UserUpdateModal = ({ onCloseModalProps, me }) => {
 			const file = e.target.files[0];
 			singleFileUpload({
 				variables: { file },
-				context: {
-					headers: {
-						authorization: "Bearer pass",
-					},
-				},
 			});
 		},
 		[singleFileUpload]

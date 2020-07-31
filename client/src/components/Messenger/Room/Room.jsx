@@ -78,11 +78,7 @@ const Room = ({ allRooms, onEnterRoom }) => {
 		const room = { name: roomName };
 		createRoom({
 			variables: { room },
-			context: {
-				headers: {
-					authorization: `Bearer ${localStorage.getItem("token")}`,
-				},
-			},
+			context: {},
 		});
 
 		setRoomName("");

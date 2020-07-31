@@ -25,11 +25,7 @@ const RoomItem = ({ room, onEnterRoom }) => {
 	const onRemoveRoom = (roomId) => () => {
 		removeRoom({
 			variables: { roomId },
-			context: {
-				headers: {
-					authorization: `Bearer ${localStorage.getItem("token")}`,
-				},
-			},
+			context: {},
 		});
 	};
 	const enterRoom = (roomId) => () => {

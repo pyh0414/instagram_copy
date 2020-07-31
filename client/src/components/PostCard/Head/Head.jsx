@@ -25,11 +25,6 @@ const Head = ({ author }) => {
 		const userId = author.userId;
 		searchUser({
 			variables: { userId },
-			context: {
-				headers: {
-					authorization: `Bearer ${localStorage.getItem("token")}`,
-				},
-			},
 		});
 	}, [author, searchUser]);
 

@@ -53,11 +53,6 @@ const FollowUnfollowUser = ({ user, loggedInUser }) => {
 			variables: {
 				data,
 			},
-			context: {
-				headers: {
-					authorization: "Bearer pass",
-				},
-			},
 		});
 	}, [data, followUser]);
 
@@ -66,11 +61,6 @@ const FollowUnfollowUser = ({ user, loggedInUser }) => {
 		unFollowUser({
 			variables: {
 				data,
-			},
-			context: {
-				headers: {
-					authorization: "Bearer pass",
-				},
 			},
 		});
 	}, [data, unFollowUser]);

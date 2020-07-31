@@ -45,11 +45,6 @@ const Comment = ({ postId }) => {
 					variables: {
 						comment,
 					},
-					context: {
-						headers: {
-							authorization: `Bearer ${localStorage.getItem("token")}`,
-						},
-					},
 				});
 				setContent("");
 			}

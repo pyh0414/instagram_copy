@@ -16,11 +16,6 @@ const LikeIcon = ({ postId, user, likers }) => {
 	const client = useApolloClient();
 
 	const [likeToPost] = useMutation(MUTATION_LIKE_TO_POST, {
-		context: {
-			headers: {
-				authorization: `Bearer ${localStorage.getItem("token")}`,
-			},
-		},
 		update: async (cache, data) => {
 			const likedPost = data.data.likeToPost;
 
@@ -46,11 +41,6 @@ const LikeIcon = ({ postId, user, likers }) => {
 	});
 
 	const [unLikeToPost] = useMutation(MUTATION_UNLIKE_TO_POST, {
-		context: {
-			headers: {
-				authorization: `Bearer ${localStorage.getItem("token")}`,
-			},
-		},
 		update: async (cache, data) => {
 			const unLikedPost = data.data.unLikeToPost;
 

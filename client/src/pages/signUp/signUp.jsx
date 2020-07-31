@@ -93,11 +93,6 @@ const SignUp = () => {
 			const user = { userId, name, userPw, profile };
 			createUser({
 				variables: { user },
-				context: {
-					headers: {
-						authorization: "Bearer pass",
-					},
-				},
 			});
 		}
 	}, [
@@ -117,11 +112,6 @@ const SignUp = () => {
 		}
 		getUser({
 			variables: { userId },
-			context: {
-				headers: {
-					authorization: "Bearer pass",
-				},
-			},
 		});
 	}, [userId, getUser]);
 
