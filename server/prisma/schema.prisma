@@ -17,6 +17,7 @@ model User {
   name           String
   userId         String       @unique
   userPw         String
+  refreshToken   String
   profile        String
   createdAt      DateTime     @default(now())
   myPosts        Post[]       @relation("_PostToUser")
