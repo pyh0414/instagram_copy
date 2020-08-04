@@ -6,7 +6,7 @@ export default async (ctx: any): Promise<string | null> => {
 	)[1];
 
 	if (token) {
-		const user = jwt.verify(token, "secret");
+		const user = jwt.verify(token, process.env.JWT_SECRET_KEY);
 		return user.userId;
 	}
 	return null;

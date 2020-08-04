@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useApolloClient, useLazyQuery, useQuery } from "@apollo/react-hooks";
 import OutsideClickHandler from "react-outside-click-handler";
 import { Col, Row, Avatar } from "antd";
@@ -14,6 +14,8 @@ import PostFormModal from "../PostFormModal";
 import HeaderInput from "./HeaderInput";
 import Item from "./Item";
 
+import { timer } from "../../auth/timer";
+
 import {
 	HeaderWrapper,
 	InstagramLogo,
@@ -28,17 +30,9 @@ const Header = () => {
 	const [searchUsersVisible, setSearchUsersVisible] = useState(false);
 
 	const client = useApolloClient();
-	const { data } = useQuery(CLIENT_LOGGED_IN_USER);
-	const [searchUser] = useLazyQuery(QUERY_OTHER_USER, {
-		onCompleted: (data) => {
-			const searchedUsers = data.searchUsers;
-
-			setSearchUsers(searchedUsers);
-			setSearchUsersVisible(true);
-		},
-	});
 
 	const onLogout = useCallback(() => {
+		timer.stop();
 		localStorage.clear();
 		client.writeData({
 			data: {
@@ -49,6 +43,16 @@ const Header = () => {
 		});
 		navigate("/");
 	}, [client]);
+
+	const { data } = useQuery(CLIENT_LOGGED_IN_USER);
+	const [searchUser] = useLazyQuery(QUERY_OTHER_USER, {
+		onCompleted: (data) => {
+			const searchedUsers = data.searchUsers;
+
+			setSearchUsers(searchedUsers);
+			setSearchUsersVisible(true);
+		},
+	});
 
 	// Header : 입력할 때마다 "onDelaySearch1 실행"만 출력,_.debounce의 long 출력 안됨
 	// HeaderInput : 입력할 때마다 "onDelaySearch1 실행"만 출력,_.debounce의 long 출력 안됨

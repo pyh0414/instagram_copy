@@ -1,16 +1,16 @@
-import { Resolver, Mutation, Arg, Query } from "type-graphql";
+import { Resolver, Mutation, Arg, Query, Authorized } from "type-graphql";
 import { GraphQLUpload } from "graphql-upload";
+import AWS from "aws-sdk";
+
 import { SINGLE_FILE_UPLOAD } from "./type";
 
 import uploadFile from "../../utils/uploadFile";
 import removeFile from "../../utils/removeFile";
 import { s3UploadFile } from "../../utils/s3UploadFile";
 
-import AWS from "aws-sdk";
-const uuid = require("uuid/v4");
-
 @Resolver()
 export class FileResolver {
+	// @Authorized()
 	@Query((returns) => String, { nullable: true })
 	async fileRemove(
 		@Arg("src")
@@ -24,31 +24,33 @@ export class FileResolver {
 		}
 	}
 
-	@Mutation((returns) => [String]!, { nullable: true })
+	@Mutation((returns) => [String]!, { nullable: false })
 	async singleFileUpload(
-		@Arg("file", () => GraphQLUpload!)
+		@Arg("file", () => GraphQLUpload)
 		file: SINGLE_FILE_UPLOAD
 	) {
+		console.log(file);
 		try {
-			await uploadFile(file);
-			const filePath = [];
-			filePath.push(`images/${file.filename}`);
-			return filePath;
+			const filePath = await uploadFile(file);
+			const result = [];
+			result.push(filePath);
+			return result;
 		} catch (err) {
 			console.log(err);
 		}
 	}
 
+	// @Authorized()
 	@Mutation((returns) => [String]!, { nullable: false })
 	async multipleFileUpload(
 		@Arg("files", () => [GraphQLUpload!]!)
 		files: Array<[string, any]>
 	) {
 		try {
-			const filePaths: Array<string> = await Promise.all(
+			const result: Array<string> = await Promise.all(
 				files.map((v) => uploadFile(v))
 			);
-			return filePaths;
+			return result;
 		} catch (err) {
 			console.log(err);
 			throw new Error(err);

@@ -8,9 +8,11 @@ import { ApolloClient } from "apollo-client";
 import { InMemoryCache } from "apollo-cache-inmemory";
 import { createUploadLink } from "apollo-upload-client";
 import { persistCache } from "apollo-cache-persist";
+import { setContext } from "apollo-link-context";
 
 import "antd/dist/antd.css"; // or 'antd/dist/antd.less' // antd를 사용하기 위함
 import App from "./App";
+import { inMemoryAccessToken } from "./auth/auth";
 
 const cache = new InMemoryCache();
 
@@ -19,6 +21,15 @@ const wsLink = new WebSocketLink({
 	options: {
 		reconnect: true,
 	},
+});
+
+const authLink = setContext((_, { headers }) => {
+	return {
+		headers: {
+			...headers,
+			authorization: `Bearer ${inMemoryAccessToken}`,
+		},
+	};
 });
 
 const httpWithUploadLink = createUploadLink({
@@ -39,7 +50,7 @@ const link = split(
 
 const client = new ApolloClient({
 	cache,
-	link,
+	link: authLink.concat(link),
 	connectToDevTools: true,
 	resolvers: {},
 });
@@ -71,6 +82,5 @@ ReactDOM.render(
 	<ApolloProvider client={client}>
 		<App />
 	</ApolloProvider>,
-
 	document.getElementById("root")
 );

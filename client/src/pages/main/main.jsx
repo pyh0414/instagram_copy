@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useQuery } from "@apollo/react-hooks";
 import { Col, Row } from "antd";
 
@@ -12,9 +12,15 @@ import { CLIENT_LOGGED_IN_USER } from "../../action/client";
 
 import { Wrapper } from "./style";
 
+import { timer } from "../../auth/timer";
+
 const Main = () => {
 	const { data: posts } = useQuery(CLIENT_ALL_POSTS);
 	const { data: loggedInUser } = useQuery(CLIENT_LOGGED_IN_USER);
+
+	useEffect(() => {
+		timer.start();
+	}, []);
 
 	return (
 		<div>
