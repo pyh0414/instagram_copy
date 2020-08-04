@@ -5,7 +5,8 @@
 	"license": "MIT",
 	"scripts": {
 		"test": "jest",
-		"dev": "nodemon 'src/index.ts' --exec 'ts-node' src/index.ts"
+		"dev": "cross-env NODE_ENV=development nodemon 'src/index.ts' --exec 'ts-node' src/index.ts",
+		"prov": "cross-env NODE_ENV=production nodemon 'src/index.ts' --exec 'ts-node' src/index.ts"
 	},
 	"dependencies": {
 		"@prisma/client": "^2.2.0",
@@ -13,18 +14,24 @@
 		"axios": "^0.19.2",
 		"bcryptjs": "^2.4.3",
 		"class-validator": "^0.11.0",
+		"cookie-parser": "^1.4.5",
+		"cors": "^2.8.5",
+		"cross-env": "^7.0.2",
 		"dotenv": "^8.2.0",
 		"express": "^4.16.4",
 		"faker": "^4.1.0",
 		"graphql": "^14.0.2",
 		"graphql-request": "^1.8.2",
 		"graphql-tag": "^2.10.3",
+		"graphql-upload": "^10.0.0",
 		"graphql-yoga": "^1.18.3",
 		"jest": "^26.0.1",
+		"jwt-decode": "^2.2.0",
 		"prisma-binding": "^2.3.16",
 		"reflect-metadata": "^0.1.12",
 		"request": "^2.88.2",
 		"type-graphql": "^0.17.6",
+		"uuid": "^8.3.0",
 		"ws": "^7.3.0"
 	},
 	"devDependencies": {
@@ -32,7 +39,7 @@
 		"@types/graphql": "^14.5.0",
 		"@types/jest": "^26.0.0",
 		"@types/node": "^10.12.18",
-		"nodemon": "^1.18.9",
+		"nodemon": "^2.0.4",
 		"ts-jest": "^26.1.0",
 		"ts-node": "^7.0.1",
 		"typescript": "^3.2.2"
