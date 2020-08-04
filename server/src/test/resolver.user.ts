@@ -1,22 +1,28 @@
 import faker from "faker";
 import { PrismaClient } from "@prisma/client";
-import { request } from "graphql-request";
+import { request, GraphQLClient } from "graphql-request";
 
 const prisma = new PrismaClient();
 
-const createUser = `
-mutation($user: createUserInput!) {
-    createUser(user: $user)
-}
-`;
+const client = new GraphQLClient("http://localhost:4000/graphql", {
+	headers: {
+		authorization: `Bearer _test`,
+	},
+});
 
-const getUser = `
-query($userId: String!) {
+const getUserQuery = `
+query _test($userId: String!) {
 	user(userId: $userId) {
 		userId
 		name
 	}
 }
+`;
+
+const createUserQuery = `
+	mutation _signUpCreateUser($user: createUserInput!) {
+		createUser(user: $user)
+	}
 `;
 
 const testUser = {
@@ -25,8 +31,6 @@ const testUser = {
 	name: "testName",
 	profile: "testProfile",
 };
-
-const endPoint = "http://localhost:4000/graphql";
 
 beforeAll(async () => {
 	await prisma.user.create({
@@ -50,11 +54,11 @@ describe("User Resolver Test", () => {
 			name: faker.name.firstName() + faker.name.lastName(),
 			profile: faker.image.imageUrl(),
 		};
-
 		try {
-			const res = await request(endPoint, createUser, {
+			const res = await client.request(createUserQuery, {
 				user,
 			});
+			console.log(res);
 			expect(res).toMatchObject({
 				createUser: true,
 			});
@@ -65,10 +69,9 @@ describe("User Resolver Test", () => {
 
 	it("get user", async () => {
 		try {
-			const res = await request(endPoint, getUser, {
+			const res = await request("http://localhost:4000/graphql", getUserQuery, {
 				userId: testUser.userId,
 			});
-
 			expect(res).toMatchObject({
 				user: {
 					userId: testUser.userId,
