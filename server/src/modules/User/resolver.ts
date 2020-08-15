@@ -1,301 +1,326 @@
-import { Resolver, Query, Mutation, Arg, Ctx } from "type-graphql";
+import { Resolver, Query, Mutation, Arg, Ctx, Authorized } from "type-graphql";
 import bcrypt from "bcryptjs";
 
-import {
-	User,
-	createUserInput,
-	signInInput,
-	CTX,
-	AuthPayload,
-	followUnfollowUserInput,
-	updateUserInput,
-	followUnfollowUserRetrun,
-} from "./type";
 import getHashedPassword from "../../utils/getHashedPassword";
 import getUserWithToken from "../../utils/getUserWithToken";
-import generateToken from "../../utils/generateToken";
+import {
+  generateAccessToken,
+  generateRefreshToken,
+} from "../../utils/generateToken";
+import {
+  User,
+  createUserInput,
+  followUnfollowUserInput,
+  updateUserInput,
+  followUnfollowUserRetrun,
+  signInInput,
+  authPayload,
+} from "./type";
+
+import { resolverContextParameters } from "../../types";
 
 @Resolver()
 export class UserResolver {
-	@Query((returns) => User, { nullable: true })
-	async user(@Arg("userId") userId: string, @Ctx() ctx: CTX) {
-		try {
-			const { prisma } = ctx;
-			const user = prisma.user.findOne({
-				where: {
-					userId,
-				},
-			});
-			return user;
-		} catch (err) {
-			console.log(err);
-			throw new Error(err);
-		}
-	}
+  @Query((returns) => User, { nullable: true })
+  async user(
+    @Arg("userId") userId: string,
+    @Ctx() ctx: resolverContextParameters
+  ) {
+    try {
+      const { prisma } = ctx;
+      const user = prisma.user.findOne({
+        where: {
+          userId,
+        },
+      });
+      return user;
+    } catch (err) {
+      console.log(err);
+      throw new Error(err);
+    }
+  }
 
-	@Query((returns) => [User], { nullable: true })
-	async searchUsers(@Arg("userId") userId: string, @Ctx() ctx: CTX) {
-		try {
-			const { prisma } = ctx;
-			const user = prisma.user.findMany({
-				where: {
-					userId: {
-						contains: userId,
-					},
-				},
-				include: {
-					following: true,
-					follower: true,
-					myPosts: {
-						include: {
-							images: true,
-							author: true,
-							likers: {
-								include: {
-									user: true,
-								},
-							},
-							comments: {
-								include: {
-									author: true,
-								},
-							},
-						},
-					},
-				},
-			});
+  @Query((returns) => authPayload)
+  async signIn(@Arg("user") user: signInInput, @Ctx() ctx: any) {
+    try {
+      const { prisma, response } = ctx;
+      const { userId, userPw } = user;
 
-			return user;
-		} catch (err) {
-			console.log(err);
-			throw new Error(err);
-		}
-	}
+      const fullUser = await prisma.user.findOne({
+        where: {
+          userId,
+        },
+        include: {
+          following: true,
+          follower: true,
+          myPosts: {
+            include: {
+              images: true,
+              author: true,
+              likers: {
+                include: {
+                  user: true,
+                },
+              },
+              comments: {
+                include: {
+                  author: true,
+                },
+              },
+            },
+          },
+        },
+      });
 
-	@Mutation((returns) => followUnfollowUserRetrun, { nullable: true })
-	async followUser(
-		@Arg("data") data: followUnfollowUserInput,
-		@Ctx() ctx: CTX
-	) {
-		try {
-			const { prisma } = ctx;
-			const { me, you } = data;
+      if (!fullUser) {
+        return false;
+      }
 
-			await prisma.user.update({
-				where: {
-					id: me,
-				},
-				data: {
-					following: {
-						connect: {
-							id: you,
-						},
-					},
-				},
-			});
+      const isPasswordSame = await bcrypt.compare(userPw, fullUser.userPw);
 
-			const user1 = await prisma.user.findOne({
-				where: {
-					id: me,
-				},
-				include: {
-					following: true,
-				},
-			});
+      if (!isPasswordSame) {
+        return false;
+      }
 
-			const user2 = await prisma.user.findOne({
-				where: {
-					id: you,
-				},
-				include: {
-					follower: true,
-				},
-			});
+      const accessToken = generateAccessToken(userId);
+      const refreshToken = generateRefreshToken(userId);
 
-			return {
-				me: user1,
-				you: user2,
-			};
-		} catch (err) {
-			console.log(err);
-			throw new Error("err");
-		}
-	}
+      response.cookie("refreshToken", refreshToken, {
+        maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
+        httpOnly: true,
+        secure: false,
+      });
 
-	@Mutation((returns) => followUnfollowUserRetrun, { nullable: true })
-	async unFollowUser(
-		@Arg("data") data: followUnfollowUserInput,
-		@Ctx() ctx: CTX
-	) {
-		try {
-			const { prisma } = ctx;
-			const { me, you } = data;
+      await prisma.user.update({
+        where: {
+          userId: fullUser.userId,
+        },
+        data: {
+          refreshToken,
+        },
+      });
+      return { user: fullUser, accessToken };
+    } catch (err) {
+      console.log(err);
+      throw new Error(err);
+    }
+  }
 
-			await prisma.user.update({
-				where: {
-					id: me,
-				},
-				data: {
-					following: {
-						disconnect: {
-							id: you,
-						},
-					},
-				},
-			});
+  @Authorized()
+  @Query((returns) => [User], { nullable: true })
+  async searchUsers(
+    @Arg("userId") userId: string,
+    @Ctx() ctx: resolverContextParameters
+  ) {
+    try {
+      const { prisma } = ctx;
+      const user = prisma.user.findMany({
+        where: {
+          userId: {
+            contains: userId,
+          },
+        },
+        include: {
+          following: true,
+          follower: true,
+          myPosts: {
+            include: {
+              images: true,
+              author: true,
+              likers: {
+                include: {
+                  user: true,
+                },
+              },
+              comments: {
+                include: {
+                  author: true,
+                },
+              },
+            },
+          },
+        },
+      });
 
-			const user1 = await prisma.user.findOne({
-				where: {
-					id: me,
-				},
-				include: {
-					following: true,
-				},
-			});
+      return user;
+    } catch (err) {
+      console.log(err);
+      throw new Error(err);
+    }
+  }
 
-			const user2 = await prisma.user.findOne({
-				where: {
-					id: you,
-				},
-				include: {
-					follower: true,
-				},
-			});
+  @Authorized()
+  @Mutation((returns) => followUnfollowUserRetrun, { nullable: true })
+  async followUser(
+    @Arg("data") data: followUnfollowUserInput,
+    @Ctx() ctx: resolverContextParameters
+  ) {
+    try {
+      const { prisma } = ctx;
+      const { me, you } = data;
 
-			return {
-				me: user1,
-				you: user2,
-			};
-		} catch (err) {
-			console.log(err);
-			throw new Error("err");
-		}
-	}
+      await prisma.user.update({
+        where: {
+          id: me,
+        },
+        data: {
+          following: {
+            connect: {
+              id: you,
+            },
+          },
+        },
+      });
 
-	@Mutation((returns) => User, { nullable: true })
-	async updateUser(@Arg("data") data: updateUserInput, @Ctx() ctx: CTX) {
-		try {
-			const { prisma } = ctx;
-			const { name, userPw, profile } = data;
+      const user1 = await prisma.user.findOne({
+        where: {
+          id: me,
+        },
+        include: {
+          following: true,
+        },
+      });
 
-			const userId = await getUserWithToken(ctx);
+      const user2 = await prisma.user.findOne({
+        where: {
+          id: you,
+        },
+        include: {
+          follower: true,
+        },
+      });
+      return {
+        me: user1,
+        you: user2,
+      };
+    } catch (err) {
+      console.log(err);
+      throw new Error("err");
+    }
+  }
 
-			const result = await prisma.user.findOne({
-				where: {
-					userId,
-				},
-				select: {
-					userPw: true,
-				},
-			});
+  @Authorized()
+  @Mutation((returns) => followUnfollowUserRetrun, { nullable: true })
+  async unFollowUser(
+    @Arg("data") data: followUnfollowUserInput,
+    @Ctx() ctx: resolverContextParameters
+  ) {
+    try {
+      const { prisma } = ctx;
+      const { me, you } = data;
 
-			let password;
+      await prisma.user.update({
+        where: {
+          id: me,
+        },
+        data: {
+          following: {
+            disconnect: {
+              id: you,
+            },
+          },
+        },
+      });
 
-			if (userPw) {
-				password = await getHashedPassword(userPw);
-			} else {
-				password = result.userPw;
-			}
+      const user1 = await prisma.user.findOne({
+        where: {
+          id: me,
+        },
+        include: {
+          following: true,
+        },
+      });
 
-			const updatedUser = await prisma.user.update({
-				where: {
-					userId,
-				},
-				data: {
-					profile,
-					name,
-					userPw: password,
-				},
-			});
-			return updatedUser;
-		} catch (err) {
-			console.log(err);
-			throw new Error("err");
-		}
-	}
+      const user2 = await prisma.user.findOne({
+        where: {
+          id: you,
+        },
+        include: {
+          follower: true,
+        },
+      });
 
-	@Query((returns) => AuthPayload)
-	async signIn(@Arg("user") user: signInInput, @Ctx() ctx: CTX) {
-		try {
-			const { prisma } = ctx;
-			const { userId, userPw } = user;
-			const fullUser = await prisma.user.findOne({
-				where: {
-					userId,
-				},
-				include: {
-					following: true,
-					follower: true,
-					myPosts: {
-						include: {
-							images: true,
-							author: true,
-							likers: {
-								include: {
-									user: true,
-								},
-							},
-							comments: {
-								include: {
-									author: true,
-								},
-							},
-						},
-					},
-				},
-			});
+      return {
+        me: user1,
+        you: user2,
+      };
+    } catch (err) {
+      console.log(err);
+      throw new Error("err");
+    }
+  }
 
-			if (!fullUser) {
-				return {
-					message: "존재하지 않는 아이디 입니다.",
-					user: null,
-					token: null,
-				};
-			}
+  @Authorized()
+  @Mutation((returns) => User, { nullable: true })
+  async updateUser(
+    @Arg("data") data: updateUserInput,
+    @Ctx() ctx: resolverContextParameters
+  ) {
+    try {
+      const { prisma } = ctx;
+      const { name, userPw, profile } = data;
 
-			const isPasswordSame = await bcrypt.compare(userPw, fullUser.userPw);
+      const userId = await getUserWithToken(ctx);
 
-			if (!isPasswordSame) {
-				return {
-					message: "비밀번호가 유효하지 않습니다",
-					user: null,
-					token: null,
-				};
-			}
+      const result = await prisma.user.findOne({
+        where: {
+          userId,
+        },
+        select: {
+          userPw: true,
+        },
+      });
 
-			const Token = generateToken(userId);
-			return {
-				message: "로그인 되었습니다",
-				user: fullUser,
-				token: Token,
-			};
-		} catch (err) {
-			console.log(err);
-			throw new Error(err);
-		}
-	}
+      let password;
 
-	@Mutation((returns) => Boolean)
-	async createUser(@Arg("user") user: createUserInput, @Ctx() ctx: CTX) {
-		try {
-			const { userId, userPw, name, profile } = user;
-			const { prisma } = ctx;
-			const hashedPassword = await getHashedPassword(userPw);
-			const newUser = await prisma.user.create({
-				data: {
-					userId,
-					userPw: hashedPassword.toString(),
-					name,
-					profile,
-				},
-			});
-			if (!newUser) {
-				return false;
-			}
-			return true;
-		} catch (err) {
-			console.log(err);
-			throw new Error(err);
-		}
-	}
+      if (userPw) {
+        password = await getHashedPassword(userPw);
+      } else {
+        password = result.userPw;
+      }
+
+      const updatedUser = await prisma.user.update({
+        where: {
+          userId,
+        },
+        data: {
+          profile,
+          name,
+          userPw: password,
+        },
+      });
+      return updatedUser;
+    } catch (err) {
+      console.log(err);
+      throw new Error("err");
+    }
+  }
+
+  @Mutation((returns) => Boolean)
+  async createUser(
+    @Arg("user") user: createUserInput,
+    @Ctx() ctx: resolverContextParameters
+  ) {
+    try {
+      const { userId, userPw, name, profile } = user;
+      const { prisma } = ctx;
+      const hashedPassword = await getHashedPassword(userPw);
+      const newUser = await prisma.user.create({
+        data: {
+          userId,
+          userPw: hashedPassword.toString(),
+          name,
+          profile,
+          refreshToken: "",
+        },
+      });
+      if (!newUser) {
+        return false;
+      }
+      return true;
+    } catch (err) {
+      console.log(err);
+      throw new Error(err);
+    }
+  }
 }

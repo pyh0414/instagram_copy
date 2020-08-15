@@ -1,23 +1,26 @@
-import jwt from "jsonwebtoken";
+import { MiddlewareFn } from "type-graphql";
 import express from "express";
+import { verify } from "jsonwebtoken";
 
-export const authMiddleware = async (
-	req: express.Request,
-	res: express.Request,
-	next: any
-): Promise<void> => {
-	if (req.method === "OPTIONS") {
-		return next();
-	}
-	const token: string = req.headers.authorization.split("Bearer ")[1];
-	if (token === "pass") {
-		return next();
-	}
+export const authMiddleware: MiddlewareFn<MyContext> = ({ context }, next) => {
+	const authorization = context.req.headers["authorization"];
 
-	const tokenValid: string = await jwt.verify(token, "secret");
-
-	if (!tokenValid) {
-		throw new Error("Not authorised");
+	if (!authorization) {
+		throw new Error("not authenticated");
 	}
-	next();
+	try {
+		const token = authorization.split(" ")[1];
+		const payload = verify(token, process.env.JWT_SECRET_KEY);
+		context.payload = payload as any;
+	} catch (err) {
+		console.log(err);
+		throw new Error("not authenticated");
+	}
+	return next();
 };
+
+export interface MyContext {
+	req: express.Request;
+	res: express.Response;
+	payload?: { userId: string };
+}
