@@ -6,73 +6,61 @@ import { File } from "../File/type";
 import { Comment } from "../Comment/type";
 import { User } from "../User/type";
 
-// type Post {
-// 	id: ID! @id @default(autoincrement())
-// 	content: String!
-// 	createdAt: DateTime! @createdAt
-// 	comment: [Comment!]!
-// 	author: User! @relation(link: INLINE, name: "UserToPost", onDelete: CASCADE)
-// 	hashtag: [HashTag!]!
-// 		@relation(link: TABLE, name: "HashtagToPost", onDelete: SET_NULL)
-// 	images: [Image!]
-// 	post: [User!]! @relation(name: "LikeToPost", onDelete: CASCADE)
-// }
-
 @ObjectType()
 class Liker {
-	@Field((type) => ID)
-	postId: number;
+  @Field((type) => ID)
+  postId: number;
 
-	@Field((type) => ID)
-	userId: number;
+  @Field((type) => ID)
+  userId: number;
 
-	@Field()
-	createAt: Date;
+  @Field()
+  createAt: Date;
 
-	@Field((type) => User, { nullable: true })
-	user?: User;
+  @Field((type) => User, { nullable: true })
+  user?: User;
 }
 
 @ObjectType()
 export class Post {
-	@Field((type) => ID)
-	id: number;
+  @Field((type) => ID)
+  id: number;
 
-	@Field()
-	content: string;
+  @Field()
+  content: string;
 
-	@Field((type) => User)
-	author: User;
+  @Field((type) => User)
+  author: User;
 
-	@Field((type) => [File], { nullable: true })
-	images?: File[];
+  @Field((type) => [File], { nullable: true })
+  images?: File[];
 
-	@Field((type) => [Comment], { nullable: true })
-	comments?: Comment[];
+  @Field((type) => [Comment], { nullable: true })
+  comments?: Comment[];
 
-	@Field((type) => [Liker], { nullable: true })
-	likers?: Liker[];
+  @Field((type) => [Liker], { nullable: true })
+  likers?: Liker[];
 }
 
 @InputType()
 export class createPostInput {
-	@Field()
-	content: string;
+  @Field()
+  content: string;
 
-	@Field((type) => [String])
-	images: String[];
+  @Field((type) => [String])
+  images: String[];
 }
 
 @InputType()
 export class likeOrUnlikeToPostInput {
-	@Field()
-	userId: number;
+  @Field()
+  userId: number;
 
-	@Field()
-	postId: number;
+  @Field()
+  postId: number;
 }
 
 export type CTX = {
-	request: express.Request;
-	prisma: PrismaClient;
+  request: express.Request;
+  prisma: PrismaClient;
 };

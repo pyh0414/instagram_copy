@@ -1,9 +1,14 @@
 import { createWriteStream, unlink } from "fs";
+import { v4 as uuidv4 } from "uuid";
 
 export default async (file): Promise<string> => {
 	const { createReadStream, filename } = await file;
 	const stream = createReadStream();
-	const path = `images/${filename}`;
+
+	const randomId = uuidv4();
+	const splitted = filename.split(".");
+	const imageType = splitted[splitted.length - 1];
+	const path = `images/${randomId}.${imageType}`;
 
 	// Store the file in the filesystem.
 	await new Promise((resolve, reject) => {

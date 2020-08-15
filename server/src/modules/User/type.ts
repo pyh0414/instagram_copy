@@ -9,107 +9,99 @@ import { Chat } from "../Chat/type";
 
 @ObjectType()
 export class User {
-	@Field((type) => ID)
-	id: number;
+  @Field((type) => ID)
+  id: number;
 
-	@Field({ nullable: true })
-	name: string;
+  @Field({ nullable: true })
+  name: string;
 
-	@Field()
-	userId: string;
+  @Field()
+  userId: string;
 
-	@Field({ nullable: true })
-	userPw: string;
+  @Field({ nullable: true })
+  userPw: string;
 
-	@Field()
-	profile: string;
+  @Field()
+  profile: string;
 
-	@Field({ nullable: true })
-	createAt?: Date;
+  @Field({ nullable: true })
+  createAt?: Date;
 
-	@Field((type) => [Post], { nullable: true }) // generic types(promise, arrays)에 대해서는 따로 명시해 주어여함
-	myPosts?: Post[]; // posts는 user를 생성할 때 없을 수 있기 때문에 nullable: true와 ?를 붙여줘야함
+  @Field((type) => [Post], { nullable: true }) // generic types(promise, arrays)에 대해서는 따로 명시해 주어여함
+  myPosts?: Post[]; // posts는 user를 생성할 때 없을 수 있기 때문에 nullable: true와 ?를 붙여줘야함
 
-	@Field((type) => [User], { nullable: true }) // 유저를 생성할 때 follower가 없다
-	follower?: User[];
+  @Field((type) => [User], { nullable: true }) // 유저를 생성할 때 follower가 없다
+  follower?: User[];
 
-	@Field((type) => [User], { nullable: true }) // 유저를 생성할 때 following 없다
-	following?: User[];
+  @Field((type) => [User], { nullable: true }) // 유저를 생성할 때 following 없다
+  following?: User[];
 
-	@Field((type) => [Room], { nullable: true })
-	possessedRooms?: Room[];
+  @Field((type) => [Room], { nullable: true })
+  possessedRooms?: Room[];
 
-	@Field((type) => [Chat], { nullable: true })
-	chats?: Chat[];
-}
-
-export type CTX = {
-	request: express.Request;
-	prisma: PrismaClient;
-};
-
-@InputType()
-export class signInInput {
-	@Field({ nullable: false })
-	userId: string;
-
-	@Field({ nullable: false })
-	userPw: string;
+  @Field((type) => [Chat], { nullable: true })
+  chats?: Chat[];
 }
 
 @InputType()
 export class updateUserInput {
-	@Field()
-	name: string;
+  @Field()
+  name: string;
 
-	@Field()
-	userPw: string;
+  @Field()
+  userPw: string;
 
-	@Field()
-	profile: string;
+  @Field()
+  profile: string;
+}
+
+@InputType()
+export class signInInput {
+  @Field()
+  userId: string;
+
+  @Field()
+  userPw: string;
 }
 
 @InputType()
 export class createUserInput {
-	@Field({ nullable: false })
-	userId: string;
+  @Field({ nullable: false })
+  userId: string;
 
-	@Field({ nullable: false })
-	userPw: string;
+  @Field({ nullable: false })
+  userPw: string;
 
-	@Field({ nullable: false })
-	name: string;
+  @Field({ nullable: false })
+  name: string;
 
-	@Field({ nullable: false })
-	profile: string;
+  @Field({ nullable: false })
+  profile: string;
 }
 
 @InputType()
 export class followUnfollowUserInput {
-	@Field()
-	me: number;
+  @Field()
+  me: number;
 
-	@Field()
-	you: number;
+  @Field()
+  you: number;
 }
 
 @ObjectType()
 export class followUnfollowUserRetrun {
-	@Field()
-	me: User;
+  @Field()
+  me: User;
 
-	@Field()
-	you: User;
+  @Field()
+  you: User;
 }
 
 @ObjectType()
-export class AuthPayload {
-	@Field({ nullable: true })
-	user: User;
+export class authPayload {
+  @Field((type) => User)
+  user: User;
 
-	@Field({ nullable: true })
-	token: string;
-
-	@Field({ nullable: false })
-	message: string;
+  @Field()
+  accessToken: string;
 }
