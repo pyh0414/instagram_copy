@@ -6,14 +6,14 @@ import User from "./user";
 import "./index.css";
 
 const Pages = () => {
-	return (
-		<>
-			<Router>
-				<Main path="/" />
-				<User path="/user" />
-			</Router>
-		</>
-	);
+  return (
+    <>
+      <Router>
+        <Main path="/main" />
+        <User path="/user" />
+      </Router>
+    </>
+  );
 };
 
 export default Pages;

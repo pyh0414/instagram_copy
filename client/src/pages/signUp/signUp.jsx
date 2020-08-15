@@ -42,7 +42,6 @@ const SignUp = () => {
 	const [singleFileUpload] = useMutation(MUTATION_SINGLE_FILE_UPLOAD, {
 		onCompleted: (data) => {
 			const filePath = data.singleFileUpload;
-
 			setProfile(filePath[0]);
 		},
 	});
@@ -120,15 +119,11 @@ const SignUp = () => {
 	}, []);
 
 	const onChangeImages = useCallback(
-		(e) => {
+		async (e) => {
 			const file = e.target.files[0];
-			singleFileUpload({
+
+			await singleFileUpload({
 				variables: { file },
-				context: {
-					headers: {
-						authorization: "Bearer pass",
-					},
-				},
 			});
 		},
 		[singleFileUpload]
