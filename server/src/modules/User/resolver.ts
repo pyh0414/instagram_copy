@@ -14,7 +14,7 @@ import {
   updateUserInput,
   followUnfollowUserRetrun,
   signInInput,
-  authPayload,
+  signInResult,
 } from "./type";
 
 import { resolverContextParameters } from "../../types";
@@ -40,7 +40,7 @@ export class UserResolver {
     }
   }
 
-  @Query((returns) => authPayload)
+  @Query((returns) => signInResult)
   async signIn(@Arg("user") user: signInInput, @Ctx() ctx: any) {
     try {
       const { prisma, response } = ctx;
@@ -73,13 +73,13 @@ export class UserResolver {
       });
 
       if (!fullUser) {
-        return false;
+        return { user: fullUser, accessToken: "", loginResult: false };
       }
 
       const isPasswordSame = await bcrypt.compare(userPw, fullUser.userPw);
 
       if (!isPasswordSame) {
-        return false;
+        return { user: fullUser, accessToken: "", loginResult: false };
       }
 
       const accessToken = generateAccessToken(userId);
@@ -99,7 +99,7 @@ export class UserResolver {
           refreshToken,
         },
       });
-      return { user: fullUser, accessToken };
+      return { user: fullUser, accessToken, loginResult: true };
     } catch (err) {
       console.log(err);
       throw new Error(err);

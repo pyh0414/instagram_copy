@@ -1,11 +1,6 @@
 import gql from "graphql-tag";
 
-import {
-  fullUserInfo,
-  fullPostInfo,
-  fullRoomInfo,
-  signInFullUser,
-} from "../fragment";
+import { fullUserInfo, fullPostInfo, fullRoomInfo } from "../fragment";
 
 const QUERY_ALL_POSTS = gql`
   query {
@@ -26,6 +21,7 @@ const QUERY_SIGN_IN = gql`
   query _signIn($user: signInInput!) {
     signIn(user: $user) {
       accessToken
+      loginResult
       user {
         ...full_user_info
       }

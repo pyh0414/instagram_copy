@@ -98,10 +98,13 @@ export class followUnfollowUserRetrun {
 }
 
 @ObjectType()
-export class authPayload {
-  @Field((type) => User)
+export class signInResult {
+  @Field((type) => User, { nullable: true })
   user: User;
 
-  @Field()
+  @Field({ nullable: true })
   accessToken: string;
+
+  @Field()
+  loginResult: boolean;
 }
