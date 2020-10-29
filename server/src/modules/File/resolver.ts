@@ -31,7 +31,8 @@ export class FileResolver {
     file: SINGLE_FILE_UPLOAD
   ) {
     try {
-      const filePath = await uploadFile(file);
+      // const filePath = await uploadFile(file);
+      const filePath = await s3UploadFile(file);
       const result = [];
       result.push(filePath);
       return result;

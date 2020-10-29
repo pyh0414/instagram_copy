@@ -1,7 +1,11 @@
 import AWS from "aws-sdk";
+import randomstring from "randomstring";
 
 export const s3UploadFile = async (file) => {
-	const { createReadStream, filename } = await file;
+	const { createReadStream,mimetype } = await file;
+
+	const imageType =mimetype.split("/")[1];
+	const fileName = `${randomstring.generate(10)}.${imageType}`;
 
 	AWS.config.update({
 		accessKeyId: process.env.AWS_ACCESS_KEY,
@@ -10,28 +14,23 @@ export const s3UploadFile = async (file) => {
 	});
 	const s3 = new AWS.S3({ region: process.env.AWS_RAWS_REGIONEGION });
 
-	const s3DefaultParams = {
+	const params = {
 		ACL: "public-read",
-		Bucket: process.env.S3_BUCKET_NAME,
-		Conditions: [
-			["content-length-range", 0, 1024000], // 1 Mb
-			{ acl: "public-read" },
-		],
+		Bucket: process.env.S3_ORIGIN_BUCKET_NAME,
+		Body: createReadStream(),
+		Key: fileName,
+		ContentType:mimetype, // 주석처리하면 s3파일을 웹페이지에서 열어보는 것이 아닌 다운로드 받게됨
 	};
 
 	return new Promise((resolve, reject) => {
 		s3.upload(
-			{
-				...s3DefaultParams,
-				Body: createReadStream(),
-				Key: `${filename}`,
-			},
+			params,
 			(err, data) => {
 				if (err) {
 					console.log("error uploading...", err);
 					reject(err);
 				} else {
-					console.log("successfully uploaded file...", data);
+					console.log("successfully uploaded file...");
 					resolve(data.Location);
 				}
 			}
