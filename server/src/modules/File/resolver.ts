@@ -33,8 +33,10 @@ export class FileResolver {
     try {
       // const filePath = await uploadFile(file);
       const filePath = await s3UploadFile(file);
+      const filePath2 = filePath.toString().replace("origin", "w_200");
       const result = [];
-      result.push(filePath);
+
+      result.push(filePath2);
       return result;
     } catch (err) {
       console.log(err);
