@@ -57,7 +57,8 @@ export const CustomUl = styled.ul`
 
 export const ImgCustom = styled.img`
 	width: 100%;
-	height: 100%;
+	height: 400px;
+	object-fit:contain;
 	cursor: pointer;
 `;
 
