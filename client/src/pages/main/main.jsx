@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useQuery } from "@apollo/react-hooks";
 import { Col, Row } from "antd";
 
@@ -15,7 +15,6 @@ import { Wrapper } from "./style";
 const Main = () => {
   const { data: posts } = useQuery(CLIENT_ALL_POSTS);
   const { data: loggedInUser } = useQuery(CLIENT_LOGGED_IN_USER);
-
   return (
     <div>
       <Header />

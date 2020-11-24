@@ -33,7 +33,6 @@ const main = async () => {
     ],
     authChecker: ({ root, args, context, info }) => {
       try {
-        console.log(context.request.headers);
         const authorization = context.request.headers.authorization;
         if (!authorization) {
           throw new Error("not authenticated");
@@ -74,6 +73,7 @@ const main = async () => {
 
   server.express.use("/images", express.static("images"));
   server.express.use("/auth", auth);
+
   const graphqlServerStartOptions = {
     cors: {
       origin: "http://localhost:3000",
