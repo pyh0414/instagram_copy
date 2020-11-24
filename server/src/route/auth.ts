@@ -1,13 +1,8 @@
 import express from "express";
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcryptjs";
 import jwtDecode from "jwt-decode";
-import jwt from "jsonwebtoken";
 
-import {
-  generateAccessToken,
-  generateRefreshToken,
-} from "../utils/generateToken";
+import { generateAccessToken } from "../utils/generateToken";
 import { returnAccessTokenType } from "../types";
 
 const prisma = new PrismaClient();
@@ -37,7 +32,6 @@ router.get(
             refreshToken: "",
           },
         });
-        res.clearCookie("refreshToken");
         return res.send({
           refreshTokenexpirated: true,
           accessToken: "",
@@ -64,7 +58,6 @@ router.get(
             refreshToken: "",
           },
         });
-        res.clearCookie("refreshToken");
         return res.send({
           refreshTokenexpirated: true,
           accessToken: "",
