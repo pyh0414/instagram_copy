@@ -17,6 +17,7 @@ model User {
   name           String
   userId         String       @unique
   userPw         String
+  refreshToken   String
   profile        String
   createdAt      DateTime     @default(now())
   myPosts        Post[]       @relation("_PostToUser")
@@ -29,15 +30,14 @@ model User {
 }
 
 model Post {
-  id        Int             @id @default(autoincrement())
+  id        Int          @id @default(autoincrement())
   content   String
-  createdAt DateTime        @default(now())
-  author    User            @relation("_PostToUser", fields: [authorId], references: [id])
+  createdAt DateTime     @default(now())
+  author    User         @relation("_PostToUser", fields: [authorId], references: [id])
   authorId  Int
-  comments  Comment[]       @relation("_CommentToPost")
-  images    Image[]         @relation("_ImageToPost")
+  comments  Comment[]    @relation("_CommentToPost")
+  images    Image[]      @relation("_ImageToPost")
   likers    likeToPost[]
-  hashtags  hashtagToPost[]
 }
 
 model Comment {
@@ -48,13 +48,6 @@ model Comment {
   authorId  Int
   Post      Post?    @relation("_CommentToPost", fields: [postId], references: [id])
   postId    Int?
-}
-
-model HashTag {
-  id             Int             @id @default(autoincrement())
-  content        String
-  createdAt      DateTime        @default(now())
-  hashtagedPosts hashtagToPost[]
 }
 
 model Image {
@@ -93,14 +86,4 @@ model likeToPost {
   createdAt DateTime @default(now())
 
   @@id([postId, userId])
-}
-
-// user[] <--> post[]
-model hashtagToPost {
-  post      Post    @relation(fields: [postId], references: [id])
-  postId    Int
-  hashtag   HashTag @relation(fields: [hashtagId], references: [id])
-  hashtagId Int
-
-  @@id([postId, hashtagId])
 }
