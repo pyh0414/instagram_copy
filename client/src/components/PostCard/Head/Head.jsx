@@ -32,7 +32,7 @@ const Head = ({ author }) => {
 		<Wrapper onClick={onItemClick} style={{ cursor: "pointer" }}>
 			{
 				<ImgCustom
-					src={`http://${process.env.REACT_APP_SERVER_DOMAIN}/${author.profile}`}
+					src={`${author.profile}`}
 				/>
 			}
 			{<UserCustom>{author.userId}</UserCustom>}

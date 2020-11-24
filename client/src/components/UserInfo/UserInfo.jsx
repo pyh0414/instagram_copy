@@ -7,7 +7,7 @@ const UserInfo = ({ user }) => {
 		<Wrapper>
 			{
 				<UserProfile
-					src={`http://${process.env.REACT_APP_SERVER_DOMAIN}/${user.profile}`}
+					src={`${user.profile}`}
 				/>
 			}
 

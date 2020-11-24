@@ -8,7 +8,7 @@ const Comments = ({ comments }) => {
 			<div key={i} style={{ marginTop: "8px" }}>
 				<span>
 					<ImgCustom
-						src={`http://${process.env.REACT_APP_SERVER_DOMAIN}/${v.author.profile}`}
+						src={`${v.author.profile}`}
 					/>
 				</span>
 				<span
