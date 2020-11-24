@@ -32,7 +32,7 @@ const SignIn = () => {
         antdMessage.error("사용자 정보를 다시 확인해 주세요.", 0.7);
       }
     },
-    // fetchPolicy: "network-only", // 먼저 cache를 보지 않고 바로 http 통신
+    fetchPolicy: "network-only", // 먼저 cache를 보지 않고 바로 http 통신
   });
 
   const onChangeUserId = useCallback((e) => {
