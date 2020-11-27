@@ -34,6 +34,10 @@ const main = async () => {
     authChecker: ({ root, args, context, info }) => {
       try {
         const authorization = context.request.headers.authorization;
+        // test 모드일 경우는 pass
+        if (authorization == "test") {
+          return true;
+        }
         if (!authorization) {
           throw new Error("not authenticated");
         }
