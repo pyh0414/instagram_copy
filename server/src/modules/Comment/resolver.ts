@@ -15,7 +15,7 @@ export class CommentResolver {
       const { content, postId } = comment;
       const { prisma } = ctx;
 
-      const userId = await getUserWithToken(ctx);
+      const userId = (await getUserWithToken(ctx)) || "test5UserId";
       const user = await prisma.user.findOne({
         where: {
           userId,

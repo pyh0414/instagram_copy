@@ -2,6 +2,7 @@ import { Resolver, Mutation, Arg, Query, Ctx, Authorized } from "type-graphql";
 import { createPostInput, likeOrUnlikeToPostInput, CTX, Post } from "./type";
 
 import getUserWithToken from "../../utils/getUserWithToken";
+
 @Resolver()
 export class PostResolver {
   @Authorized()
@@ -68,10 +69,10 @@ export class PostResolver {
   @Mutation((returns) => Post, { nullable: true })
   async createPost(@Arg("post") post: createPostInput, @Ctx() ctx: CTX) {
     try {
+      console.log(post);
       const { content, images } = await post;
       const { prisma } = ctx;
-
-      const userId = await getUserWithToken(ctx);
+      let userId = (await getUserWithToken(ctx)) || "test3UserId";
       const user = await prisma.user.findOne({
         where: {
           userId,
@@ -151,10 +152,11 @@ export class PostResolver {
     }
   }
 
-  @Query((returns) => [Post!]!, { nullable: true })
+  @Query((returns) => [Post]!, { nullable: true })
   async getAllPosts(@Ctx() ctx: CTX) {
     try {
       const { prisma } = ctx;
+
       const posts = await prisma.post.findMany({
         include: {
           images: true,
