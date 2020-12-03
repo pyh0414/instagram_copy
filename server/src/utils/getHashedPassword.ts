@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
 
-export default (password: string): Promise<String> => {
-	return bcrypt.hash(password, 10);
+export default async (password: string): Promise<String> => {
+  return await bcrypt.hash(password, 10);
 };
