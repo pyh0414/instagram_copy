@@ -1,13 +1,13 @@
 import React, { useState, useCallback } from "react";
 import { useLazyQuery, useApolloClient } from "@apollo/react-hooks";
-import { Input, Button, message as antdMessage } from "antd";
+import { message as antdMessage } from "antd";
 import { navigate } from "@reach/router";
 
 import { setAccessToken } from "../../auth/accessToken";
 import { QUERY_SIGN_IN } from "../../action/query";
 import { timer } from "../../index";
 
-import { Wrapper, CustomForm } from "./style";
+import { LoginForm, TextBox, Wrapper, LoginButton, BottomText } from "./style";
 
 const SignIn = () => {
   const [userId, setChangeUserId] = useState("");
@@ -55,41 +55,44 @@ const SignIn = () => {
 
   return (
     <Wrapper>
-      <CustomForm onSubmit={onSubmitForm}>
-        <div>
-          <br />
-
-          <Input
+      <LoginForm onSubmit={onSubmitForm}>
+        <h1>Login</h1>
+        <TextBox>
+          <input
+            type="text"
             name="user-id"
-            placeholder="아이디"
             value={userId}
+            placeholder="Username"
             onChange={onChangeUserId}
             required
+            autocomplete="off"
           />
-          <br />
-        </div>
-        <div>
-          <br />
-          <Input
+          <span data-placeholder="Username"></span>
+        </TextBox>
+        <TextBox>
+          <input
             name="user-password"
-            placeholder="비밀번호"
             value={userPw}
             onChange={onChangeUserPw}
             required
-            type="password"
-            autoComplete="on"
+            placeholder="Password"
+            type="Password"
+            autocomplete="off"
           />
-          <br />
-        </div>
-        <br />
-        <Button
-          type="primary"
-          style={{ width: "40%", marginRight: "20%" }}
-          onClick={onSubmitForm}
-        >
-          로그인
-        </Button>
-        <Button
+          <span data-placeholder="Password"></span>
+        </TextBox>
+        <LoginButton onClick={onSubmitForm}>로그인</LoginButton>
+        <BottomText>
+          계정이 없으신가요 ?{" "}
+          <span
+            onClick={() => {
+              navigate("/signUp");
+            }}
+          >
+            회원가입
+          </span>
+        </BottomText>
+        {/* <Button
           type="Default"
           style={{ width: "40%" }}
           onClick={() => {
@@ -97,8 +100,8 @@ const SignIn = () => {
           }}
         >
           회원가입
-        </Button>
-      </CustomForm>
+        </Button> */}
+      </LoginForm>
     </Wrapper>
   );
 };
