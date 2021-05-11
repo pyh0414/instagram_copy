@@ -20,7 +20,7 @@
 		"bcryptjs": "^2.4.3",
 		"graphql": "^15.0.0",
 		"graphql-tag": "^2.10.3",
-		"lodash": "^4.17.15",
+		"lodash": "^4.17.21",
 		"react": "^16.13.1",
 		"react-apollo": "^3.1.5",
 		"react-dom": "^16.13.1",
